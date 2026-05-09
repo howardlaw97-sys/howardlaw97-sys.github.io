@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Howard Law | 个人主页</title>
+  <title>Hao Luo | 个人主页</title>
+
   <style>
     :root {
       --bg: #ffffff;
@@ -107,7 +108,7 @@
 
     textarea {
       resize: vertical;
-      min-height: 110px;
+      min-height: 120px;
     }
 
     input:focus,
@@ -149,16 +150,18 @@
 
     .brand {
       margin: 0;
-      font-size: clamp(30px, 9vw, 58px);
-      line-height: 0.95;
-      letter-spacing: -0.06em;
-      font-weight: 760;
+      font-size: clamp(44px, 17vw, 94px);
+      line-height: 0.9;
+      letter-spacing: -0.07em;
+      font-weight: 800;
     }
 
     .subtitle {
-      margin: 14px 0 0;
+      margin: 22px 0 0;
       color: var(--muted);
-      font-size: 14px;
+      font-size: clamp(18px, 5vw, 28px);
+      line-height: 1.4;
+      letter-spacing: 0.03em;
     }
 
     .topActions {
@@ -427,9 +430,10 @@
   <div class="page">
     <header class="siteHeader">
       <div>
-        <h1 class="brand">HOWARD<br>LAW</h1>
+        <h1 class="brand">HAO<br>LUO</h1>
         <p class="subtitle" data-i18n="subtitle">个人主页 / 持续更新</p>
       </div>
+
       <div class="topActions">
         <button id="langBtn" type="button">EN</button>
       </div>
@@ -444,6 +448,7 @@
         <div class="sectionHeader">
           <h2 class="sectionTitle" data-i18n="aboutTitle">ABOUT</h2>
         </div>
+
         <p id="bioText" class="bodyText"></p>
         <div id="contactList" class="contacts"></div>
       </section>
@@ -452,6 +457,7 @@
         <div class="sectionHeader">
           <h2 class="sectionTitle" data-i18n="nowTitle">NOW</h2>
         </div>
+
         <p id="nowText" class="bodyText"></p>
       </section>
 
@@ -569,23 +575,23 @@
 
             <label>
               <span data-i18n="imageUrl">图片 URL，只接受 http / https</span>
-              <input id="updateImageUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://..." />
+              <input id="updateImageUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/image.jpg" />
             </label>
 
             <label>
               <span data-i18n="linkUrl">外部链接 URL，只接受 http / https</span>
-              <input id="updateLinkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://..." />
+              <input id="updateLinkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com" />
             </label>
 
             <div class="formGrid two">
               <label>
                 <span data-i18n="linkLabelZh">中文链接按钮文字</span>
-                <input id="updateLinkLabelZh" type="text" autocomplete="off" />
+                <input id="updateLinkLabelZh" type="text" autocomplete="off" placeholder="查看" />
               </label>
 
               <label>
                 <span data-i18n="linkLabelEn">英文链接按钮文字</span>
-                <input id="updateLinkLabelEn" type="text" autocomplete="off" />
+                <input id="updateLinkLabelEn" type="text" autocomplete="off" placeholder="View" />
               </label>
             </div>
 
@@ -667,9 +673,9 @@
 
       const I18N = {
         zh: {
-          pageTitle: "Howard Law | 个人主页",
+          pageTitle: "Hao Luo | 个人主页",
           subtitle: "个人主页 / 持续更新",
-          adminMode: "管理员模式已开启",
+          adminMode: "管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。",
           aboutTitle: "ABOUT",
           nowTitle: "NOW",
           updatesTitle: "UPDATES",
@@ -701,15 +707,15 @@
           titleEn: "英文标题",
           bodyZh: "中文正文",
           bodyEn: "英文正文",
-          imageUrl: "图片 URL，只接受 http / https",
-          linkUrl: "外部链接 URL，只接受 http / https",
+          imageUrl: "图片 URL，只接受 http:// 或 https://",
+          linkUrl: "外部链接 URL，只接受 http:// 或 https://",
           linkLabelZh: "中文链接按钮文字",
           linkLabelEn: "英文链接按钮文字",
           loadingUpdates: "动态加载中...",
           noUpdates: "暂无动态",
           updateCount: "共 {count} 条动态",
           updateSaved: "动态已保存",
-          updateRequired: "标题、正文、图片或链接至少填写一项",
+          updateRequired: "标题、正文、图片 URL 或外部链接至少填写一项",
           invalidUrl: "URL 必须以 http:// 或 https:// 开头",
           untitledUpdate: "未命名动态",
           view: "查看",
@@ -740,9 +746,9 @@
         },
 
         en: {
-          pageTitle: "Howard Law | Homepage",
+          pageTitle: "Hao Luo | Homepage",
           subtitle: "Personal homepage / continuous updates",
-          adminMode: "Admin mode is on",
+          adminMode: "Admin mode is on. You can now add, edit, hide, or delete Updates.",
           aboutTitle: "ABOUT",
           nowTitle: "NOW",
           updatesTitle: "UPDATES",
@@ -774,15 +780,15 @@
           titleEn: "English title",
           bodyZh: "Chinese body",
           bodyEn: "English body",
-          imageUrl: "Image URL, http / https only",
-          linkUrl: "External link URL, http / https only",
+          imageUrl: "Image URL, http:// or https:// only",
+          linkUrl: "External link URL, http:// or https:// only",
           linkLabelZh: "Chinese link button label",
           linkLabelEn: "English link button label",
           loadingUpdates: "Loading updates...",
           noUpdates: "No updates yet",
           updateCount: "{count} updates",
           updateSaved: "Update saved",
-          updateRequired: "Please fill in at least one title, body, image, or link",
+          updateRequired: "Please fill in at least one title, body, image URL, or external link",
           invalidUrl: "URL must start with http:// or https://",
           untitledUpdate: "Untitled update",
           view: "View",
@@ -926,20 +932,9 @@
 
       function mergeProfile(value) {
         const next = {
-          bio: {
-            zh: "",
-            en: ""
-          },
-          now: {
-            zh: "",
-            en: ""
-          },
-          contacts: {
-            email: "",
-            phone: "",
-            wechat: "",
-            qq: ""
-          }
+          bio: { zh: "", en: "" },
+          now: { zh: "", en: "" },
+          contacts: { email: "", phone: "", wechat: "", qq: "" }
         };
 
         const source = value && typeof value === "object" ? value : {};
@@ -1155,6 +1150,7 @@
       function hideUpdateEditor() {
         const editor = $("updateEditor");
         if (!editor) return;
+
         editor.classList.add("hidden");
         editingUpdateId = null;
         setStatus("updateSaveStatus", "");
@@ -1162,6 +1158,7 @@
 
       function resetUpdateForm() {
         editingUpdateId = null;
+
         $("updateType").value = "post";
         $("updateVisible").value = "true";
         $("updateTitleZh").value = "";
@@ -1172,6 +1169,7 @@
         $("updateLinkUrl").value = "";
         $("updateLinkLabelZh").value = "";
         $("updateLinkLabelEn").value = "";
+
         showUpdateEditor(false);
       }
 
@@ -1180,6 +1178,7 @@
         if (!item) return;
 
         editingUpdateId = item.id;
+
         $("updateType").value = item.type || "post";
         $("updateVisible").value = item.visible === false ? "false" : "true";
         $("updateTitleZh").value = item.title_zh || "";
