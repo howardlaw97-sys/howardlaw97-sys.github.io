@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hao Luo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #fdfdfd;
+            --fg: #111;
+            --muted: #8a8a8a;
+            --line: #e8e8e8;
+        }
+
+        html, body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+                         "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .lang-switch {
+            position: fixed;
+            top: 32px;
+            right: 32px;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.25s ease;
+            z-index: 10;
+            padding: 6px 0;
+        }
+        .lang-switch:hover { color: var(--fg); }
+
+        .container {
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 140px 32px 80px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .name {
+            font-size: 44px;
+            font-weight: 300;
+            letter-spacing: -0.8px;
+            margin-bottom: 28px;
+        }
+
+        .divider {
+            width: 36px;
+            height: 1px;
+            background: var(--fg);
+            margin-bottom: 32px;
+        }
+
+        .bio {
+            font-size: 16px;
+            line-height: 1.85;
+            margin-bottom: 72px;
+            color: #2a2a2a;
+        }
+
+        .section-label {
+            font-size: 11px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .contact-list {
+            list-style: none;
+        }
+
+        .contact-item {
+            display: grid;
+            grid-template-columns: 96px 1fr;
+            gap: 20px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--line);
+            font-size: 15px;
+            align-items: baseline;
+        }
+
+        .contact-label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .contact-value {
+            color: var(--fg);
+            text-decoration: none;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.2px;
+        }
+
+        a.contact-value {
+            transition: color 0.25s ease;
+            position: relative;
+        }
+
+        a.contact-value:hover { color: var(--muted); }
+
+        .footer {
+            margin-top: 96px;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 0.8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 90px 24px 60px;
+            }
+            .name { font-size: 34px; }
+            .bio { font-size: 15px; margin-bottom: 56px; }
+            .contact-item {
+                grid-template-columns: 76px 1fr;
+                font-size: 14px;
+            }
+            .lang-switch {
+                top: 22px;
+                right: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switch" onclick="toggleLang()">
+        <span id="langText">EN</span>
+    </div>
+
+    <main class="container">
+        <h1 class="name">Hao Luo</h1>
+        <div class="divider"></div>
+
+        <p class="bio"
+           data-zh="一个简单的页面。寥寥几句,关于我是谁、在何处、以及如何联系。"
+           data-en="A simple page. A few words about who I am, where I am, and how to reach me.">
+            一个简单的页面。寥寥几句,关于我是谁、在何处、以及如何联系。
+        </p>
+
+        <div class="section-label" data-zh="联系方式" data-en="Contact">联系方式</div>
+
+        <ul class="contact-list">
+            <li class="contact-item">
+                <span class="contact-label" data-zh="邮箱" data-en="Email">邮箱</span>
+                <a class="contact-value" href="mailto:howardlaw97@gmail.com">howardlaw97@gmail.com</a>
+            </li>
+            <li class="contact-item">
+                <span class="contact-label" data-zh="电话" data-en="Phone">电话</span>
+                <a class="contact-value" href="tel:+8618710113499">187 1011 3499</a>
+            </li>
+            <li class="contact-item">
+                <span class="contact-label" data-zh="微信" data-en="WeChat">微信</span>
+                <span class="contact-value">LthunderHsnow</span>
+            </li>
+            <li class="contact-item">
+                <span class="contact-label" data-zh="QQ" data-en="QQ">QQ</span>
+                <span class="contact-value">694687313</span>
+            </li>
+        </u
