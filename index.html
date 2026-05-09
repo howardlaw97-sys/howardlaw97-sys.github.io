@@ -6,6 +6,7 @@
     <title>Hao Luo</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
             --bg: #fdfdfd;
             --fg: #111;
@@ -13,6 +14,7 @@
             --line: #e5e5e5;
             --error: #c33;
         }
+
         html, body {
             background: var(--bg);
             color: var(--fg);
@@ -22,6 +24,7 @@
             line-height: 1.7;
             -webkit-font-smoothing: antialiased;
         }
+
         .lang-switch {
             position: fixed;
             top: 24px;
@@ -40,11 +43,14 @@
             font-family: inherit;
             font-weight: 500;
         }
-        .lang-switch:hover, .lang-switch:focus {
+
+        .lang-switch:hover,
+        .lang-switch:focus {
             color: var(--fg);
             border-color: var(--fg);
             outline: none;
         }
+
         .container {
             max-width: 560px;
             margin: 0 auto;
@@ -52,25 +58,32 @@
             opacity: 0;
             animation: fadeIn 0.8s ease forwards;
         }
-        @keyframes fadeIn { to { opacity: 1; } }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
         .name {
             font-size: 44px;
             font-weight: 300;
             letter-spacing: -0.8px;
             margin-bottom: 28px;
         }
+
         .divider {
             width: 36px;
             height: 1px;
             background: var(--fg);
             margin-bottom: 36px;
         }
+
         .bio {
             font-size: 16px;
             line-height: 1.85;
             margin-bottom: 72px;
             color: #2a2a2a;
         }
+
         .section-label {
             font-size: 11px;
             letter-spacing: 2px;
@@ -79,30 +92,102 @@
             margin-bottom: 22px;
             font-weight: 500;
         }
+
         html[lang="zh-CN"] .section-label {
             letter-spacing: 0.3px;
             font-size: 12px;
         }
-        .contact-list { list-style: none; }
+
+        .contact-list {
+            list-style: none;
+        }
+
         .contact-item {
             display: grid;
-            grid-template-columns: 88px 1fr;
-            gap: 20px;
+            grid-template-columns: 88px minmax(0, 1fr) auto;
+            gap: 16px;
             padding: 16px 0;
             border-bottom: 1px solid var(--line);
             font-size: 15px;
             align-items: baseline;
         }
-        .contact-label { color: var(--muted); font-size: 13px; }
+
+        .contact-label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
         .contact-value {
             color: var(--fg);
             text-decoration: none;
             font-variant-numeric: tabular-nums;
+            word-break: break-word;
         }
-        a.contact-value { transition: color 0.25s ease; }
-        a.contact-value:hover { color: var(--muted); }
-        .guestbook { margin-top: 80px; }
-        .guestbook-form { margin-bottom: 56px; }
+
+        a.contact-value {
+            transition: color 0.25s ease;
+        }
+
+        a.contact-value:hover {
+            color: var(--muted);
+        }
+
+        .copy-button {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 11px;
+            font-family: inherit;
+            cursor: pointer;
+            padding: 2px 0;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        html[lang="zh-CN"] .copy-button {
+            font-size: 12px;
+        }
+
+        .copy-button:hover {
+            color: var(--fg);
+        }
+
+        .now {
+            margin-top: 72px;
+        }
+
+        .now-text {
+            font-size: 15px;
+            line-height: 1.85;
+            color: #2a2a2a;
+        }
+
+        .guestbook {
+            margin-top: 80px;
+        }
+
+        .guestbook-heading {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .guestbook-heading .section-label {
+            margin-bottom: 0;
+        }
+
+        .message-count {
+            font-size: 11px;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .guestbook-form {
+            margin-bottom: 56px;
+        }
+
         .guestbook-form input,
         .guestbook-form textarea {
             display: block;
@@ -118,19 +203,23 @@
             resize: none;
             transition: border-color 0.25s ease;
         }
+
         .guestbook-form input:focus,
         .guestbook-form textarea:focus {
             border-bottom-color: var(--fg);
         }
+
         .guestbook-form input::placeholder,
         .guestbook-form textarea::placeholder {
             color: var(--muted);
         }
+
         .guestbook-form textarea {
             min-height: 64px;
             margin-top: 8px;
             line-height: 1.6;
         }
+
         .guestbook-submit {
             margin-top: 20px;
             padding: 9px 22px;
@@ -145,24 +234,41 @@
             cursor: pointer;
             transition: opacity 0.2s ease;
         }
+
         html[lang="zh-CN"] .guestbook-submit {
             letter-spacing: 0.5px;
             font-size: 13px;
         }
-        .guestbook-submit:hover { opacity: 0.85; }
-        .guestbook-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .guestbook-submit:hover {
+            opacity: 0.85;
+        }
+
+        .guestbook-submit:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .guestbook-status {
             margin-top: 12px;
             font-size: 12px;
             color: var(--muted);
             min-height: 1em;
         }
-        .guestbook-status.error { color: var(--error); }
-        .messages-list { list-style: none; }
+
+        .guestbook-status.error {
+            color: var(--error);
+        }
+
+        .messages-list {
+            list-style: none;
+        }
+
         .message {
             padding: 18px 0;
             border-bottom: 1px solid var(--line);
         }
+
         .message-header {
             display: flex;
             align-items: baseline;
@@ -170,17 +276,20 @@
             margin-bottom: 6px;
             flex-wrap: wrap;
         }
+
         .message-author {
             font-size: 14px;
             font-weight: 500;
             color: var(--fg);
         }
+
         .message-time {
             font-size: 11px;
             color: var(--muted);
             letter-spacing: 0.3px;
             font-variant-numeric: tabular-nums;
         }
+
         .message-delete {
             margin-left: auto;
             background: transparent;
@@ -193,11 +302,24 @@
             font-family: inherit;
             transition: all 0.2s ease;
         }
-        html[lang="zh-CN"] .message-delete { font-size: 12px; }
+
+        html[lang="zh-CN"] .message-delete {
+            font-size: 12px;
+        }
+
         .message-delete:hover {
             color: var(--error);
-            background: rgba(204,51,51,0.06);
+            background: rgba(204, 51, 51, 0.06);
         }
+
+        .message-content {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
         .messages-empty,
         .messages-loading,
         .messages-error {
@@ -207,6 +329,7 @@
             color: var(--muted);
             letter-spacing: 1px;
         }
+
         .messages-error {
             color: var(--error);
             letter-spacing: 0;
@@ -214,13 +337,7 @@
             word-break: break-word;
             white-space: pre-wrap;
         }
-        .message-content {
-            font-size: 14px;
-            line-height: 1.7;
-            color: #333;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
+
         .debug-panel {
             display: none;
             margin-top: 28px;
@@ -231,34 +348,70 @@
             color: var(--muted);
             word-break: break-word;
         }
-        .debug-panel.is-visible { display: block; }
+
+        .debug-panel.is-visible {
+            display: block;
+        }
+
         .debug-title {
             color: var(--fg);
             font-weight: 600;
             margin-bottom: 6px;
         }
+
         .debug-message {
             color: var(--error);
             white-space: pre-wrap;
         }
+
+        .hp-field {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
         .footer {
             margin-top: 96px;
             font-size: 12px;
             color: var(--muted);
             letter-spacing: 0.5px;
         }
+
         @media (max-width: 600px) {
-            .container { padding: 100px 24px 60px; }
-            .name { font-size: 34px; }
-            .bio { font-size: 15px; margin-bottom: 56px; }
+            .container {
+                padding: 100px 24px 60px;
+            }
+
+            .name {
+                font-size: 34px;
+            }
+
+            .bio {
+                font-size: 15px;
+                margin-bottom: 56px;
+            }
+
             .contact-item {
-                grid-template-columns: 72px 1fr;
+                grid-template-columns: 72px minmax(0, 1fr) auto;
+                gap: 12px;
                 font-size: 14px;
             }
+
             .lang-switch {
-                top: 20px; right: 20px; padding: 6px 12px;
+                top: 20px;
+                right: 20px;
+                padding: 6px 12px;
             }
-            .guestbook { margin-top: 64px; }
+
+            .guestbook {
+                margin-top: 64px;
+            }
+
+            .now {
+                margin-top: 64px;
+            }
         }
     </style>
 </head>
@@ -281,33 +434,59 @@
             <li class="contact-item">
                 <span class="contact-label" data-zh="邮箱" data-en="Email">邮箱</span>
                 <a class="contact-value" href="mailto:howardlaw97@gmail.com">howardlaw97@gmail.com</a>
+                <button class="copy-button" type="button" data-copy="howardlaw97@gmail.com" data-zh="复制" data-en="Copy">复制</button>
             </li>
             <li class="contact-item">
                 <span class="contact-label" data-zh="电话" data-en="Phone">电话</span>
                 <a class="contact-value" href="tel:+8618710113499">187 1011 3499</a>
+                <button class="copy-button" type="button" data-copy="18710113499" data-zh="复制" data-en="Copy">复制</button>
             </li>
             <li class="contact-item">
                 <span class="contact-label" data-zh="微信" data-en="WeChat">微信</span>
                 <span class="contact-value">LthunderHsnow</span>
+                <button class="copy-button" type="button" data-copy="LthunderHsnow" data-zh="复制" data-en="Copy">复制</button>
             </li>
             <li class="contact-item">
                 <span class="contact-label" data-zh="QQ" data-en="QQ">QQ</span>
                 <span class="contact-value">694687313</span>
+                <button class="copy-button" type="button" data-copy="694687313" data-zh="复制" data-en="Copy">复制</button>
             </li>
         </ul>
 
-        <div class="guestbook">
-            <div class="section-label" data-zh="留言" data-en="GUESTBOOK">留言</div>
+        <section class="now">
+            <div class="section-label" data-zh="现在" data-en="NOW">现在</div>
+            <p class="now-text"
+               data-zh="正在完善自己的个人网站,也持续练习英文写作、信息整理和 AI 工具使用。"
+               data-en="Currently refining my personal website, while continuing to practice English writing, information organization, and AI tools.">
+                正在完善自己的个人网站,也持续练习英文写作、信息整理和 AI 工具使用。
+            </p>
+        </section>
+
+        <section class="guestbook">
+            <div class="guestbook-heading">
+                <div class="section-label" data-zh="留言" data-en="GUESTBOOK">留言</div>
+                <div class="message-count" id="messageCount"></div>
+            </div>
 
             <form class="guestbook-form" id="guestbookForm">
                 <input type="text" id="msgAuthor" maxlength="40" required
                     data-zh-placeholder="你的名字" data-en-placeholder="Your name"
                     placeholder="你的名字">
+
                 <textarea id="msgContent" maxlength="500" required
                     data-zh-placeholder="想说点什么..." data-en-placeholder="Say something..."
                     placeholder="想说点什么..."></textarea>
+
+                <div class="hp-field" aria-hidden="true">
+                    <label>
+                        Website
+                        <input type="text" id="websiteField" tabindex="-1" autocomplete="off">
+                    </label>
+                </div>
+
                 <button type="submit" class="guestbook-submit" id="msgSubmit"
                     data-zh="发送" data-en="SEND">发送</button>
+
                 <div class="guestbook-status" id="msgStatus"></div>
             </form>
 
@@ -319,7 +498,7 @@
                 <div class="debug-title" data-zh="调试信息" data-en="Debug info">调试信息</div>
                 <div class="debug-message" id="debugMessage"></div>
             </div>
-        </div>
+        </section>
 
         <div class="footer">© 2026 Hao Luo</div>
     </main>
@@ -332,12 +511,15 @@
             const SUPABASE_KEY = 'sb_publishable_fbPvPbTmOfum_628MVQE-w_i6-dlorB';
 
             const SUPABASE_CDN_URLS = [
-                'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
-                'https://unpkg.com/@supabase/supabase-js@2'
+                'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+                'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
             ];
 
             const SCRIPT_LOAD_TIMEOUT_MS = 10000;
             const SUPABASE_QUERY_TIMEOUT_MS = 15000;
+            const MIN_SUBMIT_WAIT_MS = 2500;
+
+            const pageLoadedAt = Date.now();
 
             const urlParams = new URLSearchParams(window.location.search);
             const adminPasswordFromUrl = urlParams.get('admin') || '';
@@ -349,9 +531,11 @@
 
             const langBtn = document.getElementById('langBtn');
             const messagesList = document.getElementById('messagesList');
+            const messageCount = document.getElementById('messageCount');
             const form = document.getElementById('guestbookForm');
             const inputAuthor = document.getElementById('msgAuthor');
             const inputContent = document.getElementById('msgContent');
+            const websiteField = document.getElementById('websiteField');
             const submitBtn = document.getElementById('msgSubmit');
             const statusEl = document.getElementById('msgStatus');
             const debugPanel = document.getElementById('debugPanel');
@@ -367,6 +551,8 @@
                 deleteFailed: { zh: '删除失败: ', en: 'Delete failed: ' },
                 sending: { zh: '发送中...', en: 'Sending...' },
                 sent: { zh: '已发送 ✓', en: 'Sent ✓' },
+                copied: { zh: '已复制', en: 'Copied' },
+                copy: { zh: '复制', en: 'Copy' },
                 systemUnavailable: { zh: '留言系统未连接。请稍后再试。', en: 'Guestbook is not connected. Please try again later.' },
                 deleteConfirm: { zh: '确认删除这条留言?', en: 'Delete this message?' },
                 wrongPassword: { zh: '删除失败: 管理员密码不正确。', en: 'Delete failed: wrong admin password.' },
@@ -375,18 +561,23 @@
                 scriptTimeout: { zh: 'Supabase 前端库加载超时。', en: 'Supabase frontend library load timed out.' },
                 requestTimeout: { zh: '请求 Supabase 超时。可能是网络、VPN 或 Supabase 连接问题。', en: 'Supabase request timed out. This may be a network, VPN, or Supabase connection issue.' },
                 libraryMissing: { zh: 'window.supabase.createClient 不存在。可能是 CDN 文件未正确加载。', en: 'window.supabase.createClient is missing. The CDN file may not have loaded correctly.' },
+                tooFast: { zh: '请稍等几秒后再发送。', en: 'Please wait a few seconds before sending.' },
+                tooManyLinks: { zh: '留言里链接太多,请减少链接后再发送。', en: 'Too many links. Please remove some links and try again.' },
+                blockedWords: { zh: '留言内容看起来像垃圾信息,请修改后再发送。', en: 'This message looks like spam. Please edit it and try again.' },
+                messageCount: { zh: '条留言', en: 'messages' },
+                oneMessage: { zh: '1 条留言', en: '1 message' },
                 unknown: { zh: '未知错误', en: 'Unknown error' },
                 justNow: { zh: '刚刚', en: 'just now' }
             };
 
             window.addEventListener('error', function (event) {
-                const msg = event.message || (event.error && event.error.message) || t.unknown[currentLang];
+                const msg = event.message || (event.error && event.error.message) || tr('unknown');
                 showDebug('JS error: ' + msg);
             });
 
             window.addEventListener('unhandledrejection', function (event) {
                 const reason = event.reason;
-                const msg = reason && reason.message ? reason.message : String(reason || t.unknown[currentLang]);
+                const msg = reason && reason.message ? reason.message : String(reason || tr('unknown'));
                 showDebug('Unhandled promise rejection: ' + msg);
             });
 
@@ -404,12 +595,28 @@
                 deleteMessage(button.getAttribute('data-delete-id'));
             });
 
+            document.addEventListener('click', function (event) {
+                const button = event.target.closest('.copy-button');
+                if (!button) return;
+                copyText(button);
+            });
+
             applyLang();
             initGuestbook();
 
             function safeReadLang() {
                 try {
-                    return localStorage.getItem('siteLang') === 'en' ? 'en' : 'zh';
+                    const saved = localStorage.getItem('siteLang');
+
+                    if (saved === 'zh' || saved === 'en') {
+                        return saved;
+                    }
+
+                    const browserLang = (navigator.languages && navigator.languages[0]) ||
+                        navigator.language ||
+                        'zh-CN';
+
+                    return browserLang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
                 } catch (err) {
                     return 'zh';
                 }
@@ -553,8 +760,23 @@
 
                 const author = inputAuthor.value.trim();
                 const content = inputContent.value.trim();
+                const honeypot = websiteField.value.trim();
 
                 if (!author || !content) return;
+
+                const spamCheck = checkSpam(content, honeypot);
+
+                if (!spamCheck.ok) {
+                    if (spamCheck.silent) {
+                        inputAuthor.value = '';
+                        inputContent.value = '';
+                        websiteField.value = '';
+                        setStatus(tr('sent'), false);
+                    } else {
+                        setStatus(spamCheck.message, true);
+                    }
+                    return;
+                }
 
                 submitBtn.disabled = true;
                 setStatus(tr('sending'), false);
@@ -570,6 +792,8 @@
 
                     inputAuthor.value = '';
                     inputContent.value = '';
+                    websiteField.value = '';
+
                     setStatus(tr('sent'), false);
 
                     setTimeout(function () {
@@ -584,6 +808,42 @@
                 } finally {
                     submitBtn.disabled = false;
                 }
+            }
+
+            function checkSpam(content, honeypot) {
+                if (honeypot) {
+                    return { ok: false, silent: true };
+                }
+
+                if (Date.now() - pageLoadedAt < MIN_SUBMIT_WAIT_MS) {
+                    return { ok: false, message: tr('tooFast') };
+                }
+
+                const links = content.match(/https?:\/\/|www\./gi) || [];
+                if (links.length > 2) {
+                    return { ok: false, message: tr('tooManyLinks') };
+                }
+
+                const blockedWords = [
+                    'casino',
+                    'porn',
+                    'viagra',
+                    'crypto giveaway',
+                    'free money',
+                    '바카라',
+                    '카지노'
+                ];
+
+                const lower = content.toLowerCase();
+                const hasBlockedWord = blockedWords.some(function (word) {
+                    return lower.indexOf(word) !== -1;
+                });
+
+                if (hasBlockedWord) {
+                    return { ok: false, message: tr('blockedWords') };
+                }
+
+                return { ok: true };
             }
 
             async function deleteMessage(id) {
@@ -636,6 +896,48 @@
                 });
             }
 
+            async function copyText(button) {
+                const value = button.getAttribute('data-copy') || '';
+
+                if (!value) return;
+
+                try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(value);
+                    } else {
+                        fallbackCopy(value);
+                    }
+
+                    button.textContent = tr('copied');
+
+                    setTimeout(function () {
+                        button.textContent = tr('copy');
+                    }, 1400);
+                } catch (err) {
+                    showDebug('Copy failed: ' + cleanError(err));
+                }
+            }
+
+            function fallbackCopy(value) {
+                const textarea = document.createElement('textarea');
+                textarea.value = value;
+                textarea.setAttribute('readonly', '');
+                textarea.style.position = 'fixed';
+                textarea.style.top = '-9999px';
+                textarea.style.left = '-9999px';
+
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+
+                const ok = document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                if (!ok) {
+                    throw new Error('document.execCommand("copy") failed');
+                }
+            }
+
             function setStatus(message, isError) {
                 statusEl.textContent = message;
                 statusEl.classList.toggle('error', Boolean(isError));
@@ -651,10 +953,13 @@
 
                 if (listState.type === 'messages') {
                     renderMessages(listState.messages || []);
+                    updateMessageCount(listState.messages ? listState.messages.length : 0);
                     return;
                 }
 
                 if (listState.type === 'loading') {
+                    updateMessageCount(null);
+
                     messagesList.innerHTML =
                         '<li class="messages-loading">' +
                         escapeHtml(listState.message || tr('loading')) +
@@ -663,6 +968,8 @@
                 }
 
                 if (listState.type === 'error') {
+                    updateMessageCount(null);
+
                     messagesList.innerHTML =
                         '<li class="messages-error">' +
                         escapeHtml(listState.message || tr('supabaseUnavailable')) +
@@ -671,6 +978,8 @@
             }
 
             function renderMessages(messages) {
+                updateMessageCount(messages.length);
+
                 if (!messages || messages.length === 0) {
                     messagesList.innerHTML =
                         '<li class="messages-empty">' +
@@ -697,6 +1006,26 @@
                         '<div class="message-content">' + escapeHtml(msg.content || '') + '</div>' +
                     '</li>';
                 }).join('');
+            }
+
+            function updateMessageCount(count) {
+                if (!messageCount) return;
+
+                if (typeof count !== 'number') {
+                    messageCount.textContent = '';
+                    return;
+                }
+
+                if (currentLang === 'zh') {
+                    messageCount.textContent = count + ' 条留言';
+                    return;
+                }
+
+                if (count === 1) {
+                    messageCount.textContent = tr('oneMessage');
+                } else {
+                    messageCount.textContent = count + ' ' + tr('messageCount');
+                }
             }
 
             function formatTime(isoString) {
