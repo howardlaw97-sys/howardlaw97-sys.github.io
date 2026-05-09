@@ -29,19 +29,19 @@
             position: fixed;
             top: 24px;
             right: 24px;
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            color: var(--muted);
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
             z-index: 10;
             padding: 7px 14px;
             background: transparent;
             border: 1px solid var(--line);
             border-radius: 999px;
+            color: var(--muted);
             font-family: inherit;
+            font-size: 11px;
             font-weight: 500;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
         }
 
         .lang-switch:hover,
@@ -155,7 +155,9 @@
         }
 
         .copy-button:hover,
-        .admin-text-button:hover { color: var(--fg); }
+        .admin-text-button:hover {
+            color: var(--fg);
+        }
 
         .admin-button {
             padding: 4px 10px;
@@ -286,9 +288,14 @@
         }
 
         .guestbook-form input:focus,
-        .guestbook-form textarea:focus { border-bottom-color: var(--fg); }
+        .guestbook-form textarea:focus {
+            border-bottom-color: var(--fg);
+        }
+
         .guestbook-form input::placeholder,
-        .guestbook-form textarea::placeholder { color: var(--muted); }
+        .guestbook-form textarea::placeholder {
+            color: var(--muted);
+        }
 
         .guestbook-form textarea {
             min-height: 64px;
@@ -469,9 +476,18 @@
         }
 
         @media (max-width: 600px) {
-            .container { padding: 100px 24px 60px; }
-            .name { font-size: 34px; }
-            .bio { font-size: 15px; margin-bottom: 56px; }
+            .container {
+                padding: 100px 24px 60px;
+            }
+
+            .name {
+                font-size: 34px;
+            }
+
+            .bio {
+                font-size: 15px;
+                margin-bottom: 56px;
+            }
 
             .contact-item {
                 grid-template-columns: 72px minmax(0, 1fr) auto;
@@ -479,7 +495,12 @@
                 font-size: 14px;
             }
 
-            .lang-switch { top: 20px; right: 20px; padding: 6px 12px; }
+            .lang-switch {
+                top: 20px;
+                right: 20px;
+                padding: 6px 12px;
+            }
+
             .guestbook { margin-top: 64px; }
             .now { margin-top: 64px; }
 
@@ -491,6 +512,7 @@
         }
     </style>
 </head>
+
 <body>
     <button class="lang-switch" type="button" id="langBtn">EN</button>
 
@@ -510,28 +532,34 @@
 
             <div class="admin-panel admin-only" id="contactEditor" hidden>
                 <div class="admin-panel-title" data-zh="编辑联系方式" data-en="Edit contact info">编辑联系方式</div>
+
                 <div class="admin-grid">
                     <div class="admin-field">
                         <label for="editEmail" data-zh="邮箱" data-en="Email">邮箱</label>
                         <input id="editEmail" type="email" autocomplete="email">
                     </div>
+
                     <div class="admin-field">
                         <label for="editPhone" data-zh="电话" data-en="Phone">电话</label>
                         <input id="editPhone" type="text" inputmode="tel" autocomplete="tel">
                     </div>
+
                     <div class="admin-field">
                         <label for="editWechat" data-zh="微信" data-en="WeChat">微信</label>
                         <input id="editWechat" type="text" autocomplete="off">
                     </div>
+
                     <div class="admin-field">
                         <label for="editQQ" data-zh="QQ" data-en="QQ">QQ</label>
                         <input id="editQQ" type="text" inputmode="numeric" autocomplete="off">
                     </div>
                 </div>
+
                 <div class="admin-actions">
                     <button class="admin-save" type="button" id="saveContactBtn" data-zh="保存" data-en="Save">保存</button>
                     <button class="admin-text-button" type="button" id="cancelContactBtn" data-zh="取消" data-en="Cancel">取消</button>
                 </div>
+
                 <div class="admin-status" id="contactAdminStatus"></div>
             </div>
         </section>
@@ -546,20 +574,24 @@
 
             <div class="admin-panel admin-only" id="nowEditor" hidden>
                 <div class="admin-panel-title" data-zh="编辑现在状态" data-en="Edit now status">编辑现在状态</div>
+
                 <div class="admin-grid">
                     <div class="admin-field">
                         <label for="editNowZh">中文</label>
                         <textarea id="editNowZh" maxlength="500"></textarea>
                     </div>
+
                     <div class="admin-field">
                         <label for="editNowEn">English</label>
                         <textarea id="editNowEn" maxlength="500"></textarea>
                     </div>
                 </div>
+
                 <div class="admin-actions">
                     <button class="admin-save" type="button" id="saveNowBtn" data-zh="保存" data-en="Save">保存</button>
                     <button class="admin-text-button" type="button" id="cancelNowBtn" data-zh="取消" data-en="Cancel">取消</button>
                 </div>
+
                 <div class="admin-status" id="nowAdminStatus"></div>
             </div>
         </section>
@@ -655,12 +687,14 @@
             const nowText = document.getElementById('nowText');
             const messagesList = document.getElementById('messagesList');
             const messageCount = document.getElementById('messageCount');
+
             const form = document.getElementById('guestbookForm');
             const inputAuthor = document.getElementById('msgAuthor');
             const inputContent = document.getElementById('msgContent');
             const websiteField = document.getElementById('websiteField');
             const submitBtn = document.getElementById('msgSubmit');
             const statusEl = document.getElementById('msgStatus');
+
             const debugPanel = document.getElementById('debugPanel');
             const debugMessage = document.getElementById('debugMessage');
 
@@ -718,8 +752,6 @@
                 blockedWords: { zh: '留言内容看起来像垃圾信息,请修改后再发送。', en: 'This message looks like spam. Please edit it and try again.' },
                 messageCount: { zh: '条留言', en: 'messages' },
                 oneMessage: { zh: '1 条留言', en: '1 message' },
-                visibleCount: { zh: '可见', en: 'visible' },
-                hiddenCount: { zh: '隐藏', en: 'hidden' },
                 unknown: { zh: '未知错误', en: 'Unknown error' },
                 justNow: { zh: '刚刚', en: 'just now' }
             };
@@ -774,17 +806,21 @@
             });
 
             editContactBtn.addEventListener('click', openContactEditor);
+
             cancelContactBtn.addEventListener('click', function () {
                 contactEditor.hidden = true;
                 setAdminStatus(contactAdminStatus, '', false);
             });
+
             saveContactBtn.addEventListener('click', saveContactsFromEditor);
 
             editNowBtn.addEventListener('click', openNowEditor);
+
             cancelNowBtn.addEventListener('click', function () {
                 nowEditor.hidden = true;
                 setAdminStatus(nowAdminStatus, '', false);
             });
+
             saveNowBtn.addEventListener('click', saveNowFromEditor);
 
             applyLang();
@@ -851,14 +887,39 @@
                 const contacts = siteProfile.contacts || DEFAULT_PROFILE.contacts;
 
                 const rows = [
-                    { labelZh: '邮箱', labelEn: 'Email', value: contacts.email || '', href: makeEmailHref(contacts.email), copy: contacts.email || '' },
-                    { labelZh: '电话', labelEn: 'Phone', value: contacts.phone || '', href: makePhoneHref(contacts.phone), copy: cleanPhone(contacts.phone) || contacts.phone || '' },
-                    { labelZh: '微信', labelEn: 'WeChat', value: contacts.wechat || '', href: '', copy: contacts.wechat || '' },
-                    { labelZh: 'QQ', labelEn: 'QQ', value: contacts.qq || '', href: '', copy: contacts.qq || '' }
+                    {
+                        labelZh: '邮箱',
+                        labelEn: 'Email',
+                        value: contacts.email || '',
+                        href: makeEmailHref(contacts.email),
+                        copy: contacts.email || ''
+                    },
+                    {
+                        labelZh: '电话',
+                        labelEn: 'Phone',
+                        value: contacts.phone || '',
+                        href: makePhoneHref(contacts.phone),
+                        copy: cleanPhone(contacts.phone) || contacts.phone || ''
+                    },
+                    {
+                        labelZh: '微信',
+                        labelEn: 'WeChat',
+                        value: contacts.wechat || '',
+                        href: '',
+                        copy: contacts.wechat || ''
+                    },
+                    {
+                        labelZh: 'QQ',
+                        labelEn: 'QQ',
+                        value: contacts.qq || '',
+                        href: '',
+                        copy: contacts.qq || ''
+                    }
                 ];
 
                 contactList.innerHTML = rows.map(function (row) {
                     const label = currentLang === 'zh' ? row.labelZh : row.labelEn;
+
                     const valueHtml = row.href
                         ? '<a class="contact-value" href="' + escapeHtml(row.href) + '">' + escapeHtml(row.value) + '</a>'
                         : '<span class="contact-value">' + escapeHtml(row.value) + '</span>';
@@ -1032,6 +1093,7 @@
                 renderProfile();
 
                 const ok = await saveProfile(contactAdminStatus, saveContactBtn);
+
                 if (ok) {
                     contactEditor.hidden = true;
                 } else {
@@ -1059,6 +1121,7 @@
                 renderProfile();
 
                 const ok = await saveProfile(nowAdminStatus, saveNowBtn);
+
                 if (ok) {
                     nowEditor.hidden = true;
                 } else {
@@ -1133,6 +1196,7 @@
                             sbClient
                                 .from('messages')
                                 .select('*')
+                                .eq('visible', true)
                                 .order('created_at', { ascending: false })
                                 .limit(50),
                             SUPABASE_QUERY_TIMEOUT_MS
@@ -1141,10 +1205,16 @@
 
                     if (result.error) throw result.error;
 
-                    setListState({ type: 'messages', messages: result.data || [] });
+                    setListState({
+                        type: 'messages',
+                        messages: result.data || []
+                    });
                 } catch (err) {
                     const message = cleanError(err);
-                    setListState({ type: 'error', message: tr('loadFailed') + message });
+                    setListState({
+                        type: 'error',
+                        message: tr('loadFailed') + message
+                    });
                     showDebug('Load messages failed: ' + message);
                 }
             }
@@ -1184,7 +1254,11 @@
                 try {
                     const query = sbClient
                         .from('messages')
-                        .insert({ author: author, content: content, visible: true });
+                        .insert({
+                            author: author,
+                            content: content,
+                            visible: true
+                        });
 
                     const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
 
@@ -1220,6 +1294,7 @@
                 }
 
                 const links = content.match(/https?:\/\/|www\./gi) || [];
+
                 if (links.length > 2) {
                     return { ok: false, message: tr('tooManyLinks') };
                 }
@@ -1235,6 +1310,7 @@
                 ];
 
                 const lower = content.toLowerCase();
+
                 const hasBlockedWord = blockedWords.some(function (word) {
                     return lower.indexOf(word) !== -1;
                 });
@@ -1254,6 +1330,7 @@
                 }
 
                 const confirmText = visible ? tr('restoreConfirm') : tr('hideConfirm');
+
                 if (!window.confirm(confirmText)) return;
 
                 setStatus(visible ? tr('restoreText') + '...' : tr('hideText') + '...', false);
@@ -1396,6 +1473,7 @@
 
                 if (listState.type === 'loading') {
                     updateMessageCount(null, []);
+
                     messagesList.innerHTML =
                         '<li class="messages-loading">' +
                         escapeHtml(listState.message || tr('loading')) +
@@ -1405,6 +1483,7 @@
 
                 if (listState.type === 'error') {
                     updateMessageCount(null, []);
+
                     messagesList.innerHTML =
                         '<li class="messages-error">' +
                         escapeHtml(listState.message || tr('supabaseUnavailable')) +
@@ -1474,6 +1553,7 @@
                     const hidden = messages.filter(function (msg) {
                         return msg.visible === false;
                     }).length;
+
                     const visible = count - hidden;
 
                     if (currentLang === 'zh') {
@@ -1481,6 +1561,7 @@
                     } else {
                         messageCount.textContent = visible + ' visible · ' + hidden + ' hidden';
                     }
+
                     return;
                 }
 
