@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hao Luo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -22,10 +23,8 @@
             font-size: 16px;
             line-height: 1.7;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* 语言切换:胶囊按钮,有边框、更显眼 */
         .lang-switch {
             position: fixed;
             top: 24px;
@@ -44,9 +43,7 @@
             font-family: inherit;
             font-weight: 500;
         }
-        .lang-switch:hover,
-        .lang-switch:active,
-        .lang-switch:focus {
+        .lang-switch:hover, .lang-switch:focus {
             color: var(--fg);
             border-color: var(--fg);
             outline: none;
@@ -59,7 +56,6 @@
             opacity: 0;
             animation: fadeIn 0.8s ease forwards;
         }
-
         @keyframes fadeIn { to { opacity: 1; } }
 
         .name {
@@ -68,14 +64,12 @@
             letter-spacing: -0.8px;
             margin-bottom: 28px;
         }
-
         .divider {
             width: 36px;
             height: 1px;
             background: var(--fg);
             margin-bottom: 36px;
         }
-
         .bio {
             font-size: 16px;
             line-height: 1.85;
@@ -83,7 +77,6 @@
             color: #2a2a2a;
         }
 
-        /* 章节标签:英文用大字距,中文用小字距 */
         .section-label {
             font-size: 11px;
             letter-spacing: 2px;
@@ -98,7 +91,6 @@
         }
 
         .contact-list { list-style: none; }
-
         .contact-item {
             display: grid;
             grid-template-columns: 88px 1fr;
@@ -108,21 +100,130 @@
             font-size: 15px;
             align-items: baseline;
         }
-
-        .contact-label {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
+        .contact-label { color: var(--muted); font-size: 13px; }
         .contact-value {
             color: var(--fg);
             text-decoration: none;
             font-variant-numeric: tabular-nums;
-            letter-spacing: 0.2px;
         }
-
         a.contact-value { transition: color 0.25s ease; }
         a.contact-value:hover { color: var(--muted); }
+
+        .guestbook { margin-top: 80px; }
+        .guestbook-form { margin-bottom: 56px; }
+        .guestbook-form input,
+        .guestbook-form textarea {
+            display: block;
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px solid var(--line);
+            background: transparent;
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--fg);
+            outline: none;
+            resize: none;
+            transition: border-color 0.25s ease;
+        }
+        .guestbook-form input:focus,
+        .guestbook-form textarea:focus {
+            border-bottom-color: var(--fg);
+        }
+        .guestbook-form input::placeholder,
+        .guestbook-form textarea::placeholder {
+            color: var(--muted);
+        }
+        .guestbook-form textarea {
+            min-height: 64px;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        .guestbook-submit {
+            margin-top: 20px;
+            padding: 9px 22px;
+            background: var(--fg);
+            color: var(--bg);
+            border: none;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        html[lang="zh-CN"] .guestbook-submit {
+            letter-spacing: 0.5px;
+            font-size: 13px;
+        }
+        .guestbook-submit:hover { opacity: 0.85; }
+        .guestbook-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .guestbook-status {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--muted);
+            min-height: 1em;
+        }
+        .guestbook-status.error { color: #c33; }
+
+        .messages-list { list-style: none; }
+        .message {
+            padding: 18px 0;
+            border-bottom: 1px solid var(--line);
+        }
+        .message-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .message-author {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--fg);
+        }
+        .message-time {
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+            font-variant-numeric: tabular-nums;
+        }
+        .message-delete {
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        html[lang="zh-CN"] .message-delete { font-size: 12px; }
+        .message-delete:hover {
+            color: #c33;
+            background: rgba(204,51,51,0.06);
+        }
+        .message-content {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .messages-empty,
+        .messages-loading {
+            padding: 24px 0;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
 
         .footer {
             margin-top: 96px;
@@ -140,10 +241,9 @@
                 font-size: 14px;
             }
             .lang-switch {
-                top: 20px;
-                right: 20px;
-                padding: 6px 12px;
+                top: 20px; right: 20px; padding: 6px 12px;
             }
+            .guestbook { margin-top: 64px; }
         }
     </style>
 </head>
@@ -181,25 +281,175 @@
             </li>
         </ul>
 
+        <div class="guestbook">
+            <div class="section-label" data-zh="留言" data-en="GUESTBOOK">留言</div>
+
+            <form class="guestbook-form" id="guestbookForm">
+                <input type="text" id="msgAuthor" maxlength="40" required
+                    data-zh-placeholder="你的名字" data-en-placeholder="Your name"
+                    placeholder="你的名字">
+                <textarea id="msgContent" maxlength="500" required
+                    data-zh-placeholder="想说点什么..." data-en-placeholder="Say something..."
+                    placeholder="想说点什么..."></textarea>
+                <button type="submit" class="guestbook-submit" id="msgSubmit"
+                    data-zh="发送" data-en="SEND">发送</button>
+                <div class="guestbook-status" id="msgStatus"></div>
+            </form>
+
+            <ul class="messages-list" id="messagesList">
+                <li class="messages-loading"
+                    data-zh="加载中..." data-en="Loading...">加载中...</li>
+            </ul>
+        </div>
+
         <div class="footer">© 2026 Hao Luo</div>
     </main>
 
     <script>
-        (function() {
-            var currentLang = 'zh';
-            var btn = document.getElementById('langBtn');
+        // ========== ⚠️ 三个占位符,必须替换 ==========
+        const SUPABASE_URL = 'https://wzbqabzlmfassgmyyowj.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_fbPvP_这里是你完整的 key';
+        const ADMIN_PASSWORD = 'haohaoxuexi3669';
+        // ==========================================
 
-            function toggleLang() {
-                currentLang = currentLang === 'zh' ? 'en' : 'zh';
-                document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
-                btn.textContent = currentLang === 'zh' ? 'EN' : '中';
-                document.querySelectorAll('[data-zh][data-en]').forEach(function(el) {
-                    el.textContent = el.getAttribute('data-' + currentLang);
-                });
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const urlParams = new URLSearchParams(window.location.search);
+        const isAdmin = urlParams.get('admin') === ADMIN_PASSWORD;
+
+        let currentLang = 'zh';
+        const langBtn = document.getElementById('langBtn');
+
+        function applyLang() {
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+            langBtn.textContent = currentLang === 'zh' ? 'EN' : '中';
+            document.querySelectorAll('[data-zh][data-en]').forEach(function(el) {
+                el.textContent = el.getAttribute('data-' + currentLang);
+            });
+            document.querySelectorAll('[data-zh-placeholder][data-en-placeholder]').forEach(function(el) {
+                el.placeholder = el.getAttribute('data-' + currentLang + '-placeholder');
+            });
+            if (window._messages) renderMessages(window._messages);
+        }
+
+        langBtn.addEventListener('click', function() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            applyLang();
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            const diffMs = new Date() - date;
+            const m = Math.floor(diffMs / 60000);
+            const h = Math.floor(diffMs / 3600000);
+            const d = Math.floor(diffMs / 86400000);
+            if (currentLang === 'zh') {
+                if (m < 1) return '刚刚';
+                if (m < 60) return m + ' 分钟前';
+                if (h < 24) return h + ' 小时前';
+                if (d < 7) return d + ' 天前';
+                return (date.getMonth() + 1) + '月' + date.getDate() + '日';
+            } else {
+                if (m < 1) return 'just now';
+                if (m < 60) return m + 'm ago';
+                if (h < 24) return h + 'h ago';
+                if (d < 7) return d + 'd ago';
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             }
+        }
 
-            btn.addEventListener('click', toggleLang);
-        })();
+        const messagesList = document.getElementById('messagesList');
+        const form = document.getElementById('guestbookForm');
+        const inputAuthor = document.getElementById('msgAuthor');
+        const inputContent = document.getElementById('msgContent');
+        const submitBtn = document.getElementById('msgSubmit');
+        const statusEl = document.getElementById('msgStatus');
+
+        async function loadMessages() {
+            try {
+                const { data, error } = await supabase
+                    .from('messages').select('*')
+                    .order('created_at', { ascending: false }).limit(50);
+                if (error) throw error;
+                window._messages = data;
+                renderMessages(data);
+            } catch (err) {
+                console.error(err);
+                messagesList.innerHTML = '<li class="messages-empty">' +
+                    (currentLang === 'zh' ? '加载失败' : 'Failed to load') + '</li>';
+            }
+        }
+
+        function renderMessages(messages) {
+            if (!messages || messages.length === 0) {
+                messagesList.innerHTML = '<li class="messages-empty">' +
+                    (currentLang === 'zh' ? '还没有留言,留下第一条吧' : 'No messages yet. Be the first.') +
+                    '</li>';
+                return;
+            }
+            const deleteText = currentLang === 'zh' ? '删除' : 'Delete';
+            messagesList.innerHTML = messages.map(function(msg) {
+                const del = isAdmin
+                    ? '<button class="message-delete" onclick="deleteMessage(' + msg.id + ')">' + deleteText + '</button>'
+                    : '';
+                return '<li class="message">' +
+                    '<div class="message-header">' +
+                        '<span class="message-author">' + escapeHtml(msg.author) + '</span>' +
+                        '<span class="message-time">' + formatTime(msg.created_at) + '</span>' +
+                        del +
+                    '</div>' +
+                    '<div class="message-content">' + escapeHtml(msg.content) + '</div>' +
+                '</li>';
+            }).join('');
+        }
+
+        async function submitMessage(e) {
+            e.preventDefault();
+            const author = inputAuthor.value.trim();
+            const content = inputContent.value.trim();
+            if (!author || !content) return;
+            submitBtn.disabled = true;
+            statusEl.classList.remove('error');
+            statusEl.textContent = currentLang === 'zh' ? '发送中...' : 'Sending...';
+            try {
+                const { error } = await supabase.from('messages').insert({ author, content });
+                if (error) throw error;
+                inputAuthor.value = '';
+                inputContent.value = '';
+                statusEl.textContent = currentLang === 'zh' ? '已发送 ✓' : 'Sent ✓';
+                setTimeout(function() { statusEl.textContent = ''; }, 2500);
+                loadMessages();
+            } catch (err) {
+                console.error(err);
+                statusEl.classList.add('error');
+                statusEl.textContent = currentLang === 'zh' ? '发送失败,请重试' : 'Failed, please retry';
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function deleteMessage(id) {
+            if (!confirm(currentLang === 'zh' ? '确认删除这条留言?' : 'Delete this message?')) return;
+            try {
+                const { data, error } = await supabase.rpc('delete_message_with_admin', {
+                    msg_id: id, admin_password: ADMIN_PASSWORD
+                });
+                if (error) throw error;
+                if (data === true) loadMessages();
+                else alert(currentLang === 'zh' ? '密码错误' : 'Wrong password.');
+            } catch (err) {
+                console.error(err);
+                alert(currentLang === 'zh' ? '删除失败' : 'Delete failed.');
+            }
+        }
+
+        form.addEventListener('submit', submitMessage);
+        loadMessages();
     </script>
 </body>
 </html>
