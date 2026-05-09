@@ -327,11 +327,16 @@
         }
 
         .guestbook-status.error { color: var(--error); }
+
         .messages-list { list-style: none; }
 
         .message {
             padding: 18px 0;
             border-bottom: 1px solid var(--line);
+        }
+
+        .message.is-hidden {
+            opacity: 0.48;
         }
 
         .message-header {
@@ -355,24 +360,47 @@
             font-variant-numeric: tabular-nums;
         }
 
-        .message-delete {
+        .message-hidden-badge {
+            font-size: 11px;
+            color: var(--error);
+            border: 1px solid rgba(204, 51, 51, 0.25);
+            border-radius: 999px;
+            padding: 1px 7px;
+        }
+
+        .message-actions {
             margin-left: auto;
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .message-delete,
+        .message-visibility {
             background: transparent;
             border: none;
             color: var(--muted);
             font-size: 11px;
             cursor: pointer;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             font-family: inherit;
             transition: all 0.2s ease;
         }
 
-        html[lang="zh-CN"] .message-delete { font-size: 12px; }
+        html[lang="zh-CN"] .message-delete,
+        html[lang="zh-CN"] .message-visibility {
+            font-size: 12px;
+        }
 
         .message-delete:hover {
             color: var(--error);
             background: rgba(204, 51, 51, 0.06);
+        }
+
+        .message-visibility:hover {
+            color: var(--fg);
+            background: rgba(0, 0, 0, 0.04);
         }
 
         .message-content {
@@ -444,14 +472,22 @@
             .container { padding: 100px 24px 60px; }
             .name { font-size: 34px; }
             .bio { font-size: 15px; margin-bottom: 56px; }
+
             .contact-item {
                 grid-template-columns: 72px minmax(0, 1fr) auto;
                 gap: 12px;
                 font-size: 14px;
             }
+
             .lang-switch { top: 20px; right: 20px; padding: 6px 12px; }
             .guestbook { margin-top: 64px; }
             .now { margin-top: 64px; }
+
+            .message-actions {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 4px;
+            }
         }
     </style>
 </head>
@@ -651,12 +687,12 @@
                 noMessages: { zh: '还没有留言,留下第一条吧', en: 'No messages yet. Be the first.' },
                 supabaseLoading: { zh: '正在连接留言系统...', en: 'Connecting to guestbook...' },
                 supabaseUnavailable: { zh: '留言系统暂时不可用,但页面其他功能可以正常使用。', en: 'Guestbook is temporarily unavailable, but the rest of the page still works.' },
-                profileUnavailable: { zh: '资料编辑系统暂时不可用。请检查 Supabase 表和函数是否已创建。', en: 'Profile editing is temporarily unavailable. Please check whether the Supabase table and function are created.' },
-                loadFailed: { zh: '留言加载失败: ', en: 'Failed to load messages: ' },
                 profileLoadFailed: { zh: '资料加载失败,已使用页面默认内容: ', en: 'Profile load failed; using default content: ' },
+                loadFailed: { zh: '留言加载失败: ', en: 'Failed to load messages: ' },
                 sendFailed: { zh: '发送失败: ', en: 'Failed to send: ' },
                 deleteFailed: { zh: '删除失败: ', en: 'Delete failed: ' },
                 saveFailed: { zh: '保存失败: ', en: 'Save failed: ' },
+                visibilityFailed: { zh: '操作失败: ', en: 'Action failed: ' },
                 saving: { zh: '保存中...', en: 'Saving...' },
                 saved: { zh: '已保存 ✓', en: 'Saved ✓' },
                 sending: { zh: '发送中...', en: 'Sending...' },
@@ -665,9 +701,14 @@
                 copy: { zh: '复制', en: 'Copy' },
                 systemUnavailable: { zh: '留言系统未连接。请稍后再试。', en: 'Guestbook is not connected. Please try again later.' },
                 adminUnavailable: { zh: '无法保存: Supabase 未连接。', en: 'Cannot save: Supabase is not connected.' },
-                deleteConfirm: { zh: '确认删除这条留言?', en: 'Delete this message?' },
+                deleteConfirm: { zh: '确认永久删除这条留言?', en: 'Permanently delete this message?' },
+                hideConfirm: { zh: '确认隐藏这条留言?', en: 'Hide this message?' },
+                restoreConfirm: { zh: '确认恢复这条留言?', en: 'Restore this message?' },
                 wrongPassword: { zh: '管理员密码不正确。', en: 'Wrong admin password.' },
                 deleteText: { zh: '删除', en: 'Delete' },
+                hideText: { zh: '隐藏', en: 'Hide' },
+                restoreText: { zh: '恢复', en: 'Restore' },
+                hiddenBadge: { zh: '已隐藏', en: 'Hidden' },
                 scriptLoadFailed: { zh: 'Supabase 前端库加载失败。常见原因: CDN 被网络/VPN 拦截。', en: 'Supabase frontend library failed to load. Common cause: CDN blocked by network/VPN.' },
                 scriptTimeout: { zh: 'Supabase 前端库加载超时。', en: 'Supabase frontend library load timed out.' },
                 requestTimeout: { zh: '请求 Supabase 超时。可能是网络、VPN 或 Supabase 连接问题。', en: 'Supabase request timed out. This may be a network, VPN, or Supabase connection issue.' },
@@ -677,6 +718,8 @@
                 blockedWords: { zh: '留言内容看起来像垃圾信息,请修改后再发送。', en: 'This message looks like spam. Please edit it and try again.' },
                 messageCount: { zh: '条留言', en: 'messages' },
                 oneMessage: { zh: '1 条留言', en: '1 message' },
+                visibleCount: { zh: '可见', en: 'visible' },
+                hiddenCount: { zh: '隐藏', en: 'hidden' },
                 unknown: { zh: '未知错误', en: 'Unknown error' },
                 justNow: { zh: '刚刚', en: 'just now' }
             };
@@ -705,9 +748,23 @@
             form.addEventListener('submit', submitMessage);
 
             messagesList.addEventListener('click', function (event) {
-                const button = event.target.closest('[data-delete-id]');
-                if (!button) return;
-                deleteMessage(button.getAttribute('data-delete-id'));
+                const deleteButton = event.target.closest('[data-delete-id]');
+                const hideButton = event.target.closest('[data-hide-id]');
+                const restoreButton = event.target.closest('[data-restore-id]');
+
+                if (deleteButton) {
+                    deleteMessage(deleteButton.getAttribute('data-delete-id'));
+                    return;
+                }
+
+                if (hideButton) {
+                    setMessageVisible(hideButton.getAttribute('data-hide-id'), false);
+                    return;
+                }
+
+                if (restoreButton) {
+                    setMessageVisible(restoreButton.getAttribute('data-restore-id'), true);
+                }
             });
 
             document.addEventListener('click', function (event) {
@@ -794,10 +851,10 @@
                 const contacts = siteProfile.contacts || DEFAULT_PROFILE.contacts;
 
                 const rows = [
-                    { id: 'email', labelZh: '邮箱', labelEn: 'Email', value: contacts.email || '', href: makeEmailHref(contacts.email), copy: contacts.email || '' },
-                    { id: 'phone', labelZh: '电话', labelEn: 'Phone', value: contacts.phone || '', href: makePhoneHref(contacts.phone), copy: cleanPhone(contacts.phone) || contacts.phone || '' },
-                    { id: 'wechat', labelZh: '微信', labelEn: 'WeChat', value: contacts.wechat || '', href: '', copy: contacts.wechat || '' },
-                    { id: 'qq', labelZh: 'QQ', labelEn: 'QQ', value: contacts.qq || '', href: '', copy: contacts.qq || '' }
+                    { labelZh: '邮箱', labelEn: 'Email', value: contacts.email || '', href: makeEmailHref(contacts.email), copy: contacts.email || '' },
+                    { labelZh: '电话', labelEn: 'Phone', value: contacts.phone || '', href: makePhoneHref(contacts.phone), copy: cleanPhone(contacts.phone) || contacts.phone || '' },
+                    { labelZh: '微信', labelEn: 'WeChat', value: contacts.wechat || '', href: '', copy: contacts.wechat || '' },
+                    { labelZh: 'QQ', labelEn: 'QQ', value: contacts.qq || '', href: '', copy: contacts.qq || '' }
                 ];
 
                 contactList.innerHTML = rows.map(function (row) {
@@ -1062,13 +1119,25 @@
                 setListState({ type: 'loading', message: tr('loading') });
 
                 try {
-                    const query = sbClient
-                        .from('messages')
-                        .select('*')
-                        .order('created_at', { ascending: false })
-                        .limit(50);
+                    let result;
 
-                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
+                    if (isAdmin) {
+                        result = await withTimeout(
+                            sbClient.rpc('get_messages_with_admin', {
+                                admin_password: adminPasswordFromUrl
+                            }),
+                            SUPABASE_QUERY_TIMEOUT_MS
+                        );
+                    } else {
+                        result = await withTimeout(
+                            sbClient
+                                .from('messages')
+                                .select('*')
+                                .order('created_at', { ascending: false })
+                                .limit(50),
+                            SUPABASE_QUERY_TIMEOUT_MS
+                        );
+                    }
 
                     if (result.error) throw result.error;
 
@@ -1115,7 +1184,7 @@
                 try {
                     const query = sbClient
                         .from('messages')
-                        .insert({ author: author, content: content });
+                        .insert({ author: author, content: content, visible: true });
 
                     const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
 
@@ -1175,6 +1244,43 @@
                 }
 
                 return { ok: true };
+            }
+
+            async function setMessageVisible(id, visible) {
+                if (!sbClient) {
+                    setStatus(tr('systemUnavailable'), true);
+                    showDebug(tr('systemUnavailable'));
+                    return;
+                }
+
+                const confirmText = visible ? tr('restoreConfirm') : tr('hideConfirm');
+                if (!window.confirm(confirmText)) return;
+
+                setStatus(visible ? tr('restoreText') + '...' : tr('hideText') + '...', false);
+
+                try {
+                    const result = await withTimeout(
+                        sbClient.rpc('set_message_visible_with_admin', {
+                            msg_id: Number(id),
+                            msg_visible: Boolean(visible),
+                            admin_password: adminPasswordFromUrl
+                        }),
+                        SUPABASE_QUERY_TIMEOUT_MS
+                    );
+
+                    if (result.error) throw result.error;
+
+                    if (result.data !== true) {
+                        throw new Error(tr('wrongPassword'));
+                    }
+
+                    setStatus('', false);
+                    await loadMessages();
+                } catch (err) {
+                    const message = cleanError(err);
+                    setStatus(tr('visibilityFailed') + message, true);
+                    showDebug('Set message visibility failed: ' + message);
+                }
             }
 
             async function deleteMessage(id) {
@@ -1284,13 +1390,12 @@
 
                 if (listState.type === 'messages') {
                     renderMessages(listState.messages || []);
-                    updateMessageCount(listState.messages ? listState.messages.length : 0);
+                    updateMessageCount(listState.messages ? listState.messages.length : 0, listState.messages || []);
                     return;
                 }
 
                 if (listState.type === 'loading') {
-                    updateMessageCount(null);
-
+                    updateMessageCount(null, []);
                     messagesList.innerHTML =
                         '<li class="messages-loading">' +
                         escapeHtml(listState.message || tr('loading')) +
@@ -1299,8 +1404,7 @@
                 }
 
                 if (listState.type === 'error') {
-                    updateMessageCount(null);
-
+                    updateMessageCount(null, []);
                     messagesList.innerHTML =
                         '<li class="messages-error">' +
                         escapeHtml(listState.message || tr('supabaseUnavailable')) +
@@ -1309,7 +1413,7 @@
             }
 
             function renderMessages(messages) {
-                updateMessageCount(messages.length);
+                updateMessageCount(messages.length, messages);
 
                 if (!messages || messages.length === 0) {
                     messagesList.innerHTML =
@@ -1320,6 +1424,20 @@
                 }
 
                 messagesList.innerHTML = messages.map(function (msg) {
+                    const isHidden = msg.visible === false;
+
+                    const hiddenBadge = isAdmin && isHidden
+                        ? '<span class="message-hidden-badge">' + escapeHtml(tr('hiddenBadge')) + '</span>'
+                        : '';
+
+                    const visibilityButton = isAdmin
+                        ? (
+                            isHidden
+                                ? '<button class="message-visibility" type="button" data-restore-id="' + escapeHtml(String(msg.id)) + '">' + escapeHtml(tr('restoreText')) + '</button>'
+                                : '<button class="message-visibility" type="button" data-hide-id="' + escapeHtml(String(msg.id)) + '">' + escapeHtml(tr('hideText')) + '</button>'
+                        )
+                        : '';
+
                     const deleteButton = isAdmin
                         ? '<button class="message-delete" type="button" data-delete-id="' +
                           escapeHtml(String(msg.id)) +
@@ -1328,22 +1446,41 @@
                           '</button>'
                         : '';
 
-                    return '<li class="message">' +
+                    const actions = isAdmin
+                        ? '<span class="message-actions">' + visibilityButton + deleteButton + '</span>'
+                        : '';
+
+                    return '<li class="message' + (isHidden ? ' is-hidden' : '') + '">' +
                         '<div class="message-header">' +
                             '<span class="message-author">' + escapeHtml(msg.author || '') + '</span>' +
                             '<span class="message-time">' + escapeHtml(formatTime(msg.created_at)) + '</span>' +
-                            deleteButton +
+                            hiddenBadge +
+                            actions +
                         '</div>' +
                         '<div class="message-content">' + escapeHtml(msg.content || '') + '</div>' +
                     '</li>';
                 }).join('');
             }
 
-            function updateMessageCount(count) {
+            function updateMessageCount(count, messages) {
                 if (!messageCount) return;
 
                 if (typeof count !== 'number') {
                     messageCount.textContent = '';
+                    return;
+                }
+
+                if (isAdmin && Array.isArray(messages)) {
+                    const hidden = messages.filter(function (msg) {
+                        return msg.visible === false;
+                    }).length;
+                    const visible = count - hidden;
+
+                    if (currentLang === 'zh') {
+                        messageCount.textContent = visible + ' 可见 · ' + hidden + ' 隐藏';
+                    } else {
+                        messageCount.textContent = visible + ' visible · ' + hidden + ' hidden';
+                    }
                     return;
                 }
 
