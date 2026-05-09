@@ -1,1636 +1,1655 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hao Luo</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg: #fdfdfd;
-            --fg: #111;
-            --muted: #888;
-            --line: #e5e5e5;
-            --error: #c33;
-        }
-
-        html, body {
-            background: var(--bg);
-            color: var(--fg);
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-                         "PingFang SC", "Microsoft YaHei", sans-serif;
-            font-size: 16px;
-            line-height: 1.7;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .lang-switch {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            z-index: 10;
-            padding: 7px 14px;
-            background: transparent;
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            color: var(--muted);
-            font-family: inherit;
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-        }
-
-        .lang-switch:hover,
-        .lang-switch:focus {
-            color: var(--fg);
-            border-color: var(--fg);
-            outline: none;
-        }
-
-        .container {
-            max-width: 560px;
-            margin: 0 auto;
-            padding: 130px 32px 80px;
-            opacity: 0;
-            animation: fadeIn 0.8s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        .name {
-            font-size: 44px;
-            font-weight: 300;
-            letter-spacing: -0.8px;
-            margin-bottom: 28px;
-        }
-
-        .divider {
-            width: 36px;
-            height: 1px;
-            background: var(--fg);
-            margin-bottom: 36px;
-        }
-
-        .bio,
-        .now-text {
-            font-size: 16px;
-            line-height: 1.85;
-            color: #2a2a2a;
-        }
-
-        .bio { margin-bottom: 72px; }
-
-        .section-heading,
-        .guestbook-heading {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 22px;
-        }
-
-        .section-label {
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--muted);
-            font-weight: 500;
-        }
-
-        html[lang="zh-CN"] .section-label {
-            letter-spacing: 0.3px;
-            font-size: 12px;
-        }
-
-        .contact-list { list-style: none; }
-
-        .contact-item {
-            display: grid;
-            grid-template-columns: 88px minmax(0, 1fr) auto;
-            gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--line);
-            font-size: 15px;
-            align-items: baseline;
-        }
-
-        .contact-label {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .contact-value {
-            color: var(--fg);
-            text-decoration: none;
-            font-variant-numeric: tabular-nums;
-            word-break: break-word;
-        }
-
-        a.contact-value { transition: color 0.25s ease; }
-        a.contact-value:hover { color: var(--muted); }
-
-        .copy-button,
-        .admin-button,
-        .admin-text-button {
-            background: transparent;
-            border: none;
-            color: var(--muted);
-            font-size: 11px;
-            font-family: inherit;
-            cursor: pointer;
-            transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-            white-space: nowrap;
-        }
-
-        html[lang="zh-CN"] .copy-button,
-        html[lang="zh-CN"] .admin-button,
-        html[lang="zh-CN"] .admin-text-button {
-            font-size: 12px;
-        }
-
-        .copy-button:hover,
-        .admin-text-button:hover {
-            color: var(--fg);
-        }
-
-        .admin-button {
-            padding: 4px 10px;
-            border: 1px solid var(--line);
-            border-radius: 999px;
-        }
-
-        .admin-button:hover {
-            color: var(--fg);
-            border-color: var(--fg);
-        }
-
-        .admin-only { display: none; }
-        body.admin-mode .admin-only { display: inline-flex; }
-        body.admin-mode .admin-panel.admin-only { display: block; }
-        .admin-panel[hidden] { display: none !important; }
-
-        .admin-panel {
-            margin-top: 22px;
-            padding: 18px 18px 16px;
-            border: 1px solid var(--line);
-            border-radius: 16px;
-        }
-
-        .admin-panel-title {
-            font-size: 12px;
-            color: var(--fg);
-            font-weight: 600;
-            margin-bottom: 14px;
-        }
-
-        .admin-grid {
-            display: grid;
-            gap: 14px;
-        }
-
-        .admin-field label {
-            display: block;
-            font-size: 12px;
-            color: var(--muted);
-            margin-bottom: 5px;
-        }
-
-        .admin-field input,
-        .admin-field textarea {
-            display: block;
-            width: 100%;
-            padding: 9px 10px;
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            background: transparent;
-            color: var(--fg);
-            font: inherit;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .admin-field textarea {
-            min-height: 88px;
-            resize: vertical;
-            line-height: 1.6;
-        }
-
-        .admin-field input:focus,
-        .admin-field textarea:focus {
-            border-color: var(--fg);
-        }
-
-        .admin-actions {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-            margin-top: 16px;
-        }
-
-        .admin-save {
-            padding: 7px 16px;
-            border: none;
-            border-radius: 999px;
-            background: var(--fg);
-            color: var(--bg);
-            font: inherit;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .admin-save:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-        }
-
-        .admin-status {
-            margin-top: 12px;
-            min-height: 1em;
-            font-size: 12px;
-            color: var(--muted);
-            white-space: pre-wrap;
-        }
-
-        .admin-status.error { color: var(--error); }
-
-        .now { margin-top: 72px; }
-        .guestbook { margin-top: 80px; }
-        .guestbook-heading .section-label { margin-bottom: 0; }
-
-        .message-count {
-            font-size: 11px;
-            color: var(--muted);
-            white-space: nowrap;
-        }
-
-        .guestbook-form { margin-bottom: 56px; }
-
-        .guestbook-form input,
-        .guestbook-form textarea {
-            display: block;
-            width: 100%;
-            padding: 12px 0;
-            border: none;
-            border-bottom: 1px solid var(--line);
-            background: transparent;
-            font-family: inherit;
-            font-size: 15px;
-            color: var(--fg);
-            outline: none;
-            resize: none;
-            transition: border-color 0.25s ease;
-        }
-
-        .guestbook-form input:focus,
-        .guestbook-form textarea:focus {
-            border-bottom-color: var(--fg);
-        }
-
-        .guestbook-form input::placeholder,
-        .guestbook-form textarea::placeholder {
-            color: var(--muted);
-        }
-
-        .guestbook-form textarea {
-            min-height: 64px;
-            margin-top: 8px;
-            line-height: 1.6;
-        }
-
-        .guestbook-submit {
-            margin-top: 20px;
-            padding: 9px 22px;
-            background: var(--fg);
-            color: var(--bg);
-            border: none;
-            border-radius: 999px;
-            font-family: inherit;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-        }
-
-        html[lang="zh-CN"] .guestbook-submit {
-            letter-spacing: 0.5px;
-            font-size: 13px;
-        }
-
-        .guestbook-submit:hover { opacity: 0.85; }
-        .guestbook-submit:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        .guestbook-status {
-            margin-top: 12px;
-            font-size: 12px;
-            color: var(--muted);
-            min-height: 1em;
-        }
-
-        .guestbook-status.error { color: var(--error); }
-
-        .messages-list { list-style: none; }
-
-        .message {
-            padding: 18px 0;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .message.is-hidden {
-            opacity: 0.48;
-        }
-
-        .message-header {
-            display: flex;
-            align-items: baseline;
-            gap: 12px;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
-        }
-
-        .message-author {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--fg);
-        }
-
-        .message-time {
-            font-size: 11px;
-            color: var(--muted);
-            letter-spacing: 0.3px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .message-hidden-badge {
-            font-size: 11px;
-            color: var(--error);
-            border: 1px solid rgba(204, 51, 51, 0.25);
-            border-radius: 999px;
-            padding: 1px 7px;
-        }
-
-        .message-actions {
-            margin-left: auto;
-            display: inline-flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .message-delete,
-        .message-visibility {
-            background: transparent;
-            border: none;
-            color: var(--muted);
-            font-size: 11px;
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: inherit;
-            transition: all 0.2s ease;
-        }
-
-        html[lang="zh-CN"] .message-delete,
-        html[lang="zh-CN"] .message-visibility {
-            font-size: 12px;
-        }
-
-        .message-delete:hover {
-            color: var(--error);
-            background: rgba(204, 51, 51, 0.06);
-        }
-
-        .message-visibility:hover {
-            color: var(--fg);
-            background: rgba(0, 0, 0, 0.04);
-        }
-
-        .message-content {
-            font-size: 14px;
-            line-height: 1.7;
-            color: #333;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .messages-empty,
-        .messages-loading,
-        .messages-error {
-            padding: 24px 0;
-            text-align: center;
-            font-size: 12px;
-            color: var(--muted);
-            letter-spacing: 1px;
-        }
-
-        .messages-error {
-            color: var(--error);
-            letter-spacing: 0;
-            text-align: left;
-            word-break: break-word;
-            white-space: pre-wrap;
-        }
-
-        .debug-panel {
-            display: none;
-            margin-top: 28px;
-            padding: 14px 16px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            font-size: 12px;
-            color: var(--muted);
-            word-break: break-word;
-        }
-
-        .debug-panel.is-visible { display: block; }
-
-        .debug-title {
-            color: var(--fg);
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .debug-message {
-            color: var(--error);
-            white-space: pre-wrap;
-        }
-
-        .hp-field {
-            position: absolute;
-            left: -9999px;
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-        }
-
-        .footer {
-            margin-top: 96px;
-            font-size: 12px;
-            color: var(--muted);
-            letter-spacing: 0.5px;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 100px 24px 60px;
-            }
-
-            .name {
-                font-size: 34px;
-            }
-
-            .bio {
-                font-size: 15px;
-                margin-bottom: 56px;
-            }
-
-            .contact-item {
-                grid-template-columns: 72px minmax(0, 1fr) auto;
-                gap: 12px;
-                font-size: 14px;
-            }
-
-            .lang-switch {
-                top: 20px;
-                right: 20px;
-                padding: 6px 12px;
-            }
-
-            .guestbook { margin-top: 64px; }
-            .now { margin-top: 64px; }
-
-            .message-actions {
-                width: 100%;
-                margin-left: 0;
-                margin-top: 4px;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Howard Law | 个人主页</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #111111;
+      --muted: #666666;
+      --soft: #999999;
+      --line: #e8e8e8;
+      --panel: #fafafa;
+      --danger: #b00020;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      letter-spacing: 0.01em;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid var(--fg);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--fg);
+      background: var(--bg);
+      color: var(--fg);
+      border-radius: 999px;
+      padding: 7px 13px;
+      cursor: pointer;
+      line-height: 1.2;
+    }
+
+    button:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    button.primary {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    button.primary:hover {
+      background: var(--bg);
+      color: var(--fg);
+    }
+
+    button.textButton {
+      border: 0;
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--fg);
+      border-bottom: 1px solid var(--fg);
+    }
+
+    button.textButton:hover {
+      background: transparent;
+      color: var(--muted);
+      border-bottom-color: var(--muted);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 11px;
+      background: var(--bg);
+      color: var(--fg);
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--fg);
+    }
+
+    label {
+      display: block;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    label span {
+      display: block;
+      margin: 0 0 6px;
+    }
+
+    [hidden],
+    .hidden {
+      display: none !important;
+    }
+
+    .page {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 30px 18px 56px;
+    }
+
+    .siteHeader {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 0 34px;
+    }
+
+    .brand {
+      margin: 0;
+      font-size: clamp(30px, 9vw, 58px);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      font-weight: 760;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .topActions {
+      flex: 0 0 auto;
+      padding-top: 2px;
+    }
+
+    .section {
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+    }
+
+    .sectionHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 18px;
+    }
+
+    .sectionTitle {
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      font-weight: 700;
+    }
+
+    .bodyText {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .adminBanner,
+    .adminBox {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 13px 14px;
+      margin: 0 0 18px;
+    }
+
+    .adminBanner {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    details.adminBox summary {
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .formGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      margin-top: 16px;
+    }
+
+    .formActions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .contacts {
+      display: grid;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .contactItem {
+      display: grid;
+      grid-template-columns: 82px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .contactName {
+      color: var(--muted);
+    }
+
+    .contactValue {
+      overflow-wrap: anywhere;
+    }
+
+    .statusLine {
+      margin: 8px 0 14px;
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .errorText {
+      color: var(--danger);
+    }
+
+    .updatesList,
+    .messageList {
+      display: grid;
+      gap: 0;
+    }
+
+    .updateCard,
+    .messageCard {
+      border-top: 1px solid var(--line);
+      padding: 20px 0;
+    }
+
+    .updateCard:first-child,
+    .messageCard:first-child {
+      border-top: 0;
+    }
+
+    .updateCard.isHidden,
+    .messageCard.isHidden {
+      opacity: 0.62;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 7px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .updateTitle {
+      margin: 0 0 10px;
+      font-size: 21px;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+
+    .updateBody,
+    .messageBody {
+      margin: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .updateImage {
+      display: block;
+      width: 100%;
+      max-height: 460px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .linkButton {
+      display: inline-block;
+      margin-top: 14px;
+      border: 1px solid var(--fg);
+      border-radius: 999px;
+      padding: 7px 13px;
+      line-height: 1.2;
+    }
+
+    .linkButton:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .adminActions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+      font-size: 13px;
+    }
+
+    .messageForm {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .honeypot {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .debugPanel {
+      border-top: 1px solid var(--line);
+      margin-top: 20px;
+      padding-top: 20px;
+    }
+
+    .debugPanel pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      font-size: 12px;
+      color: var(--danger);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      background: var(--fg);
+      color: var(--bg);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      z-index: 99;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    @media (min-width: 680px) {
+      .page {
+        padding-top: 46px;
+      }
+
+      .formGrid.two {
+        grid-template-columns: 1fr 1fr;
+        column-gap: 14px;
+      }
+
+      .messageForm {
+        grid-template-columns: 170px 1fr auto;
+        align-items: start;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <button class="lang-switch" type="button" id="langBtn">EN</button>
+  <div class="page">
+    <header class="siteHeader">
+      <div>
+        <h1 class="brand">HOWARD<br>LAW</h1>
+        <p class="subtitle" data-i18n="subtitle">个人主页 / 持续更新</p>
+      </div>
+      <div class="topActions">
+        <button id="langBtn" type="button">EN</button>
+      </div>
+    </header>
 
-    <main class="container">
-        <h1 class="name">Hao Luo</h1>
-        <div class="divider"></div>
+    <main>
+      <div id="adminBanner" class="adminBanner" data-admin-only hidden data-i18n="adminMode">
+        管理员模式已开启
+      </div>
 
-        <p class="bio" id="bioText"></p>
+      <section class="section">
+        <div class="sectionHeader">
+          <h2 class="sectionTitle" data-i18n="aboutTitle">ABOUT</h2>
+        </div>
+        <p id="bioText" class="bodyText"></p>
+        <div id="contactList" class="contacts"></div>
+      </section>
 
-        <section class="contact-section">
-            <div class="section-heading">
-                <div class="section-label" data-zh="联系方式" data-en="CONTACT">联系方式</div>
-                <button class="admin-button admin-only" type="button" id="editContactBtn" data-zh="编辑" data-en="Edit">编辑</button>
+      <section class="section">
+        <div class="sectionHeader">
+          <h2 class="sectionTitle" data-i18n="nowTitle">NOW</h2>
+        </div>
+        <p id="nowText" class="bodyText"></p>
+      </section>
+
+      <details id="adminProfilePanel" class="adminBox" data-admin-only hidden>
+        <summary data-i18n="editProfile">编辑个人信息 / 联系方式</summary>
+
+        <form id="profileForm">
+          <div class="formGrid two">
+            <label>
+              <span data-i18n="bioZh">中文简介</span>
+              <textarea id="editBioZh"></textarea>
+            </label>
+
+            <label>
+              <span data-i18n="bioEn">英文简介</span>
+              <textarea id="editBioEn"></textarea>
+            </label>
+          </div>
+
+          <div class="formGrid two">
+            <label>
+              <span data-i18n="nowZh">中文 Now</span>
+              <textarea id="editNowZh"></textarea>
+            </label>
+
+            <label>
+              <span data-i18n="nowEn">英文 Now</span>
+              <textarea id="editNowEn"></textarea>
+            </label>
+          </div>
+
+          <div class="formGrid two">
+            <label>
+              <span>Email</span>
+              <input id="editEmail" type="text" autocomplete="off" />
+            </label>
+
+            <label>
+              <span data-i18n="phone">电话</span>
+              <input id="editPhone" type="text" autocomplete="off" />
+            </label>
+
+            <label>
+              <span>WeChat</span>
+              <input id="editWechat" type="text" autocomplete="off" />
+            </label>
+
+            <label>
+              <span>QQ</span>
+              <input id="editQq" type="text" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="formActions">
+            <button id="saveProfileBtn" class="primary" type="submit" data-i18n="save">保存</button>
+            <span id="profileSaveStatus" class="small"></span>
+          </div>
+        </form>
+      </details>
+
+      <section class="section" id="updatesSection">
+        <div class="sectionHeader">
+          <h2 class="sectionTitle" data-i18n="updatesTitle">UPDATES</h2>
+          <button id="newUpdateBtn" type="button" data-admin-only hidden data-i18n="newUpdate">新增</button>
+        </div>
+
+        <div id="updateEditor" class="adminBox hidden" data-admin-only hidden>
+          <h3 id="updateFormTitle" class="sectionTitle" style="margin:0 0 16px;">新增动态</h3>
+
+          <form id="updateForm">
+            <div class="formGrid two">
+              <label>
+                <span data-i18n="updateType">类型</span>
+                <select id="updateType">
+                  <option value="post">post</option>
+                  <option value="note">note</option>
+                  <option value="project">project</option>
+                  <option value="link">link</option>
+                  <option value="image">image</option>
+                </select>
+              </label>
+
+              <label>
+                <span data-i18n="visible">公开显示</span>
+                <select id="updateVisible">
+                  <option value="true" data-i18n="visibleYes">公开</option>
+                  <option value="false" data-i18n="visibleNo">隐藏</option>
+                </select>
+              </label>
             </div>
 
-            <ul class="contact-list" id="contactList"></ul>
+            <div class="formGrid two">
+              <label>
+                <span data-i18n="titleZh">中文标题</span>
+                <input id="updateTitleZh" type="text" autocomplete="off" />
+              </label>
 
-            <div class="admin-panel admin-only" id="contactEditor" hidden>
-                <div class="admin-panel-title" data-zh="编辑联系方式" data-en="Edit contact info">编辑联系方式</div>
-
-                <div class="admin-grid">
-                    <div class="admin-field">
-                        <label for="editEmail" data-zh="邮箱" data-en="Email">邮箱</label>
-                        <input id="editEmail" type="email" autocomplete="email">
-                    </div>
-
-                    <div class="admin-field">
-                        <label for="editPhone" data-zh="电话" data-en="Phone">电话</label>
-                        <input id="editPhone" type="text" inputmode="tel" autocomplete="tel">
-                    </div>
-
-                    <div class="admin-field">
-                        <label for="editWechat" data-zh="微信" data-en="WeChat">微信</label>
-                        <input id="editWechat" type="text" autocomplete="off">
-                    </div>
-
-                    <div class="admin-field">
-                        <label for="editQQ" data-zh="QQ" data-en="QQ">QQ</label>
-                        <input id="editQQ" type="text" inputmode="numeric" autocomplete="off">
-                    </div>
-                </div>
-
-                <div class="admin-actions">
-                    <button class="admin-save" type="button" id="saveContactBtn" data-zh="保存" data-en="Save">保存</button>
-                    <button class="admin-text-button" type="button" id="cancelContactBtn" data-zh="取消" data-en="Cancel">取消</button>
-                </div>
-
-                <div class="admin-status" id="contactAdminStatus"></div>
-            </div>
-        </section>
-
-        <section class="now">
-            <div class="section-heading">
-                <div class="section-label" data-zh="现在" data-en="NOW">现在</div>
-                <button class="admin-button admin-only" type="button" id="editNowBtn" data-zh="编辑" data-en="Edit">编辑</button>
+              <label>
+                <span data-i18n="titleEn">英文标题</span>
+                <input id="updateTitleEn" type="text" autocomplete="off" />
+              </label>
             </div>
 
-            <p class="now-text" id="nowText"></p>
+            <div class="formGrid two">
+              <label>
+                <span data-i18n="bodyZh">中文正文</span>
+                <textarea id="updateBodyZh"></textarea>
+              </label>
 
-            <div class="admin-panel admin-only" id="nowEditor" hidden>
-                <div class="admin-panel-title" data-zh="编辑现在状态" data-en="Edit now status">编辑现在状态</div>
-
-                <div class="admin-grid">
-                    <div class="admin-field">
-                        <label for="editNowZh">中文</label>
-                        <textarea id="editNowZh" maxlength="500"></textarea>
-                    </div>
-
-                    <div class="admin-field">
-                        <label for="editNowEn">English</label>
-                        <textarea id="editNowEn" maxlength="500"></textarea>
-                    </div>
-                </div>
-
-                <div class="admin-actions">
-                    <button class="admin-save" type="button" id="saveNowBtn" data-zh="保存" data-en="Save">保存</button>
-                    <button class="admin-text-button" type="button" id="cancelNowBtn" data-zh="取消" data-en="Cancel">取消</button>
-                </div>
-
-                <div class="admin-status" id="nowAdminStatus"></div>
-            </div>
-        </section>
-
-        <section class="guestbook">
-            <div class="guestbook-heading">
-                <div class="section-label" data-zh="留言" data-en="GUESTBOOK">留言</div>
-                <div class="message-count" id="messageCount"></div>
+              <label>
+                <span data-i18n="bodyEn">英文正文</span>
+                <textarea id="updateBodyEn"></textarea>
+              </label>
             </div>
 
-            <form class="guestbook-form" id="guestbookForm">
-                <input type="text" id="msgAuthor" maxlength="40" required
-                    data-zh-placeholder="你的名字" data-en-placeholder="Your name"
-                    placeholder="你的名字">
+            <label>
+              <span data-i18n="imageUrl">图片 URL，只接受 http / https</span>
+              <input id="updateImageUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://..." />
+            </label>
 
-                <textarea id="msgContent" maxlength="500" required
-                    data-zh-placeholder="想说点什么..." data-en-placeholder="Say something..."
-                    placeholder="想说点什么..."></textarea>
+            <label>
+              <span data-i18n="linkUrl">外部链接 URL，只接受 http / https</span>
+              <input id="updateLinkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://..." />
+            </label>
 
-                <div class="hp-field" aria-hidden="true">
-                    <label>
-                        Website
-                        <input type="text" id="websiteField" tabindex="-1" autocomplete="off">
-                    </label>
-                </div>
+            <div class="formGrid two">
+              <label>
+                <span data-i18n="linkLabelZh">中文链接按钮文字</span>
+                <input id="updateLinkLabelZh" type="text" autocomplete="off" />
+              </label>
 
-                <button type="submit" class="guestbook-submit" id="msgSubmit"
-                    data-zh="发送" data-en="SEND">发送</button>
-
-                <div class="guestbook-status" id="msgStatus"></div>
-            </form>
-
-            <ul class="messages-list" id="messagesList">
-                <li class="messages-loading" data-zh="加载中..." data-en="Loading...">加载中...</li>
-            </ul>
-
-            <div class="debug-panel" id="debugPanel" aria-live="polite">
-                <div class="debug-title" data-zh="调试信息" data-en="Debug info">调试信息</div>
-                <div class="debug-message" id="debugMessage"></div>
+              <label>
+                <span data-i18n="linkLabelEn">英文链接按钮文字</span>
+                <input id="updateLinkLabelEn" type="text" autocomplete="off" />
+              </label>
             </div>
-        </section>
 
-        <div class="footer">© 2026 Hao Luo</div>
+            <div class="formActions">
+              <button id="saveUpdateBtn" class="primary" type="submit" data-i18n="save">保存</button>
+              <button id="cancelUpdateBtn" type="button" data-i18n="cancel">取消</button>
+              <span id="updateSaveStatus" class="small"></span>
+            </div>
+          </form>
+        </div>
+
+        <div id="updatesStatus" class="statusLine" data-i18n="loadingUpdates">动态加载中...</div>
+        <div id="updatesList" class="updatesList"></div>
+      </section>
+
+      <section class="section" id="messagesSection">
+        <div class="sectionHeader">
+          <h2 class="sectionTitle" data-i18n="messagesTitle">MESSAGES</h2>
+        </div>
+
+        <form id="messageForm" class="messageForm">
+          <input
+            id="messageAuthor"
+            type="text"
+            maxlength="40"
+            autocomplete="name"
+            data-i18n-placeholder="namePlaceholder"
+            placeholder="你的名字"
+          />
+
+          <textarea
+            id="messageContent"
+            maxlength="500"
+            required
+            data-i18n-placeholder="messagePlaceholder"
+            placeholder="写点什么..."
+          ></textarea>
+
+          <input id="messageWebsite" class="honeypot" type="text" autocomplete="off" tabindex="-1" />
+
+          <button id="sendMessageBtn" class="primary" type="submit" data-i18n="send">发布</button>
+        </form>
+
+        <div id="messageStatus" class="statusLine" data-i18n="loadingMessages">留言加载中...</div>
+        <div id="messageList" class="messageList"></div>
+      </section>
+
+      <section id="debugPanel" class="debugPanel hidden">
+        <h2 class="sectionTitle">DEBUG</h2>
+        <pre id="debugLog"></pre>
+      </section>
     </main>
+  </div>
 
-    <script>
-        (function () {
-            'use strict';
+  <div id="toast" class="toast hidden"></div>
 
-            const SUPABASE_URL = 'https://wzbqabzlmfassgmyyowj.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_fbPvPbTmOfum_628MVQE-w_i6-dlorB';
-            const PROFILE_SETTING_KEY = 'profile';
+  <script>
+    (function () {
+      "use strict";
 
-            const SUPABASE_CDN_URLS = [
-                'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
-                'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
-            ];
+      const SUPABASE_URL = "https://wzbqabzlmfassgmyyowj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_fbPvPbTmOfum_628MVQE-w_i6-dlorB";
+      const SUPABASE_CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
-            const SCRIPT_LOAD_TIMEOUT_MS = 10000;
-            const SUPABASE_QUERY_TIMEOUT_MS = 15000;
-            const MIN_SUBMIT_WAIT_MS = 2500;
-            const pageLoadedAt = Date.now();
+      let sbClient = null;
+      let messagesData = [];
+      let updatesData = [];
+      let editingUpdateId = null;
+      let toastTimer = null;
 
-            const DEFAULT_PROFILE = {
-                bio: {
-                    zh: '一个简单的页面。寥寥几句,关于我是谁、身在何处,以及如何联系。',
-                    en: 'A simple page. A few words about who I am, where I am, and how to reach me.'
-                },
-                now: {
-                    zh: '正在完善自己的个人网站,也持续练习英文写作、信息整理和 AI 工具使用。',
-                    en: 'Currently refining my personal website, while continuing to practice English writing, information organization, and AI tools.'
-                },
-                contacts: {
-                    email: 'howardlaw97@gmail.com',
-                    phone: '187 1011 3499',
-                    wechat: 'LthunderHsnow',
-                    qq: '694687313'
-                }
-            };
+      const params = new URLSearchParams(window.location.search);
+      const adminPasswordFromUrl = params.get("admin") || "";
+      const isAdmin = adminPasswordFromUrl.trim().length > 0;
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const adminPasswordFromUrl = urlParams.get('admin') || '';
-            const isAdmin = adminPasswordFromUrl.length > 0;
+      let lang = localStorage.getItem("site_lang");
+      if (lang !== "zh" && lang !== "en") {
+        lang = (navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en";
+      }
 
-            let currentLang = safeReadLang();
-            let sbClient = null;
-            let listState = { type: 'loading' };
-            let siteProfile = cloneProfile(DEFAULT_PROFILE);
+      const I18N = {
+        zh: {
+          pageTitle: "Howard Law | 个人主页",
+          subtitle: "个人主页 / 持续更新",
+          adminMode: "管理员模式已开启",
+          aboutTitle: "ABOUT",
+          nowTitle: "NOW",
+          updatesTitle: "UPDATES",
+          messagesTitle: "MESSAGES",
 
-            const langBtn = document.getElementById('langBtn');
-            const bioText = document.getElementById('bioText');
-            const contactList = document.getElementById('contactList');
-            const nowText = document.getElementById('nowText');
-            const messagesList = document.getElementById('messagesList');
-            const messageCount = document.getElementById('messageCount');
+          editProfile: "编辑个人信息 / 联系方式",
+          bioZh: "中文简介",
+          bioEn: "英文简介",
+          nowZh: "中文 Now",
+          nowEn: "英文 Now",
+          phone: "电话",
+          save: "保存",
+          saving: "保存中...",
+          saved: "已保存",
+          cancel: "取消",
 
-            const form = document.getElementById('guestbookForm');
-            const inputAuthor = document.getElementById('msgAuthor');
-            const inputContent = document.getElementById('msgContent');
-            const websiteField = document.getElementById('websiteField');
-            const submitBtn = document.getElementById('msgSubmit');
-            const statusEl = document.getElementById('msgStatus');
+          copy: "复制",
+          copied: "已复制",
+          noContact: "暂无公开联系方式",
 
-            const debugPanel = document.getElementById('debugPanel');
-            const debugMessage = document.getElementById('debugMessage');
+          newUpdate: "新增",
+          updateFormNew: "新增动态",
+          updateFormEdit: "编辑动态",
+          updateType: "类型",
+          visible: "公开显示",
+          visibleYes: "公开",
+          visibleNo: "隐藏",
+          titleZh: "中文标题",
+          titleEn: "英文标题",
+          bodyZh: "中文正文",
+          bodyEn: "英文正文",
+          imageUrl: "图片 URL，只接受 http / https",
+          linkUrl: "外部链接 URL，只接受 http / https",
+          linkLabelZh: "中文链接按钮文字",
+          linkLabelEn: "英文链接按钮文字",
+          loadingUpdates: "动态加载中...",
+          noUpdates: "暂无动态",
+          updateCount: "共 {count} 条动态",
+          updateSaved: "动态已保存",
+          updateRequired: "标题、正文、图片或链接至少填写一项",
+          invalidUrl: "URL 必须以 http:// 或 https:// 开头",
+          untitledUpdate: "未命名动态",
+          view: "查看",
 
-            const editContactBtn = document.getElementById('editContactBtn');
-            const contactEditor = document.getElementById('contactEditor');
-            const saveContactBtn = document.getElementById('saveContactBtn');
-            const cancelContactBtn = document.getElementById('cancelContactBtn');
-            const contactAdminStatus = document.getElementById('contactAdminStatus');
-            const editEmail = document.getElementById('editEmail');
-            const editPhone = document.getElementById('editPhone');
-            const editWechat = document.getElementById('editWechat');
-            const editQQ = document.getElementById('editQQ');
+          namePlaceholder: "你的名字",
+          messagePlaceholder: "写点什么...",
+          send: "发布",
+          sending: "发布中...",
+          loadingMessages: "留言加载中...",
+          noMessages: "暂无留言",
+          messageCount: "共 {count} 条留言",
+          messageSent: "已发布",
+          messageTooShort: "留言内容太短",
+          messageTooManyLinks: "链接太多了",
+          anonymous: "匿名",
 
-            const editNowBtn = document.getElementById('editNowBtn');
-            const nowEditor = document.getElementById('nowEditor');
-            const saveNowBtn = document.getElementById('saveNowBtn');
-            const cancelNowBtn = document.getElementById('cancelNowBtn');
-            const nowAdminStatus = document.getElementById('nowAdminStatus');
-            const editNowZh = document.getElementById('editNowZh');
-            const editNowEn = document.getElementById('editNowEn');
+          edit: "编辑",
+          hide: "隐藏",
+          restore: "恢复",
+          delete: "删除",
+          hidden: "已隐藏",
+          confirmDeleteUpdate: "确定删除这条动态吗？删除后无法恢复。",
+          confirmDeleteMessage: "确定删除这条留言吗？删除后无法恢复。",
 
-            const t = {
-                loading: { zh: '加载中...', en: 'Loading...' },
-                noMessages: { zh: '还没有留言,留下第一条吧', en: 'No messages yet. Be the first.' },
-                supabaseLoading: { zh: '正在连接留言系统...', en: 'Connecting to guestbook...' },
-                supabaseUnavailable: { zh: '留言系统暂时不可用,但页面其他功能可以正常使用。', en: 'Guestbook is temporarily unavailable, but the rest of the page still works.' },
-                profileLoadFailed: { zh: '资料加载失败,已使用页面默认内容: ', en: 'Profile load failed; using default content: ' },
-                loadFailed: { zh: '留言加载失败: ', en: 'Failed to load messages: ' },
-                sendFailed: { zh: '发送失败: ', en: 'Failed to send: ' },
-                deleteFailed: { zh: '删除失败: ', en: 'Delete failed: ' },
-                saveFailed: { zh: '保存失败: ', en: 'Save failed: ' },
-                visibilityFailed: { zh: '操作失败: ', en: 'Action failed: ' },
-                saving: { zh: '保存中...', en: 'Saving...' },
-                saved: { zh: '已保存 ✓', en: 'Saved ✓' },
-                sending: { zh: '发送中...', en: 'Sending...' },
-                sent: { zh: '已发送 ✓', en: 'Sent ✓' },
-                copied: { zh: '已复制', en: 'Copied' },
-                copy: { zh: '复制', en: 'Copy' },
-                systemUnavailable: { zh: '留言系统未连接。请稍后再试。', en: 'Guestbook is not connected. Please try again later.' },
-                adminUnavailable: { zh: '无法保存: Supabase 未连接。', en: 'Cannot save: Supabase is not connected.' },
-                deleteConfirm: { zh: '确认永久删除这条留言?', en: 'Permanently delete this message?' },
-                hideConfirm: { zh: '确认隐藏这条留言?', en: 'Hide this message?' },
-                restoreConfirm: { zh: '确认恢复这条留言?', en: 'Restore this message?' },
-                wrongPassword: { zh: '管理员密码不正确。', en: 'Wrong admin password.' },
-                deleteText: { zh: '删除', en: 'Delete' },
-                hideText: { zh: '隐藏', en: 'Hide' },
-                restoreText: { zh: '恢复', en: 'Restore' },
-                hiddenBadge: { zh: '已隐藏', en: 'Hidden' },
-                scriptLoadFailed: { zh: 'Supabase 前端库加载失败。常见原因: CDN 被网络/VPN 拦截。', en: 'Supabase frontend library failed to load. Common cause: CDN blocked by network/VPN.' },
-                scriptTimeout: { zh: 'Supabase 前端库加载超时。', en: 'Supabase frontend library load timed out.' },
-                requestTimeout: { zh: '请求 Supabase 超时。可能是网络、VPN 或 Supabase 连接问题。', en: 'Supabase request timed out. This may be a network, VPN, or Supabase connection issue.' },
-                libraryMissing: { zh: 'window.supabase.createClient 不存在。可能是 CDN 文件未正确加载。', en: 'window.supabase.createClient is missing. The CDN file may not have loaded correctly.' },
-                tooFast: { zh: '请稍等几秒后再发送。', en: 'Please wait a few seconds before sending.' },
-                tooManyLinks: { zh: '留言里链接太多,请减少链接后再发送。', en: 'Too many links. Please remove some links and try again.' },
-                blockedWords: { zh: '留言内容看起来像垃圾信息,请修改后再发送。', en: 'This message looks like spam. Please edit it and try again.' },
-                messageCount: { zh: '条留言', en: 'messages' },
-                oneMessage: { zh: '1 条留言', en: '1 message' },
-                unknown: { zh: '未知错误', en: 'Unknown error' },
-                justNow: { zh: '刚刚', en: 'just now' }
-            };
+          supabaseUnavailable: "Supabase 加载失败。前端语言切换仍可使用。",
+          loadFailed: "加载失败，请查看页面底部 DEBUG。",
+          actionFailed: "操作失败，请查看页面底部 DEBUG。"
+        },
 
-            if (isAdmin) {
-                document.body.classList.add('admin-mode');
-            }
+        en: {
+          pageTitle: "Howard Law | Homepage",
+          subtitle: "Personal homepage / continuous updates",
+          adminMode: "Admin mode is on",
+          aboutTitle: "ABOUT",
+          nowTitle: "NOW",
+          updatesTitle: "UPDATES",
+          messagesTitle: "MESSAGES",
 
-            window.addEventListener('error', function (event) {
-                const msg = event.message || (event.error && event.error.message) || tr('unknown');
-                showDebug('JS error: ' + msg);
+          editProfile: "Edit profile / contacts",
+          bioZh: "Chinese bio",
+          bioEn: "English bio",
+          nowZh: "Chinese Now",
+          nowEn: "English Now",
+          phone: "Phone",
+          save: "Save",
+          saving: "Saving...",
+          saved: "Saved",
+          cancel: "Cancel",
+
+          copy: "Copy",
+          copied: "Copied",
+          noContact: "No public contact yet",
+
+          newUpdate: "New",
+          updateFormNew: "New update",
+          updateFormEdit: "Edit update",
+          updateType: "Type",
+          visible: "Visibility",
+          visibleYes: "Visible",
+          visibleNo: "Hidden",
+          titleZh: "Chinese title",
+          titleEn: "English title",
+          bodyZh: "Chinese body",
+          bodyEn: "English body",
+          imageUrl: "Image URL, http / https only",
+          linkUrl: "External link URL, http / https only",
+          linkLabelZh: "Chinese link button label",
+          linkLabelEn: "English link button label",
+          loadingUpdates: "Loading updates...",
+          noUpdates: "No updates yet",
+          updateCount: "{count} updates",
+          updateSaved: "Update saved",
+          updateRequired: "Please fill in at least one title, body, image, or link",
+          invalidUrl: "URL must start with http:// or https://",
+          untitledUpdate: "Untitled update",
+          view: "View",
+
+          namePlaceholder: "Your name",
+          messagePlaceholder: "Write something...",
+          send: "Send",
+          sending: "Sending...",
+          loadingMessages: "Loading messages...",
+          noMessages: "No messages yet",
+          messageCount: "{count} messages",
+          messageSent: "Sent",
+          messageTooShort: "Message is too short",
+          messageTooManyLinks: "Too many links",
+          anonymous: "Anonymous",
+
+          edit: "Edit",
+          hide: "Hide",
+          restore: "Restore",
+          delete: "Delete",
+          hidden: "Hidden",
+          confirmDeleteUpdate: "Delete this update? This cannot be undone.",
+          confirmDeleteMessage: "Delete this message? This cannot be undone.",
+
+          supabaseUnavailable: "Supabase failed to load. Language switching still works.",
+          loadFailed: "Failed to load. See DEBUG at the bottom.",
+          actionFailed: "Action failed. See DEBUG at the bottom."
+        }
+      };
+
+      let profileData = {
+        bio: {
+          zh: "这里是我的个人主页。",
+          en: "This is my personal homepage."
+        },
+        now: {
+          zh: "正在持续更新这个页面。",
+          en: "Currently updating this page."
+        },
+        contacts: {
+          email: "",
+          phone: "",
+          wechat: "",
+          qq: ""
+        }
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function t(key) {
+        return (I18N[lang] && I18N[lang][key]) || I18N.zh[key] || key;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function escapeAttr(value) {
+        return escapeHtml(value);
+      }
+
+      function nl2br(value) {
+        return escapeHtml(value).replace(/\n/g, "<br>");
+      }
+
+      function safeHttpUrl(value) {
+        const url = String(value || "").trim();
+        if (/^https?:\/\//i.test(url)) return url;
+        return "";
+      }
+
+      function trimValue(value) {
+        return String(value || "").trim();
+      }
+
+      function chooseText(zh, en, fallback) {
+        const primary = lang === "zh" ? zh : en;
+        const secondary = lang === "zh" ? en : zh;
+        return trimValue(primary) || trimValue(secondary) || fallback || "";
+      }
+
+      function formatDate(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}.${m}.${d}`;
+      }
+
+      function showToast(message) {
+        const el = $("toast");
+        if (!el) return;
+
+        el.textContent = message;
+        el.classList.remove("hidden");
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          el.classList.add("hidden");
+        }, 1800);
+      }
+
+      function showDebug(message, detail) {
+        const panel = $("debugPanel");
+        const log = $("debugLog");
+        if (!panel || !log) return;
+
+        const time = new Date().toLocaleTimeString();
+        const safeDetail = detail ? String(detail) : "";
+        log.textContent += `[${time}] ${message}${safeDetail ? "\n" + safeDetail : ""}\n\n`;
+        panel.classList.remove("hidden");
+
+        try {
+          console.error(message, detail || "");
+        } catch (_) {}
+      }
+
+      function errorMessage(error) {
+        if (!error) return "";
+        if (typeof error === "string") return error;
+        if (error.message) return error.message;
+        try {
+          return JSON.stringify(error);
+        } catch (_) {
+          return String(error);
+        }
+      }
+
+      function setStatus(id, message, isError) {
+        const el = $(id);
+        if (!el) return;
+        el.textContent = message || "";
+        el.classList.toggle("errorText", Boolean(isError));
+      }
+
+      function mergeProfile(value) {
+        const next = {
+          bio: {
+            zh: "",
+            en: ""
+          },
+          now: {
+            zh: "",
+            en: ""
+          },
+          contacts: {
+            email: "",
+            phone: "",
+            wechat: "",
+            qq: ""
+          }
+        };
+
+        const source = value && typeof value === "object" ? value : {};
+
+        next.bio.zh = trimValue(source.bio && source.bio.zh) || profileData.bio.zh || "";
+        next.bio.en = trimValue(source.bio && source.bio.en) || profileData.bio.en || "";
+        next.now.zh = trimValue(source.now && source.now.zh) || profileData.now.zh || "";
+        next.now.en = trimValue(source.now && source.now.en) || profileData.now.en || "";
+        next.contacts.email = trimValue(source.contacts && source.contacts.email);
+        next.contacts.phone = trimValue(source.contacts && source.contacts.phone);
+        next.contacts.wechat = trimValue(source.contacts && source.contacts.wechat);
+        next.contacts.qq = trimValue(source.contacts && source.contacts.qq);
+
+        return next;
+      }
+
+      function applyLanguage() {
+        document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+        document.title = t("pageTitle");
+
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          el.textContent = t(key);
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-placeholder");
+          el.setAttribute("placeholder", t(key));
+        });
+
+        const langBtn = $("langBtn");
+        if (langBtn) {
+          langBtn.textContent = lang === "zh" ? "EN" : "中文";
+        }
+
+        renderProfile();
+        renderUpdates();
+        renderMessages();
+      }
+
+      function setupAdminView() {
+        document.querySelectorAll("[data-admin-only]").forEach((el) => {
+          el.hidden = !isAdmin;
+        });
+      }
+
+      function renderProfile() {
+        const bioText = $("bioText");
+        const nowText = $("nowText");
+        const contactList = $("contactList");
+
+        if (bioText) {
+          bioText.innerHTML = nl2br(chooseText(profileData.bio.zh, profileData.bio.en, ""));
+        }
+
+        if (nowText) {
+          nowText.innerHTML = nl2br(chooseText(profileData.now.zh, profileData.now.en, ""));
+        }
+
+        if (contactList) {
+          const contacts = [
+            ["email", "Email", profileData.contacts.email],
+            ["phone", t("phone"), profileData.contacts.phone],
+            ["wechat", "WeChat", profileData.contacts.wechat],
+            ["qq", "QQ", profileData.contacts.qq]
+          ].filter((item) => trimValue(item[2]));
+
+          if (!contacts.length) {
+            contactList.innerHTML = `<p class="muted">${escapeHtml(t("noContact"))}</p>`;
+          } else {
+            contactList.innerHTML = contacts.map(([key, label, value]) => {
+              return `
+                <div class="contactItem">
+                  <span class="contactName">${escapeHtml(label)}</span>
+                  <span class="contactValue">${escapeHtml(value)}</span>
+                  <button type="button" data-copy="${escapeAttr(value)}">${escapeHtml(t("copy"))}</button>
+                </div>
+              `;
+            }).join("");
+          }
+        }
+
+        fillProfileEditor();
+      }
+
+      function fillProfileEditor() {
+        const form = $("profileForm");
+        if (!form || form.contains(document.activeElement)) return;
+
+        $("editBioZh").value = profileData.bio.zh || "";
+        $("editBioEn").value = profileData.bio.en || "";
+        $("editNowZh").value = profileData.now.zh || "";
+        $("editNowEn").value = profileData.now.en || "";
+        $("editEmail").value = profileData.contacts.email || "";
+        $("editPhone").value = profileData.contacts.phone || "";
+        $("editWechat").value = profileData.contacts.wechat || "";
+        $("editQq").value = profileData.contacts.qq || "";
+      }
+
+      function renderUpdates() {
+        const list = $("updatesList");
+        if (!list) return;
+
+        if (!updatesData.length) {
+          list.innerHTML = "";
+          setStatus("updatesStatus", t("noUpdates"));
+          return;
+        }
+
+        setStatus("updatesStatus", t("updateCount").replace("{count}", updatesData.length));
+
+        list.innerHTML = updatesData.map((item) => {
+          const visible = item.visible !== false;
+          const date = formatDate(item.created_at);
+          const title = chooseText(item.title_zh, item.title_en, t("untitledUpdate"));
+          const body = chooseText(item.body_zh, item.body_en, "");
+          const imageUrl = safeHttpUrl(item.image_url);
+          const linkUrl = safeHttpUrl(item.link_url);
+          const linkLabel = chooseText(item.link_label_zh, item.link_label_en, t("view"));
+          const type = trimValue(item.type || "post");
+
+          return `
+            <article class="updateCard ${visible ? "" : "isHidden"}">
+              <div class="meta">
+                ${date ? `<span>${escapeHtml(date)}</span>` : ""}
+                ${type ? `<span>${escapeHtml(type)}</span>` : ""}
+                ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
+              </div>
+
+              <h3 class="updateTitle">${escapeHtml(title)}</h3>
+
+              ${body ? `<p class="updateBody">${nl2br(body)}</p>` : ""}
+
+              ${imageUrl ? `<img class="updateImage" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">` : ""}
+
+              ${linkUrl ? `
+                <a class="linkButton" href="${escapeAttr(linkUrl)}" target="_blank" rel="noopener noreferrer">
+                  ${escapeHtml(linkLabel || t("view"))}
+                </a>
+              ` : ""}
+
+              ${isAdmin ? `
+                <div class="adminActions">
+                  <button class="textButton" type="button" data-update-action="edit" data-id="${escapeAttr(item.id)}">${escapeHtml(t("edit"))}</button>
+                  <button class="textButton" type="button" data-update-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
+                    ${escapeHtml(visible ? t("hide") : t("restore"))}
+                  </button>
+                  <button class="textButton" type="button" data-update-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                </div>
+              ` : ""}
+            </article>
+          `;
+        }).join("");
+      }
+
+      function renderMessages() {
+        const list = $("messageList");
+        if (!list) return;
+
+        if (!messagesData.length) {
+          list.innerHTML = "";
+          setStatus("messageStatus", t("noMessages"));
+          return;
+        }
+
+        setStatus("messageStatus", t("messageCount").replace("{count}", messagesData.length));
+
+        list.innerHTML = messagesData.map((item) => {
+          const visible = item.visible !== false;
+          const author = trimValue(item.author) || t("anonymous");
+          const date = formatDate(item.created_at);
+          const content = trimValue(item.content);
+
+          return `
+            <article class="messageCard ${visible ? "" : "isHidden"}">
+              <div class="meta">
+                <span>${escapeHtml(author)}</span>
+                ${date ? `<span>${escapeHtml(date)}</span>` : ""}
+                ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
+              </div>
+
+              <p class="messageBody">${nl2br(content)}</p>
+
+              ${isAdmin ? `
+                <div class="adminActions">
+                  <button class="textButton" type="button" data-message-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
+                    ${escapeHtml(visible ? t("hide") : t("restore"))}
+                  </button>
+                  <button class="textButton" type="button" data-message-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                </div>
+              ` : ""}
+            </article>
+          `;
+        }).join("");
+      }
+
+      function showUpdateEditor(isEditing) {
+        const editor = $("updateEditor");
+        const title = $("updateFormTitle");
+        if (!editor) return;
+
+        editor.hidden = false;
+        editor.classList.remove("hidden");
+
+        if (title) {
+          title.textContent = isEditing ? t("updateFormEdit") : t("updateFormNew");
+        }
+
+        setStatus("updateSaveStatus", "");
+        editor.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function hideUpdateEditor() {
+        const editor = $("updateEditor");
+        if (!editor) return;
+        editor.classList.add("hidden");
+        editingUpdateId = null;
+        setStatus("updateSaveStatus", "");
+      }
+
+      function resetUpdateForm() {
+        editingUpdateId = null;
+        $("updateType").value = "post";
+        $("updateVisible").value = "true";
+        $("updateTitleZh").value = "";
+        $("updateTitleEn").value = "";
+        $("updateBodyZh").value = "";
+        $("updateBodyEn").value = "";
+        $("updateImageUrl").value = "";
+        $("updateLinkUrl").value = "";
+        $("updateLinkLabelZh").value = "";
+        $("updateLinkLabelEn").value = "";
+        showUpdateEditor(false);
+      }
+
+      function editUpdate(id) {
+        const item = updatesData.find((entry) => String(entry.id) === String(id));
+        if (!item) return;
+
+        editingUpdateId = item.id;
+        $("updateType").value = item.type || "post";
+        $("updateVisible").value = item.visible === false ? "false" : "true";
+        $("updateTitleZh").value = item.title_zh || "";
+        $("updateTitleEn").value = item.title_en || "";
+        $("updateBodyZh").value = item.body_zh || "";
+        $("updateBodyEn").value = item.body_en || "";
+        $("updateImageUrl").value = item.image_url || "";
+        $("updateLinkUrl").value = item.link_url || "";
+        $("updateLinkLabelZh").value = item.link_label_zh || "";
+        $("updateLinkLabelEn").value = item.link_label_en || "";
+
+        showUpdateEditor(true);
+      }
+
+      async function copyText(value) {
+        const text = String(value || "");
+        if (!text) return;
+
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.setAttribute("readonly", "");
+            textarea.style.position = "absolute";
+            textarea.style.left = "-9999px";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+          }
+
+          showToast(t("copied"));
+        } catch (error) {
+          showDebug("Copy failed", errorMessage(error));
+        }
+      }
+
+      async function loadSupabaseScript() {
+        if (window.supabase && typeof window.supabase.createClient === "function") {
+          return;
+        }
+
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = SUPABASE_CDN;
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error("Failed to load Supabase CDN"));
+          document.head.appendChild(script);
+        });
+      }
+
+      async function loadProfile() {
+        if (!sbClient) return;
+
+        const { data, error } = await sbClient
+          .from("site_settings")
+          .select("value")
+          .eq("key", "profile")
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data && data.value) {
+          profileData = mergeProfile(data.value);
+          renderProfile();
+        }
+      }
+
+      async function saveProfile(event) {
+        event.preventDefault();
+
+        if (!sbClient) {
+          setStatus("profileSaveStatus", t("supabaseUnavailable"), true);
+          return;
+        }
+
+        const btn = $("saveProfileBtn");
+        btn.disabled = true;
+        setStatus("profileSaveStatus", t("saving"));
+
+        const nextProfile = {
+          bio: {
+            zh: $("editBioZh").value,
+            en: $("editBioEn").value
+          },
+          now: {
+            zh: $("editNowZh").value,
+            en: $("editNowEn").value
+          },
+          contacts: {
+            email: $("editEmail").value,
+            phone: $("editPhone").value,
+            wechat: $("editWechat").value,
+            qq: $("editQq").value
+          }
+        };
+
+        try {
+          const { error } = await sbClient.rpc("update_site_setting_with_admin", {
+            setting_key: "profile",
+            setting_value: nextProfile,
+            admin_password: adminPasswordFromUrl
+          });
+
+          if (error) throw error;
+
+          profileData = mergeProfile(nextProfile);
+          renderProfile();
+          setStatus("profileSaveStatus", t("saved"));
+        } catch (error) {
+          setStatus("profileSaveStatus", t("actionFailed"), true);
+          showDebug("Save profile failed", errorMessage(error));
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      async function loadUpdates() {
+        if (!sbClient) return;
+
+        setStatus("updatesStatus", t("loadingUpdates"));
+
+        let result;
+
+        if (isAdmin) {
+          result = await sbClient.rpc("get_updates_with_admin", {
+            p_admin_password: adminPasswordFromUrl
+          });
+        } else {
+          result = await sbClient
+            .from("updates")
+            .select("*")
+            .eq("visible", true)
+            .order("created_at", { ascending: false })
+            .limit(100);
+        }
+
+        if (result.error) throw result.error;
+
+        updatesData = Array.isArray(result.data) ? result.data : [];
+        renderUpdates();
+      }
+
+      async function saveUpdate(event) {
+        event.preventDefault();
+
+        if (!sbClient) {
+          setStatus("updateSaveStatus", t("supabaseUnavailable"), true);
+          return;
+        }
+
+        const titleZh = $("updateTitleZh").value;
+        const titleEn = $("updateTitleEn").value;
+        const bodyZh = $("updateBodyZh").value;
+        const bodyEn = $("updateBodyEn").value;
+        const imageUrl = $("updateImageUrl").value.trim();
+        const linkUrl = $("updateLinkUrl").value.trim();
+
+        const hasAnyContent = [
+          titleZh,
+          titleEn,
+          bodyZh,
+          bodyEn,
+          imageUrl,
+          linkUrl
+        ].some((value) => trimValue(value));
+
+        if (!hasAnyContent) {
+          setStatus("updateSaveStatus", t("updateRequired"), true);
+          return;
+        }
+
+        if (imageUrl && !safeHttpUrl(imageUrl)) {
+          setStatus("updateSaveStatus", t("invalidUrl"), true);
+          return;
+        }
+
+        if (linkUrl && !safeHttpUrl(linkUrl)) {
+          setStatus("updateSaveStatus", t("invalidUrl"), true);
+          return;
+        }
+
+        const btn = $("saveUpdateBtn");
+        btn.disabled = true;
+        setStatus("updateSaveStatus", t("saving"));
+
+        try {
+          const { error } = await sbClient.rpc("save_update_with_admin", {
+            p_update_id: editingUpdateId,
+            p_update_type: $("updateType").value || "post",
+            p_title_zh: titleZh,
+            p_title_en: titleEn,
+            p_body_zh: bodyZh,
+            p_body_en: bodyEn,
+            p_image_url: imageUrl,
+            p_link_url: linkUrl,
+            p_link_label_zh: $("updateLinkLabelZh").value,
+            p_link_label_en: $("updateLinkLabelEn").value,
+            p_visible: $("updateVisible").value === "true",
+            p_admin_password: adminPasswordFromUrl
+          });
+
+          if (error) throw error;
+
+          hideUpdateEditor();
+          await loadUpdates();
+          showToast(t("updateSaved"));
+        } catch (error) {
+          setStatus("updateSaveStatus", t("actionFailed"), true);
+          showDebug("Save update failed", errorMessage(error));
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      async function setUpdateVisible(id, visible) {
+        if (!sbClient) return;
+
+        try {
+          const { error } = await sbClient.rpc("set_update_visible_with_admin", {
+            p_update_id: Number(id),
+            p_visible: Boolean(visible),
+            p_admin_password: adminPasswordFromUrl
+          });
+
+          if (error) throw error;
+
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("actionFailed"), true);
+          showDebug("Set update visible failed", errorMessage(error));
+        }
+      }
+
+      async function deleteUpdate(id) {
+        if (!sbClient) return;
+        if (!window.confirm(t("confirmDeleteUpdate"))) return;
+
+        try {
+          const { error } = await sbClient.rpc("delete_update_with_admin", {
+            p_update_id: Number(id),
+            p_admin_password: adminPasswordFromUrl
+          });
+
+          if (error) throw error;
+
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("actionFailed"), true);
+          showDebug("Delete update failed", errorMessage(error));
+        }
+      }
+
+      async function loadMessages() {
+        if (!sbClient) return;
+
+        setStatus("messageStatus", t("loadingMessages"));
+
+        let result;
+
+        if (isAdmin) {
+          result = await sbClient.rpc("get_messages_with_admin", {
+            admin_password: adminPasswordFromUrl
+          });
+        } else {
+          result = await sbClient
+            .from("messages")
+            .select("*")
+            .eq("visible", true)
+            .order("created_at", { ascending: false })
+            .limit(50);
+        }
+
+        if (result.error) throw result.error;
+
+        messagesData = Array.isArray(result.data) ? result.data : [];
+        renderMessages();
+      }
+
+      async function sendMessage(event) {
+        event.preventDefault();
+
+        if (!sbClient) {
+          setStatus("messageStatus", t("supabaseUnavailable"), true);
+          return;
+        }
+
+        const honeypot = trimValue($("messageWebsite").value);
+        if (honeypot) {
+          $("messageForm").reset();
+          setStatus("messageStatus", t("messageSent"));
+          return;
+        }
+
+        const author = trimValue($("messageAuthor").value).slice(0, 40) || t("anonymous");
+        const content = trimValue($("messageContent").value).slice(0, 500);
+
+        if (content.length < 2) {
+          setStatus("messageStatus", t("messageTooShort"), true);
+          return;
+        }
+
+        const linkCount = (content.match(/https?:\/\//gi) || []).length;
+        if (linkCount > 3) {
+          setStatus("messageStatus", t("messageTooManyLinks"), true);
+          return;
+        }
+
+        const btn = $("sendMessageBtn");
+        btn.disabled = true;
+        btn.textContent = t("sending");
+
+        try {
+          const { error } = await sbClient
+            .from("messages")
+            .insert({
+              author,
+              content,
+              visible: true
             });
 
-            window.addEventListener('unhandledrejection', function (event) {
-                const reason = event.reason;
-                const msg = reason && reason.message ? reason.message : String(reason || tr('unknown'));
-                showDebug('Unhandled promise rejection: ' + msg);
-            });
-
-            langBtn.addEventListener('click', function () {
-                currentLang = currentLang === 'zh' ? 'en' : 'zh';
-                safeSaveLang(currentLang);
-                applyLang();
-            });
-
-            form.addEventListener('submit', submitMessage);
-
-            messagesList.addEventListener('click', function (event) {
-                const deleteButton = event.target.closest('[data-delete-id]');
-                const hideButton = event.target.closest('[data-hide-id]');
-                const restoreButton = event.target.closest('[data-restore-id]');
-
-                if (deleteButton) {
-                    deleteMessage(deleteButton.getAttribute('data-delete-id'));
-                    return;
-                }
-
-                if (hideButton) {
-                    setMessageVisible(hideButton.getAttribute('data-hide-id'), false);
-                    return;
-                }
-
-                if (restoreButton) {
-                    setMessageVisible(restoreButton.getAttribute('data-restore-id'), true);
-                }
-            });
-
-            document.addEventListener('click', function (event) {
-                const button = event.target.closest('.copy-button');
-                if (!button) return;
-                copyText(button);
-            });
-
-            editContactBtn.addEventListener('click', openContactEditor);
-
-            cancelContactBtn.addEventListener('click', function () {
-                contactEditor.hidden = true;
-                setAdminStatus(contactAdminStatus, '', false);
-            });
-
-            saveContactBtn.addEventListener('click', saveContactsFromEditor);
-
-            editNowBtn.addEventListener('click', openNowEditor);
-
-            cancelNowBtn.addEventListener('click', function () {
-                nowEditor.hidden = true;
-                setAdminStatus(nowAdminStatus, '', false);
-            });
-
-            saveNowBtn.addEventListener('click', saveNowFromEditor);
-
-            applyLang();
-            initApp();
-
-            function cloneProfile(profile) {
-                return JSON.parse(JSON.stringify(profile));
-            }
-
-            function safeReadLang() {
-                try {
-                    const saved = localStorage.getItem('siteLang');
-
-                    if (saved === 'zh' || saved === 'en') return saved;
-
-                    const browserLang = (navigator.languages && navigator.languages[0]) ||
-                        navigator.language ||
-                        'zh-CN';
-
-                    return browserLang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
-                } catch (err) {
-                    return 'zh';
-                }
-            }
-
-            function safeSaveLang(lang) {
-                try {
-                    localStorage.setItem('siteLang', lang);
-                } catch (err) {}
-            }
-
-            function tr(key) {
-                return (t[key] && t[key][currentLang]) || key;
-            }
-
-            function applyLang() {
-                document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
-                langBtn.textContent = currentLang === 'zh' ? 'EN' : '中';
-
-                document.querySelectorAll('[data-zh][data-en]').forEach(function (el) {
-                    el.textContent = el.getAttribute('data-' + currentLang);
-                });
-
-                document.querySelectorAll('[data-zh-placeholder][data-en-placeholder]').forEach(function (el) {
-                    el.placeholder = el.getAttribute('data-' + currentLang + '-placeholder');
-                });
-
-                renderProfile();
-                rerenderListState();
-            }
-
-            function renderProfile() {
-                bioText.textContent = getLangValue(siteProfile.bio, 'bio');
-                nowText.textContent = getLangValue(siteProfile.now, 'now');
-                renderContacts();
-            }
-
-            function getLangValue(valueObject, fieldName) {
-                const fallback = DEFAULT_PROFILE[fieldName] || {};
-                return (valueObject && valueObject[currentLang]) || fallback[currentLang] || '';
-            }
-
-            function renderContacts() {
-                const contacts = siteProfile.contacts || DEFAULT_PROFILE.contacts;
-
-                const rows = [
-                    {
-                        labelZh: '邮箱',
-                        labelEn: 'Email',
-                        value: contacts.email || '',
-                        href: makeEmailHref(contacts.email),
-                        copy: contacts.email || ''
-                    },
-                    {
-                        labelZh: '电话',
-                        labelEn: 'Phone',
-                        value: contacts.phone || '',
-                        href: makePhoneHref(contacts.phone),
-                        copy: cleanPhone(contacts.phone) || contacts.phone || ''
-                    },
-                    {
-                        labelZh: '微信',
-                        labelEn: 'WeChat',
-                        value: contacts.wechat || '',
-                        href: '',
-                        copy: contacts.wechat || ''
-                    },
-                    {
-                        labelZh: 'QQ',
-                        labelEn: 'QQ',
-                        value: contacts.qq || '',
-                        href: '',
-                        copy: contacts.qq || ''
-                    }
-                ];
-
-                contactList.innerHTML = rows.map(function (row) {
-                    const label = currentLang === 'zh' ? row.labelZh : row.labelEn;
-
-                    const valueHtml = row.href
-                        ? '<a class="contact-value" href="' + escapeHtml(row.href) + '">' + escapeHtml(row.value) + '</a>'
-                        : '<span class="contact-value">' + escapeHtml(row.value) + '</span>';
-
-                    return '<li class="contact-item">' +
-                        '<span class="contact-label">' + escapeHtml(label) + '</span>' +
-                        valueHtml +
-                        '<button class="copy-button" type="button" data-copy="' + escapeHtml(row.copy) + '">' + escapeHtml(tr('copy')) + '</button>' +
-                    '</li>';
-                }).join('');
-            }
-
-            function makeEmailHref(email) {
-                const value = String(email || '').trim();
-                return value ? 'mailto:' + value : '';
-            }
-
-            function makePhoneHref(phone) {
-                const digits = cleanPhone(phone);
-                if (!digits) return '';
-                if (digits.length === 11 && digits.charAt(0) === '1') return 'tel:+86' + digits;
-                if (String(phone || '').trim().charAt(0) === '+') return 'tel:' + String(phone).replace(/\s+/g, '');
-                return 'tel:' + digits;
-            }
-
-            function cleanPhone(phone) {
-                return String(phone || '').replace(/[^0-9]/g, '');
-            }
-
-            async function initApp() {
-                setListState({ type: 'loading', message: tr('supabaseLoading') });
-
-                try {
-                    await ensureSupabaseLibrary();
-
-                    if (!window.supabase || typeof window.supabase.createClient !== 'function') {
-                        throw new Error(tr('libraryMissing'));
-                    }
-
-                    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-                    await loadProfile();
-                    await loadMessages();
-                } catch (err) {
-                    sbClient = null;
-                    const message = cleanError(err) || tr('scriptLoadFailed');
-                    setListState({ type: 'error', message: tr('supabaseUnavailable') + '\n' + message });
-                    showDebug(message);
-                }
-            }
-
-            async function ensureSupabaseLibrary() {
-                if (window.supabase && typeof window.supabase.createClient === 'function') return;
-
-                const errors = [];
-
-                for (const src of SUPABASE_CDN_URLS) {
-                    try {
-                        await loadScript(src, SCRIPT_LOAD_TIMEOUT_MS);
-
-                        if (window.supabase && typeof window.supabase.createClient === 'function') {
-                            return;
-                        }
-
-                        errors.push(src + ': ' + tr('libraryMissing'));
-                    } catch (err) {
-                        errors.push(src + ': ' + cleanError(err));
-                    }
-                }
-
-                throw new Error(errors.join('\n'));
-            }
-
-            function loadScript(src, timeoutMs) {
-                return new Promise(function (resolve, reject) {
-                    const script = document.createElement('script');
-                    let settled = false;
-
-                    const timer = setTimeout(function () {
-                        if (settled) return;
-                        settled = true;
-                        script.remove();
-                        reject(new Error(tr('scriptTimeout')));
-                    }, timeoutMs);
-
-                    script.src = src;
-                    script.async = true;
-
-                    script.onload = function () {
-                        if (settled) return;
-                        settled = true;
-                        clearTimeout(timer);
-                        resolve();
-                    };
-
-                    script.onerror = function () {
-                        if (settled) return;
-                        settled = true;
-                        clearTimeout(timer);
-                        reject(new Error(tr('scriptLoadFailed')));
-                    };
-
-                    document.head.appendChild(script);
-                });
-            }
-
-            async function loadProfile() {
-                if (!sbClient) return;
-
-                try {
-                    const query = sbClient
-                        .from('site_settings')
-                        .select('value')
-                        .eq('key', PROFILE_SETTING_KEY)
-                        .maybeSingle();
-
-                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
-
-                    if (result.error) throw result.error;
-
-                    if (result.data && result.data.value) {
-                        siteProfile = normalizeProfile(result.data.value);
-                        renderProfile();
-                    }
-                } catch (err) {
-                    const message = cleanError(err);
-                    showDebug(tr('profileLoadFailed') + message);
-                }
-            }
-
-            function normalizeProfile(value) {
-                const next = cloneProfile(DEFAULT_PROFILE);
-
-                if (value && value.bio) {
-                    next.bio.zh = String(value.bio.zh || next.bio.zh);
-                    next.bio.en = String(value.bio.en || next.bio.en);
-                }
-
-                if (value && value.now) {
-                    next.now.zh = String(value.now.zh || next.now.zh);
-                    next.now.en = String(value.now.en || next.now.en);
-                }
-
-                if (value && value.contacts) {
-                    next.contacts.email = String(value.contacts.email || next.contacts.email);
-                    next.contacts.phone = String(value.contacts.phone || next.contacts.phone);
-                    next.contacts.wechat = String(value.contacts.wechat || next.contacts.wechat);
-                    next.contacts.qq = String(value.contacts.qq || next.contacts.qq);
-                }
-
-                return next;
-            }
-
-            function openContactEditor() {
-                editEmail.value = siteProfile.contacts.email || '';
-                editPhone.value = siteProfile.contacts.phone || '';
-                editWechat.value = siteProfile.contacts.wechat || '';
-                editQQ.value = siteProfile.contacts.qq || '';
-                contactEditor.hidden = false;
-                setAdminStatus(contactAdminStatus, '', false);
-            }
-
-            async function saveContactsFromEditor() {
-                const previous = cloneProfile(siteProfile);
-
-                siteProfile.contacts.email = editEmail.value.trim();
-                siteProfile.contacts.phone = editPhone.value.trim();
-                siteProfile.contacts.wechat = editWechat.value.trim();
-                siteProfile.contacts.qq = editQQ.value.trim();
-
-                renderProfile();
-
-                const ok = await saveProfile(contactAdminStatus, saveContactBtn);
-
-                if (ok) {
-                    contactEditor.hidden = true;
-                } else {
-                    siteProfile = previous;
-                    renderProfile();
-                }
-            }
-
-            function openNowEditor() {
-                editNowZh.value = siteProfile.now.zh || '';
-                editNowEn.value = siteProfile.now.en || '';
-                nowEditor.hidden = false;
-                setAdminStatus(nowAdminStatus, '', false);
-            }
-
-            async function saveNowFromEditor() {
-                const previous = cloneProfile(siteProfile);
-
-                siteProfile.now.zh = editNowZh.value.trim();
-                siteProfile.now.en = editNowEn.value.trim();
-
-                if (!siteProfile.now.zh) siteProfile.now.zh = DEFAULT_PROFILE.now.zh;
-                if (!siteProfile.now.en) siteProfile.now.en = DEFAULT_PROFILE.now.en;
-
-                renderProfile();
-
-                const ok = await saveProfile(nowAdminStatus, saveNowBtn);
-
-                if (ok) {
-                    nowEditor.hidden = true;
-                } else {
-                    siteProfile = previous;
-                    renderProfile();
-                }
-            }
-
-            async function saveProfile(statusNode, buttonNode) {
-                if (!sbClient) {
-                    setAdminStatus(statusNode, tr('adminUnavailable'), true);
-                    showDebug(tr('adminUnavailable'));
-                    return false;
-                }
-
-                buttonNode.disabled = true;
-                setAdminStatus(statusNode, tr('saving'), false);
-
-                try {
-                    const query = sbClient.rpc('update_site_setting_with_admin', {
-                        setting_key: PROFILE_SETTING_KEY,
-                        setting_value: siteProfile,
-                        admin_password: adminPasswordFromUrl
-                    });
-
-                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
-
-                    if (result.error) throw result.error;
-
-                    if (result.data !== true) {
-                        throw new Error(tr('wrongPassword'));
-                    }
-
-                    setAdminStatus(statusNode, tr('saved'), false);
-                    return true;
-                } catch (err) {
-                    const message = cleanError(err);
-                    setAdminStatus(statusNode, tr('saveFailed') + message, true);
-                    showDebug('Save profile failed: ' + message);
-                    return false;
-                } finally {
-                    buttonNode.disabled = false;
-                }
-            }
-
-            function setAdminStatus(node, message, isError) {
-                if (!node) return;
-                node.textContent = message;
-                node.classList.toggle('error', Boolean(isError));
-            }
-
-            async function loadMessages() {
-                if (!sbClient) {
-                    setListState({ type: 'error', message: tr('systemUnavailable') });
-                    return;
-                }
-
-                setListState({ type: 'loading', message: tr('loading') });
-
-                try {
-                    let result;
-
-                    if (isAdmin) {
-                        result = await withTimeout(
-                            sbClient.rpc('get_messages_with_admin', {
-                                admin_password: adminPasswordFromUrl
-                            }),
-                            SUPABASE_QUERY_TIMEOUT_MS
-                        );
-                    } else {
-                        result = await withTimeout(
-                            sbClient
-                                .from('messages')
-                                .select('*')
-                                .eq('visible', true)
-                                .order('created_at', { ascending: false })
-                                .limit(50),
-                            SUPABASE_QUERY_TIMEOUT_MS
-                        );
-                    }
-
-                    if (result.error) throw result.error;
-
-                    setListState({
-                        type: 'messages',
-                        messages: result.data || []
-                    });
-                } catch (err) {
-                    const message = cleanError(err);
-                    setListState({
-                        type: 'error',
-                        message: tr('loadFailed') + message
-                    });
-                    showDebug('Load messages failed: ' + message);
-                }
-            }
-
-            async function submitMessage(event) {
-                event.preventDefault();
-
-                if (!sbClient) {
-                    setStatus(tr('systemUnavailable'), true);
-                    showDebug(tr('systemUnavailable'));
-                    return;
-                }
-
-                const author = inputAuthor.value.trim();
-                const content = inputContent.value.trim();
-                const honeypot = websiteField.value.trim();
-
-                if (!author || !content) return;
-
-                const spamCheck = checkSpam(content, honeypot);
-
-                if (!spamCheck.ok) {
-                    if (spamCheck.silent) {
-                        inputAuthor.value = '';
-                        inputContent.value = '';
-                        websiteField.value = '';
-                        setStatus(tr('sent'), false);
-                    } else {
-                        setStatus(spamCheck.message, true);
-                    }
-                    return;
-                }
-
-                submitBtn.disabled = true;
-                setStatus(tr('sending'), false);
-
-                try {
-                    const query = sbClient
-                        .from('messages')
-                        .insert({
-                            author: author,
-                            content: content,
-                            visible: true
-                        });
-
-                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
-
-                    if (result.error) throw result.error;
-
-                    inputAuthor.value = '';
-                    inputContent.value = '';
-                    websiteField.value = '';
-
-                    setStatus(tr('sent'), false);
-
-                    setTimeout(function () {
-                        setStatus('', false);
-                    }, 2500);
-
-                    await loadMessages();
-                } catch (err) {
-                    const message = cleanError(err);
-                    setStatus(tr('sendFailed') + message, true);
-                    showDebug('Submit message failed: ' + message);
-                } finally {
-                    submitBtn.disabled = false;
-                }
-            }
-
-            function checkSpam(content, honeypot) {
-                if (honeypot) {
-                    return { ok: false, silent: true };
-                }
-
-                if (Date.now() - pageLoadedAt < MIN_SUBMIT_WAIT_MS) {
-                    return { ok: false, message: tr('tooFast') };
-                }
-
-                const links = content.match(/https?:\/\/|www\./gi) || [];
-
-                if (links.length > 2) {
-                    return { ok: false, message: tr('tooManyLinks') };
-                }
-
-                const blockedWords = [
-                    'casino',
-                    'porn',
-                    'viagra',
-                    'crypto giveaway',
-                    'free money',
-                    '바카라',
-                    '카지노'
-                ];
-
-                const lower = content.toLowerCase();
-
-                const hasBlockedWord = blockedWords.some(function (word) {
-                    return lower.indexOf(word) !== -1;
-                });
-
-                if (hasBlockedWord) {
-                    return { ok: false, message: tr('blockedWords') };
-                }
-
-                return { ok: true };
-            }
-
-            async function setMessageVisible(id, visible) {
-                if (!sbClient) {
-                    setStatus(tr('systemUnavailable'), true);
-                    showDebug(tr('systemUnavailable'));
-                    return;
-                }
-
-                const confirmText = visible ? tr('restoreConfirm') : tr('hideConfirm');
-
-                if (!window.confirm(confirmText)) return;
-
-                setStatus(visible ? tr('restoreText') + '...' : tr('hideText') + '...', false);
-
-                try {
-                    const result = await withTimeout(
-                        sbClient.rpc('set_message_visible_with_admin', {
-                            msg_id: Number(id),
-                            msg_visible: Boolean(visible),
-                            admin_password: adminPasswordFromUrl
-                        }),
-                        SUPABASE_QUERY_TIMEOUT_MS
-                    );
-
-                    if (result.error) throw result.error;
-
-                    if (result.data !== true) {
-                        throw new Error(tr('wrongPassword'));
-                    }
-
-                    setStatus('', false);
-                    await loadMessages();
-                } catch (err) {
-                    const message = cleanError(err);
-                    setStatus(tr('visibilityFailed') + message, true);
-                    showDebug('Set message visibility failed: ' + message);
-                }
-            }
-
-            async function deleteMessage(id) {
-                if (!sbClient) {
-                    setStatus(tr('systemUnavailable'), true);
-                    showDebug(tr('systemUnavailable'));
-                    return;
-                }
-
-                if (!window.confirm(tr('deleteConfirm'))) return;
-
-                try {
-                    const query = sbClient.rpc('delete_message_with_admin', {
-                        msg_id: Number(id),
-                        admin_password: adminPasswordFromUrl
-                    });
-
-                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
-
-                    if (result.error) throw result.error;
-
-                    if (result.data === true) {
-                        await loadMessages();
-                    } else {
-                        setStatus(tr('wrongPassword'), true);
-                        showDebug(tr('wrongPassword'));
-                    }
-                } catch (err) {
-                    const message = cleanError(err);
-                    setStatus(tr('deleteFailed') + message, true);
-                    showDebug('Delete message failed: ' + message);
-                }
-            }
-
-            function withTimeout(promiseLike, timeoutMs) {
-                return new Promise(function (resolve, reject) {
-                    const timer = setTimeout(function () {
-                        reject(new Error(tr('requestTimeout')));
-                    }, timeoutMs);
-
-                    Promise.resolve(promiseLike)
-                        .then(function (value) {
-                            clearTimeout(timer);
-                            resolve(value);
-                        })
-                        .catch(function (err) {
-                            clearTimeout(timer);
-                            reject(err);
-                        });
-                });
-            }
-
-            async function copyText(button) {
-                const value = button.getAttribute('data-copy') || '';
-
-                if (!value) return;
-
-                try {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(value);
-                    } else {
-                        fallbackCopy(value);
-                    }
-
-                    button.textContent = tr('copied');
-
-                    setTimeout(function () {
-                        button.textContent = tr('copy');
-                    }, 1400);
-                } catch (err) {
-                    showDebug('Copy failed: ' + cleanError(err));
-                }
-            }
-
-            function fallbackCopy(value) {
-                const textarea = document.createElement('textarea');
-                textarea.value = value;
-                textarea.setAttribute('readonly', '');
-                textarea.style.position = 'fixed';
-                textarea.style.top = '-9999px';
-                textarea.style.left = '-9999px';
-
-                document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.select();
-
-                const ok = document.execCommand('copy');
-                document.body.removeChild(textarea);
-
-                if (!ok) {
-                    throw new Error('document.execCommand("copy") failed');
-                }
-            }
-
-            function setStatus(message, isError) {
-                statusEl.textContent = message;
-                statusEl.classList.toggle('error', Boolean(isError));
-            }
-
-            function setListState(nextState) {
-                listState = nextState;
-                rerenderListState();
-            }
-
-            function rerenderListState() {
-                if (!messagesList || !listState) return;
-
-                if (listState.type === 'messages') {
-                    renderMessages(listState.messages || []);
-                    updateMessageCount(listState.messages ? listState.messages.length : 0, listState.messages || []);
-                    return;
-                }
-
-                if (listState.type === 'loading') {
-                    updateMessageCount(null, []);
-
-                    messagesList.innerHTML =
-                        '<li class="messages-loading">' +
-                        escapeHtml(listState.message || tr('loading')) +
-                        '</li>';
-                    return;
-                }
-
-                if (listState.type === 'error') {
-                    updateMessageCount(null, []);
-
-                    messagesList.innerHTML =
-                        '<li class="messages-error">' +
-                        escapeHtml(listState.message || tr('supabaseUnavailable')) +
-                        '</li>';
-                }
-            }
-
-            function renderMessages(messages) {
-                updateMessageCount(messages.length, messages);
-
-                if (!messages || messages.length === 0) {
-                    messagesList.innerHTML =
-                        '<li class="messages-empty">' +
-                        escapeHtml(tr('noMessages')) +
-                        '</li>';
-                    return;
-                }
-
-                messagesList.innerHTML = messages.map(function (msg) {
-                    const isHidden = msg.visible === false;
-
-                    const hiddenBadge = isAdmin && isHidden
-                        ? '<span class="message-hidden-badge">' + escapeHtml(tr('hiddenBadge')) + '</span>'
-                        : '';
-
-                    const visibilityButton = isAdmin
-                        ? (
-                            isHidden
-                                ? '<button class="message-visibility" type="button" data-restore-id="' + escapeHtml(String(msg.id)) + '">' + escapeHtml(tr('restoreText')) + '</button>'
-                                : '<button class="message-visibility" type="button" data-hide-id="' + escapeHtml(String(msg.id)) + '">' + escapeHtml(tr('hideText')) + '</button>'
-                        )
-                        : '';
-
-                    const deleteButton = isAdmin
-                        ? '<button class="message-delete" type="button" data-delete-id="' +
-                          escapeHtml(String(msg.id)) +
-                          '">' +
-                          escapeHtml(tr('deleteText')) +
-                          '</button>'
-                        : '';
-
-                    const actions = isAdmin
-                        ? '<span class="message-actions">' + visibilityButton + deleteButton + '</span>'
-                        : '';
-
-                    return '<li class="message' + (isHidden ? ' is-hidden' : '') + '">' +
-                        '<div class="message-header">' +
-                            '<span class="message-author">' + escapeHtml(msg.author || '') + '</span>' +
-                            '<span class="message-time">' + escapeHtml(formatTime(msg.created_at)) + '</span>' +
-                            hiddenBadge +
-                            actions +
-                        '</div>' +
-                        '<div class="message-content">' + escapeHtml(msg.content || '') + '</div>' +
-                    '</li>';
-                }).join('');
-            }
-
-            function updateMessageCount(count, messages) {
-                if (!messageCount) return;
-
-                if (typeof count !== 'number') {
-                    messageCount.textContent = '';
-                    return;
-                }
-
-                if (isAdmin && Array.isArray(messages)) {
-                    const hidden = messages.filter(function (msg) {
-                        return msg.visible === false;
-                    }).length;
-
-                    const visible = count - hidden;
-
-                    if (currentLang === 'zh') {
-                        messageCount.textContent = visible + ' 可见 · ' + hidden + ' 隐藏';
-                    } else {
-                        messageCount.textContent = visible + ' visible · ' + hidden + ' hidden';
-                    }
-
-                    return;
-                }
-
-                if (currentLang === 'zh') {
-                    messageCount.textContent = count + ' 条留言';
-                    return;
-                }
-
-                if (count === 1) {
-                    messageCount.textContent = tr('oneMessage');
-                } else {
-                    messageCount.textContent = count + ' ' + tr('messageCount');
-                }
-            }
-
-            function formatTime(isoString) {
-                const date = new Date(isoString);
-
-                if (Number.isNaN(date.getTime())) return '';
-
-                const diffMs = Date.now() - date.getTime();
-                const minutes = Math.floor(diffMs / 60000);
-                const hours = Math.floor(diffMs / 3600000);
-                const days = Math.floor(diffMs / 86400000);
-
-                if (currentLang === 'zh') {
-                    if (minutes < 1) return tr('justNow');
-                    if (minutes < 60) return minutes + ' 分钟前';
-                    if (hours < 24) return hours + ' 小时前';
-                    if (days < 7) return days + ' 天前';
-                    return (date.getMonth() + 1) + '月' + date.getDate() + '日';
-                }
-
-                if (minutes < 1) return tr('justNow');
-                if (minutes < 60) return minutes + 'm ago';
-                if (hours < 24) return hours + 'h ago';
-                if (days < 7) return days + 'd ago';
-
-                return date.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric'
-                });
-            }
-
-            function cleanError(err) {
-                if (!err) return tr('unknown');
-                if (typeof err === 'string') return err;
-                if (err.message) return err.message;
-
-                try {
-                    return JSON.stringify(err);
-                } catch (jsonErr) {
-                    return String(err);
-                }
-            }
-
-            function showDebug(message) {
-                if (!debugPanel || !debugMessage) return;
-
-                debugPanel.classList.add('is-visible');
-                debugMessage.textContent = message;
-            }
-
-            function escapeHtml(value) {
-                const div = document.createElement('div');
-                div.textContent = value == null ? '' : String(value);
-                return div.innerHTML;
-            }
-        })();
-    </script>
+          if (error) throw error;
+
+          $("messageForm").reset();
+          setStatus("messageStatus", t("messageSent"));
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("actionFailed"), true);
+          showDebug("Send message failed", errorMessage(error));
+        } finally {
+          btn.disabled = false;
+          btn.textContent = t("send");
+        }
+      }
+
+      async function setMessageVisible(id, visible) {
+        if (!sbClient) return;
+
+        try {
+          const { error } = await sbClient.rpc("set_message_visible_with_admin", {
+            msg_id: Number(id),
+            msg_visible: Boolean(visible),
+            admin_password: adminPasswordFromUrl
+          });
+
+          if (error) throw error;
+
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("actionFailed"), true);
+          showDebug("Set message visible failed", errorMessage(error));
+        }
+      }
+
+      async function deleteMessage(id) {
+        if (!sbClient) return;
+        if (!window.confirm(t("confirmDeleteMessage"))) return;
+
+        try {
+          const { error } = await sbClient.rpc("delete_message_with_admin", {
+            msg_id: Number(id),
+            admin_password: adminPasswordFromUrl
+          });
+
+          if (error) throw error;
+
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("actionFailed"), true);
+          showDebug("Delete message failed", errorMessage(error));
+        }
+      }
+
+      async function loadSupabaseAndData() {
+        setStatus("updatesStatus", t("loadingUpdates"));
+        setStatus("messageStatus", t("loadingMessages"));
+
+        try {
+          await loadSupabaseScript();
+
+          if (!window.supabase || typeof window.supabase.createClient !== "function") {
+            throw new Error("window.supabase.createClient is not available");
+          }
+
+          sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (error) {
+          setStatus("updatesStatus", t("supabaseUnavailable"), true);
+          setStatus("messageStatus", t("supabaseUnavailable"), true);
+          showDebug("Supabase initialization failed", errorMessage(error));
+          return;
+        }
+
+        try {
+          await loadProfile();
+        } catch (error) {
+          showDebug("Load profile failed", errorMessage(error));
+        }
+
+        try {
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("loadFailed"), true);
+          showDebug("Load updates failed", errorMessage(error));
+        }
+
+        try {
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("loadFailed"), true);
+          showDebug("Load messages failed", errorMessage(error));
+        }
+      }
+
+      function bindEvents() {
+        $("langBtn").addEventListener("click", () => {
+          lang = lang === "zh" ? "en" : "zh";
+          localStorage.setItem("site_lang", lang);
+          applyLanguage();
+        });
+
+        $("contactList").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-copy]");
+          if (!btn) return;
+          copyText(btn.getAttribute("data-copy"));
+        });
+
+        $("profileForm").addEventListener("submit", saveProfile);
+
+        $("newUpdateBtn").addEventListener("click", resetUpdateForm);
+        $("cancelUpdateBtn").addEventListener("click", hideUpdateEditor);
+        $("updateForm").addEventListener("submit", saveUpdate);
+
+        $("updatesList").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-update-action]");
+          if (!btn) return;
+
+          const action = btn.getAttribute("data-update-action");
+          const id = btn.getAttribute("data-id");
+
+          if (action === "edit") editUpdate(id);
+          if (action === "hide") setUpdateVisible(id, false);
+          if (action === "restore") setUpdateVisible(id, true);
+          if (action === "delete") deleteUpdate(id);
+        });
+
+        $("messageForm").addEventListener("submit", sendMessage);
+
+        $("messageList").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-message-action]");
+          if (!btn) return;
+
+          const action = btn.getAttribute("data-message-action");
+          const id = btn.getAttribute("data-id");
+
+          if (action === "hide") setMessageVisible(id, false);
+          if (action === "restore") setMessageVisible(id, true);
+          if (action === "delete") deleteMessage(id);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setupAdminView();
+        bindEvents();
+        applyLanguage();
+        loadSupabaseAndData();
+      });
+    })();
+  </script>
 </body>
 </html>
