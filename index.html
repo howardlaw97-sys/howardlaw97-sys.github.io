@@ -77,11 +77,22 @@
             margin-bottom: 36px;
         }
 
-        .bio {
+        .bio,
+        .now-text {
             font-size: 16px;
             line-height: 1.85;
-            margin-bottom: 72px;
             color: #2a2a2a;
+        }
+
+        .bio { margin-bottom: 72px; }
+
+        .section-heading,
+        .guestbook-heading {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
         }
 
         .section-label {
@@ -89,7 +100,6 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--muted);
-            margin-bottom: 22px;
             font-weight: 500;
         }
 
@@ -98,9 +108,7 @@
             font-size: 12px;
         }
 
-        .contact-list {
-            list-style: none;
-        }
+        .contact-list { list-style: none; }
 
         .contact-item {
             display: grid;
@@ -124,59 +132,134 @@
             word-break: break-word;
         }
 
-        a.contact-value {
-            transition: color 0.25s ease;
-        }
+        a.contact-value { transition: color 0.25s ease; }
+        a.contact-value:hover { color: var(--muted); }
 
-        a.contact-value:hover {
-            color: var(--muted);
-        }
-
-        .copy-button {
+        .copy-button,
+        .admin-button,
+        .admin-text-button {
             background: transparent;
             border: none;
             color: var(--muted);
             font-size: 11px;
             font-family: inherit;
             cursor: pointer;
-            padding: 2px 0;
-            transition: color 0.2s ease;
+            transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
             white-space: nowrap;
         }
 
-        html[lang="zh-CN"] .copy-button {
+        html[lang="zh-CN"] .copy-button,
+        html[lang="zh-CN"] .admin-button,
+        html[lang="zh-CN"] .admin-text-button {
             font-size: 12px;
         }
 
-        .copy-button:hover {
+        .copy-button:hover,
+        .admin-text-button:hover { color: var(--fg); }
+
+        .admin-button {
+            padding: 4px 10px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+        }
+
+        .admin-button:hover {
             color: var(--fg);
+            border-color: var(--fg);
         }
 
-        .now {
-            margin-top: 72px;
+        .admin-only { display: none; }
+        body.admin-mode .admin-only { display: inline-flex; }
+        body.admin-mode .admin-panel.admin-only { display: block; }
+        .admin-panel[hidden] { display: none !important; }
+
+        .admin-panel {
+            margin-top: 22px;
+            padding: 18px 18px 16px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
         }
 
-        .now-text {
-            font-size: 15px;
-            line-height: 1.85;
-            color: #2a2a2a;
+        .admin-panel-title {
+            font-size: 12px;
+            color: var(--fg);
+            font-weight: 600;
+            margin-bottom: 14px;
         }
 
-        .guestbook {
-            margin-top: 80px;
+        .admin-grid {
+            display: grid;
+            gap: 14px;
         }
 
-        .guestbook-heading {
+        .admin-field label {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        .admin-field input,
+        .admin-field textarea {
+            display: block;
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--fg);
+            font: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .admin-field textarea {
+            min-height: 88px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .admin-field input:focus,
+        .admin-field textarea:focus {
+            border-color: var(--fg);
+        }
+
+        .admin-actions {
             display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 22px;
+            gap: 14px;
+            align-items: center;
+            margin-top: 16px;
         }
 
-        .guestbook-heading .section-label {
-            margin-bottom: 0;
+        .admin-save {
+            padding: 7px 16px;
+            border: none;
+            border-radius: 999px;
+            background: var(--fg);
+            color: var(--bg);
+            font: inherit;
+            font-size: 12px;
+            cursor: pointer;
         }
+
+        .admin-save:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .admin-status {
+            margin-top: 12px;
+            min-height: 1em;
+            font-size: 12px;
+            color: var(--muted);
+            white-space: pre-wrap;
+        }
+
+        .admin-status.error { color: var(--error); }
+
+        .now { margin-top: 72px; }
+        .guestbook { margin-top: 80px; }
+        .guestbook-heading .section-label { margin-bottom: 0; }
 
         .message-count {
             font-size: 11px;
@@ -184,9 +267,7 @@
             white-space: nowrap;
         }
 
-        .guestbook-form {
-            margin-bottom: 56px;
-        }
+        .guestbook-form { margin-bottom: 56px; }
 
         .guestbook-form input,
         .guestbook-form textarea {
@@ -205,14 +286,9 @@
         }
 
         .guestbook-form input:focus,
-        .guestbook-form textarea:focus {
-            border-bottom-color: var(--fg);
-        }
-
+        .guestbook-form textarea:focus { border-bottom-color: var(--fg); }
         .guestbook-form input::placeholder,
-        .guestbook-form textarea::placeholder {
-            color: var(--muted);
-        }
+        .guestbook-form textarea::placeholder { color: var(--muted); }
 
         .guestbook-form textarea {
             min-height: 64px;
@@ -240,14 +316,8 @@
             font-size: 13px;
         }
 
-        .guestbook-submit:hover {
-            opacity: 0.85;
-        }
-
-        .guestbook-submit:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        .guestbook-submit:hover { opacity: 0.85; }
+        .guestbook-submit:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .guestbook-status {
             margin-top: 12px;
@@ -256,13 +326,8 @@
             min-height: 1em;
         }
 
-        .guestbook-status.error {
-            color: var(--error);
-        }
-
-        .messages-list {
-            list-style: none;
-        }
+        .guestbook-status.error { color: var(--error); }
+        .messages-list { list-style: none; }
 
         .message {
             padding: 18px 0;
@@ -303,9 +368,7 @@
             transition: all 0.2s ease;
         }
 
-        html[lang="zh-CN"] .message-delete {
-            font-size: 12px;
-        }
+        html[lang="zh-CN"] .message-delete { font-size: 12px; }
 
         .message-delete:hover {
             color: var(--error);
@@ -349,9 +412,7 @@
             word-break: break-word;
         }
 
-        .debug-panel.is-visible {
-            display: block;
-        }
+        .debug-panel.is-visible { display: block; }
 
         .debug-title {
             color: var(--fg);
@@ -380,38 +441,17 @@
         }
 
         @media (max-width: 600px) {
-            .container {
-                padding: 100px 24px 60px;
-            }
-
-            .name {
-                font-size: 34px;
-            }
-
-            .bio {
-                font-size: 15px;
-                margin-bottom: 56px;
-            }
-
+            .container { padding: 100px 24px 60px; }
+            .name { font-size: 34px; }
+            .bio { font-size: 15px; margin-bottom: 56px; }
             .contact-item {
                 grid-template-columns: 72px minmax(0, 1fr) auto;
                 gap: 12px;
                 font-size: 14px;
             }
-
-            .lang-switch {
-                top: 20px;
-                right: 20px;
-                padding: 6px 12px;
-            }
-
-            .guestbook {
-                margin-top: 64px;
-            }
-
-            .now {
-                margin-top: 64px;
-            }
+            .lang-switch { top: 20px; right: 20px; padding: 6px 12px; }
+            .guestbook { margin-top: 64px; }
+            .now { margin-top: 64px; }
         }
     </style>
 </head>
@@ -422,44 +462,70 @@
         <h1 class="name">Hao Luo</h1>
         <div class="divider"></div>
 
-        <p class="bio"
-           data-zh="一个简单的页面。寥寥几句,关于我是谁、身在何处,以及如何联系。"
-           data-en="A simple page. A few words about who I am, where I am, and how to reach me.">
-            一个简单的页面。寥寥几句,关于我是谁、身在何处,以及如何联系。
-        </p>
+        <p class="bio" id="bioText"></p>
 
-        <div class="section-label" data-zh="联系方式" data-en="CONTACT">联系方式</div>
+        <section class="contact-section">
+            <div class="section-heading">
+                <div class="section-label" data-zh="联系方式" data-en="CONTACT">联系方式</div>
+                <button class="admin-button admin-only" type="button" id="editContactBtn" data-zh="编辑" data-en="Edit">编辑</button>
+            </div>
 
-        <ul class="contact-list">
-            <li class="contact-item">
-                <span class="contact-label" data-zh="邮箱" data-en="Email">邮箱</span>
-                <a class="contact-value" href="mailto:howardlaw97@gmail.com">howardlaw97@gmail.com</a>
-                <button class="copy-button" type="button" data-copy="howardlaw97@gmail.com" data-zh="复制" data-en="Copy">复制</button>
-            </li>
-            <li class="contact-item">
-                <span class="contact-label" data-zh="电话" data-en="Phone">电话</span>
-                <a class="contact-value" href="tel:+8618710113499">187 1011 3499</a>
-                <button class="copy-button" type="button" data-copy="18710113499" data-zh="复制" data-en="Copy">复制</button>
-            </li>
-            <li class="contact-item">
-                <span class="contact-label" data-zh="微信" data-en="WeChat">微信</span>
-                <span class="contact-value">LthunderHsnow</span>
-                <button class="copy-button" type="button" data-copy="LthunderHsnow" data-zh="复制" data-en="Copy">复制</button>
-            </li>
-            <li class="contact-item">
-                <span class="contact-label" data-zh="QQ" data-en="QQ">QQ</span>
-                <span class="contact-value">694687313</span>
-                <button class="copy-button" type="button" data-copy="694687313" data-zh="复制" data-en="Copy">复制</button>
-            </li>
-        </ul>
+            <ul class="contact-list" id="contactList"></ul>
+
+            <div class="admin-panel admin-only" id="contactEditor" hidden>
+                <div class="admin-panel-title" data-zh="编辑联系方式" data-en="Edit contact info">编辑联系方式</div>
+                <div class="admin-grid">
+                    <div class="admin-field">
+                        <label for="editEmail" data-zh="邮箱" data-en="Email">邮箱</label>
+                        <input id="editEmail" type="email" autocomplete="email">
+                    </div>
+                    <div class="admin-field">
+                        <label for="editPhone" data-zh="电话" data-en="Phone">电话</label>
+                        <input id="editPhone" type="text" inputmode="tel" autocomplete="tel">
+                    </div>
+                    <div class="admin-field">
+                        <label for="editWechat" data-zh="微信" data-en="WeChat">微信</label>
+                        <input id="editWechat" type="text" autocomplete="off">
+                    </div>
+                    <div class="admin-field">
+                        <label for="editQQ" data-zh="QQ" data-en="QQ">QQ</label>
+                        <input id="editQQ" type="text" inputmode="numeric" autocomplete="off">
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button class="admin-save" type="button" id="saveContactBtn" data-zh="保存" data-en="Save">保存</button>
+                    <button class="admin-text-button" type="button" id="cancelContactBtn" data-zh="取消" data-en="Cancel">取消</button>
+                </div>
+                <div class="admin-status" id="contactAdminStatus"></div>
+            </div>
+        </section>
 
         <section class="now">
-            <div class="section-label" data-zh="现在" data-en="NOW">现在</div>
-            <p class="now-text"
-               data-zh="正在完善自己的个人网站,也持续练习英文写作、信息整理和 AI 工具使用。"
-               data-en="Currently refining my personal website, while continuing to practice English writing, information organization, and AI tools.">
-                正在完善自己的个人网站,也持续练习英文写作、信息整理和 AI 工具使用。
-            </p>
+            <div class="section-heading">
+                <div class="section-label" data-zh="现在" data-en="NOW">现在</div>
+                <button class="admin-button admin-only" type="button" id="editNowBtn" data-zh="编辑" data-en="Edit">编辑</button>
+            </div>
+
+            <p class="now-text" id="nowText"></p>
+
+            <div class="admin-panel admin-only" id="nowEditor" hidden>
+                <div class="admin-panel-title" data-zh="编辑现在状态" data-en="Edit now status">编辑现在状态</div>
+                <div class="admin-grid">
+                    <div class="admin-field">
+                        <label for="editNowZh">中文</label>
+                        <textarea id="editNowZh" maxlength="500"></textarea>
+                    </div>
+                    <div class="admin-field">
+                        <label for="editNowEn">English</label>
+                        <textarea id="editNowEn" maxlength="500"></textarea>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button class="admin-save" type="button" id="saveNowBtn" data-zh="保存" data-en="Save">保存</button>
+                    <button class="admin-text-button" type="button" id="cancelNowBtn" data-zh="取消" data-en="Cancel">取消</button>
+                </div>
+                <div class="admin-status" id="nowAdminStatus"></div>
+            </div>
         </section>
 
         <section class="guestbook">
@@ -509,6 +575,7 @@
 
             const SUPABASE_URL = 'https://wzbqabzlmfassgmyyowj.supabase.co';
             const SUPABASE_KEY = 'sb_publishable_fbPvPbTmOfum_628MVQE-w_i6-dlorB';
+            const PROFILE_SETTING_KEY = 'profile';
 
             const SUPABASE_CDN_URLS = [
                 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
@@ -518,8 +585,24 @@
             const SCRIPT_LOAD_TIMEOUT_MS = 10000;
             const SUPABASE_QUERY_TIMEOUT_MS = 15000;
             const MIN_SUBMIT_WAIT_MS = 2500;
-
             const pageLoadedAt = Date.now();
+
+            const DEFAULT_PROFILE = {
+                bio: {
+                    zh: '一个简单的页面。寥寥几句,关于我是谁、身在何处,以及如何联系。',
+                    en: 'A simple page. A few words about who I am, where I am, and how to reach me.'
+                },
+                now: {
+                    zh: '正在完善自己的个人网站,也持续练习英文写作、信息整理和 AI 工具使用。',
+                    en: 'Currently refining my personal website, while continuing to practice English writing, information organization, and AI tools.'
+                },
+                contacts: {
+                    email: 'howardlaw97@gmail.com',
+                    phone: '187 1011 3499',
+                    wechat: 'LthunderHsnow',
+                    qq: '694687313'
+                }
+            };
 
             const urlParams = new URLSearchParams(window.location.search);
             const adminPasswordFromUrl = urlParams.get('admin') || '';
@@ -528,8 +611,12 @@
             let currentLang = safeReadLang();
             let sbClient = null;
             let listState = { type: 'loading' };
+            let siteProfile = cloneProfile(DEFAULT_PROFILE);
 
             const langBtn = document.getElementById('langBtn');
+            const bioText = document.getElementById('bioText');
+            const contactList = document.getElementById('contactList');
+            const nowText = document.getElementById('nowText');
             const messagesList = document.getElementById('messagesList');
             const messageCount = document.getElementById('messageCount');
             const form = document.getElementById('guestbookForm');
@@ -541,21 +628,45 @@
             const debugPanel = document.getElementById('debugPanel');
             const debugMessage = document.getElementById('debugMessage');
 
+            const editContactBtn = document.getElementById('editContactBtn');
+            const contactEditor = document.getElementById('contactEditor');
+            const saveContactBtn = document.getElementById('saveContactBtn');
+            const cancelContactBtn = document.getElementById('cancelContactBtn');
+            const contactAdminStatus = document.getElementById('contactAdminStatus');
+            const editEmail = document.getElementById('editEmail');
+            const editPhone = document.getElementById('editPhone');
+            const editWechat = document.getElementById('editWechat');
+            const editQQ = document.getElementById('editQQ');
+
+            const editNowBtn = document.getElementById('editNowBtn');
+            const nowEditor = document.getElementById('nowEditor');
+            const saveNowBtn = document.getElementById('saveNowBtn');
+            const cancelNowBtn = document.getElementById('cancelNowBtn');
+            const nowAdminStatus = document.getElementById('nowAdminStatus');
+            const editNowZh = document.getElementById('editNowZh');
+            const editNowEn = document.getElementById('editNowEn');
+
             const t = {
                 loading: { zh: '加载中...', en: 'Loading...' },
                 noMessages: { zh: '还没有留言,留下第一条吧', en: 'No messages yet. Be the first.' },
                 supabaseLoading: { zh: '正在连接留言系统...', en: 'Connecting to guestbook...' },
                 supabaseUnavailable: { zh: '留言系统暂时不可用,但页面其他功能可以正常使用。', en: 'Guestbook is temporarily unavailable, but the rest of the page still works.' },
+                profileUnavailable: { zh: '资料编辑系统暂时不可用。请检查 Supabase 表和函数是否已创建。', en: 'Profile editing is temporarily unavailable. Please check whether the Supabase table and function are created.' },
                 loadFailed: { zh: '留言加载失败: ', en: 'Failed to load messages: ' },
+                profileLoadFailed: { zh: '资料加载失败,已使用页面默认内容: ', en: 'Profile load failed; using default content: ' },
                 sendFailed: { zh: '发送失败: ', en: 'Failed to send: ' },
                 deleteFailed: { zh: '删除失败: ', en: 'Delete failed: ' },
+                saveFailed: { zh: '保存失败: ', en: 'Save failed: ' },
+                saving: { zh: '保存中...', en: 'Saving...' },
+                saved: { zh: '已保存 ✓', en: 'Saved ✓' },
                 sending: { zh: '发送中...', en: 'Sending...' },
                 sent: { zh: '已发送 ✓', en: 'Sent ✓' },
                 copied: { zh: '已复制', en: 'Copied' },
                 copy: { zh: '复制', en: 'Copy' },
                 systemUnavailable: { zh: '留言系统未连接。请稍后再试。', en: 'Guestbook is not connected. Please try again later.' },
+                adminUnavailable: { zh: '无法保存: Supabase 未连接。', en: 'Cannot save: Supabase is not connected.' },
                 deleteConfirm: { zh: '确认删除这条留言?', en: 'Delete this message?' },
-                wrongPassword: { zh: '删除失败: 管理员密码不正确。', en: 'Delete failed: wrong admin password.' },
+                wrongPassword: { zh: '管理员密码不正确。', en: 'Wrong admin password.' },
                 deleteText: { zh: '删除', en: 'Delete' },
                 scriptLoadFailed: { zh: 'Supabase 前端库加载失败。常见原因: CDN 被网络/VPN 拦截。', en: 'Supabase frontend library failed to load. Common cause: CDN blocked by network/VPN.' },
                 scriptTimeout: { zh: 'Supabase 前端库加载超时。', en: 'Supabase frontend library load timed out.' },
@@ -569,6 +680,10 @@
                 unknown: { zh: '未知错误', en: 'Unknown error' },
                 justNow: { zh: '刚刚', en: 'just now' }
             };
+
+            if (isAdmin) {
+                document.body.classList.add('admin-mode');
+            }
 
             window.addEventListener('error', function (event) {
                 const msg = event.message || (event.error && event.error.message) || tr('unknown');
@@ -601,16 +716,32 @@
                 copyText(button);
             });
 
+            editContactBtn.addEventListener('click', openContactEditor);
+            cancelContactBtn.addEventListener('click', function () {
+                contactEditor.hidden = true;
+                setAdminStatus(contactAdminStatus, '', false);
+            });
+            saveContactBtn.addEventListener('click', saveContactsFromEditor);
+
+            editNowBtn.addEventListener('click', openNowEditor);
+            cancelNowBtn.addEventListener('click', function () {
+                nowEditor.hidden = true;
+                setAdminStatus(nowAdminStatus, '', false);
+            });
+            saveNowBtn.addEventListener('click', saveNowFromEditor);
+
             applyLang();
-            initGuestbook();
+            initApp();
+
+            function cloneProfile(profile) {
+                return JSON.parse(JSON.stringify(profile));
+            }
 
             function safeReadLang() {
                 try {
                     const saved = localStorage.getItem('siteLang');
 
-                    if (saved === 'zh' || saved === 'en') {
-                        return saved;
-                    }
+                    if (saved === 'zh' || saved === 'en') return saved;
 
                     const browserLang = (navigator.languages && navigator.languages[0]) ||
                         navigator.language ||
@@ -644,10 +775,63 @@
                     el.placeholder = el.getAttribute('data-' + currentLang + '-placeholder');
                 });
 
+                renderProfile();
                 rerenderListState();
             }
 
-            async function initGuestbook() {
+            function renderProfile() {
+                bioText.textContent = getLangValue(siteProfile.bio, 'bio');
+                nowText.textContent = getLangValue(siteProfile.now, 'now');
+                renderContacts();
+            }
+
+            function getLangValue(valueObject, fieldName) {
+                const fallback = DEFAULT_PROFILE[fieldName] || {};
+                return (valueObject && valueObject[currentLang]) || fallback[currentLang] || '';
+            }
+
+            function renderContacts() {
+                const contacts = siteProfile.contacts || DEFAULT_PROFILE.contacts;
+
+                const rows = [
+                    { id: 'email', labelZh: '邮箱', labelEn: 'Email', value: contacts.email || '', href: makeEmailHref(contacts.email), copy: contacts.email || '' },
+                    { id: 'phone', labelZh: '电话', labelEn: 'Phone', value: contacts.phone || '', href: makePhoneHref(contacts.phone), copy: cleanPhone(contacts.phone) || contacts.phone || '' },
+                    { id: 'wechat', labelZh: '微信', labelEn: 'WeChat', value: contacts.wechat || '', href: '', copy: contacts.wechat || '' },
+                    { id: 'qq', labelZh: 'QQ', labelEn: 'QQ', value: contacts.qq || '', href: '', copy: contacts.qq || '' }
+                ];
+
+                contactList.innerHTML = rows.map(function (row) {
+                    const label = currentLang === 'zh' ? row.labelZh : row.labelEn;
+                    const valueHtml = row.href
+                        ? '<a class="contact-value" href="' + escapeHtml(row.href) + '">' + escapeHtml(row.value) + '</a>'
+                        : '<span class="contact-value">' + escapeHtml(row.value) + '</span>';
+
+                    return '<li class="contact-item">' +
+                        '<span class="contact-label">' + escapeHtml(label) + '</span>' +
+                        valueHtml +
+                        '<button class="copy-button" type="button" data-copy="' + escapeHtml(row.copy) + '">' + escapeHtml(tr('copy')) + '</button>' +
+                    '</li>';
+                }).join('');
+            }
+
+            function makeEmailHref(email) {
+                const value = String(email || '').trim();
+                return value ? 'mailto:' + value : '';
+            }
+
+            function makePhoneHref(phone) {
+                const digits = cleanPhone(phone);
+                if (!digits) return '';
+                if (digits.length === 11 && digits.charAt(0) === '1') return 'tel:+86' + digits;
+                if (String(phone || '').trim().charAt(0) === '+') return 'tel:' + String(phone).replace(/\s+/g, '');
+                return 'tel:' + digits;
+            }
+
+            function cleanPhone(phone) {
+                return String(phone || '').replace(/[^0-9]/g, '');
+            }
+
+            async function initApp() {
                 setListState({ type: 'loading', message: tr('supabaseLoading') });
 
                 try {
@@ -658,6 +842,8 @@
                     }
 
                     sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+                    await loadProfile();
                     await loadMessages();
                 } catch (err) {
                     sbClient = null;
@@ -720,6 +906,151 @@
 
                     document.head.appendChild(script);
                 });
+            }
+
+            async function loadProfile() {
+                if (!sbClient) return;
+
+                try {
+                    const query = sbClient
+                        .from('site_settings')
+                        .select('value')
+                        .eq('key', PROFILE_SETTING_KEY)
+                        .maybeSingle();
+
+                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
+
+                    if (result.error) throw result.error;
+
+                    if (result.data && result.data.value) {
+                        siteProfile = normalizeProfile(result.data.value);
+                        renderProfile();
+                    }
+                } catch (err) {
+                    const message = cleanError(err);
+                    showDebug(tr('profileLoadFailed') + message);
+                }
+            }
+
+            function normalizeProfile(value) {
+                const next = cloneProfile(DEFAULT_PROFILE);
+
+                if (value && value.bio) {
+                    next.bio.zh = String(value.bio.zh || next.bio.zh);
+                    next.bio.en = String(value.bio.en || next.bio.en);
+                }
+
+                if (value && value.now) {
+                    next.now.zh = String(value.now.zh || next.now.zh);
+                    next.now.en = String(value.now.en || next.now.en);
+                }
+
+                if (value && value.contacts) {
+                    next.contacts.email = String(value.contacts.email || next.contacts.email);
+                    next.contacts.phone = String(value.contacts.phone || next.contacts.phone);
+                    next.contacts.wechat = String(value.contacts.wechat || next.contacts.wechat);
+                    next.contacts.qq = String(value.contacts.qq || next.contacts.qq);
+                }
+
+                return next;
+            }
+
+            function openContactEditor() {
+                editEmail.value = siteProfile.contacts.email || '';
+                editPhone.value = siteProfile.contacts.phone || '';
+                editWechat.value = siteProfile.contacts.wechat || '';
+                editQQ.value = siteProfile.contacts.qq || '';
+                contactEditor.hidden = false;
+                setAdminStatus(contactAdminStatus, '', false);
+            }
+
+            async function saveContactsFromEditor() {
+                const previous = cloneProfile(siteProfile);
+
+                siteProfile.contacts.email = editEmail.value.trim();
+                siteProfile.contacts.phone = editPhone.value.trim();
+                siteProfile.contacts.wechat = editWechat.value.trim();
+                siteProfile.contacts.qq = editQQ.value.trim();
+
+                renderProfile();
+
+                const ok = await saveProfile(contactAdminStatus, saveContactBtn);
+                if (ok) {
+                    contactEditor.hidden = true;
+                } else {
+                    siteProfile = previous;
+                    renderProfile();
+                }
+            }
+
+            function openNowEditor() {
+                editNowZh.value = siteProfile.now.zh || '';
+                editNowEn.value = siteProfile.now.en || '';
+                nowEditor.hidden = false;
+                setAdminStatus(nowAdminStatus, '', false);
+            }
+
+            async function saveNowFromEditor() {
+                const previous = cloneProfile(siteProfile);
+
+                siteProfile.now.zh = editNowZh.value.trim();
+                siteProfile.now.en = editNowEn.value.trim();
+
+                if (!siteProfile.now.zh) siteProfile.now.zh = DEFAULT_PROFILE.now.zh;
+                if (!siteProfile.now.en) siteProfile.now.en = DEFAULT_PROFILE.now.en;
+
+                renderProfile();
+
+                const ok = await saveProfile(nowAdminStatus, saveNowBtn);
+                if (ok) {
+                    nowEditor.hidden = true;
+                } else {
+                    siteProfile = previous;
+                    renderProfile();
+                }
+            }
+
+            async function saveProfile(statusNode, buttonNode) {
+                if (!sbClient) {
+                    setAdminStatus(statusNode, tr('adminUnavailable'), true);
+                    showDebug(tr('adminUnavailable'));
+                    return false;
+                }
+
+                buttonNode.disabled = true;
+                setAdminStatus(statusNode, tr('saving'), false);
+
+                try {
+                    const query = sbClient.rpc('update_site_setting_with_admin', {
+                        setting_key: PROFILE_SETTING_KEY,
+                        setting_value: siteProfile,
+                        admin_password: adminPasswordFromUrl
+                    });
+
+                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
+
+                    if (result.error) throw result.error;
+
+                    if (result.data !== true) {
+                        throw new Error(tr('wrongPassword'));
+                    }
+
+                    setAdminStatus(statusNode, tr('saved'), false);
+                    return true;
+                } catch (err) {
+                    const message = cleanError(err);
+                    setAdminStatus(statusNode, tr('saveFailed') + message, true);
+                    showDebug('Save profile failed: ' + message);
+                    return false;
+                } finally {
+                    buttonNode.disabled = false;
+                }
+            }
+
+            function setAdminStatus(node, message, isError) {
+                if (!node) return;
+                node.textContent = message;
+                node.classList.toggle('error', Boolean(isError));
             }
 
             async function loadMessages() {
