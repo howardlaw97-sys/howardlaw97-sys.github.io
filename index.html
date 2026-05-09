@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hao Luo</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -12,6 +11,7 @@
             --fg: #111;
             --muted: #888;
             --line: #e5e5e5;
+            --error: #c33;
         }
         html, body {
             background: var(--bg);
@@ -157,7 +157,7 @@
             color: var(--muted);
             min-height: 1em;
         }
-        .guestbook-status.error { color: #c33; }
+        .guestbook-status.error { color: var(--error); }
         .messages-list { list-style: none; }
         .message {
             padding: 18px 0;
@@ -195,8 +195,24 @@
         }
         html[lang="zh-CN"] .message-delete { font-size: 12px; }
         .message-delete:hover {
-            color: #c33;
+            color: var(--error);
             background: rgba(204,51,51,0.06);
+        }
+        .messages-empty,
+        .messages-loading,
+        .messages-error {
+            padding: 24px 0;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+        .messages-error {
+            color: var(--error);
+            letter-spacing: 0;
+            text-align: left;
+            word-break: break-word;
+            white-space: pre-wrap;
         }
         .message-content {
             font-size: 14px;
@@ -205,13 +221,25 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
-        .messages-empty,
-        .messages-loading {
-            padding: 24px 0;
-            text-align: center;
+        .debug-panel {
+            display: none;
+            margin-top: 28px;
+            padding: 14px 16px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
             font-size: 12px;
             color: var(--muted);
-            letter-spacing: 1px;
+            word-break: break-word;
+        }
+        .debug-panel.is-visible { display: block; }
+        .debug-title {
+            color: var(--fg);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .debug-message {
+            color: var(--error);
+            white-space: pre-wrap;
         }
         .footer {
             margin-top: 96px;
@@ -284,183 +312,447 @@
             </form>
 
             <ul class="messages-list" id="messagesList">
-                <li class="messages-loading"
-                    data-zh="加载中..." data-en="Loading...">加载中...</li>
+                <li class="messages-loading" data-zh="加载中..." data-en="Loading...">加载中...</li>
             </ul>
+
+            <div class="debug-panel" id="debugPanel" aria-live="polite">
+                <div class="debug-title" data-zh="调试信息" data-en="Debug info">调试信息</div>
+                <div class="debug-message" id="debugMessage"></div>
+            </div>
         </div>
 
         <div class="footer">© 2026 Hao Luo</div>
     </main>
 
     <script>
-        // ========== 配置 ==========
-        const SUPABASE_URL = 'https://wzbqabzlmfassgmyyowj.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_fbPvPbTmOfum_628MVQE-w_i6-dlorB';
-        const ADMIN_PASSWORD = 'haohaoxuexi3669';
+        (function () {
+            'use strict';
 
-        // ========== 语言切换(独立运行,不依赖 Supabase) ==========
-        let currentLang = 'zh';
-        const langBtn = document.getElementById('langBtn');
+            const SUPABASE_URL = 'https://wzbqabzlmfassgmyyowj.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_fbPvPbTmOfum_628MVQE-w_i6-dlorB';
 
-        function applyLang() {
-            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
-            langBtn.textContent = currentLang === 'zh' ? 'EN' : '中';
-            document.querySelectorAll('[data-zh][data-en]').forEach(function(el) {
-                el.textContent = el.getAttribute('data-' + currentLang);
+            const SUPABASE_CDN_URLS = [
+                'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+                'https://unpkg.com/@supabase/supabase-js@2'
+            ];
+
+            const SCRIPT_LOAD_TIMEOUT_MS = 10000;
+            const SUPABASE_QUERY_TIMEOUT_MS = 15000;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const adminPasswordFromUrl = urlParams.get('admin') || '';
+            const isAdmin = adminPasswordFromUrl.length > 0;
+
+            let currentLang = safeReadLang();
+            let sbClient = null;
+            let listState = { type: 'loading' };
+
+            const langBtn = document.getElementById('langBtn');
+            const messagesList = document.getElementById('messagesList');
+            const form = document.getElementById('guestbookForm');
+            const inputAuthor = document.getElementById('msgAuthor');
+            const inputContent = document.getElementById('msgContent');
+            const submitBtn = document.getElementById('msgSubmit');
+            const statusEl = document.getElementById('msgStatus');
+            const debugPanel = document.getElementById('debugPanel');
+            const debugMessage = document.getElementById('debugMessage');
+
+            const t = {
+                loading: { zh: '加载中...', en: 'Loading...' },
+                noMessages: { zh: '还没有留言,留下第一条吧', en: 'No messages yet. Be the first.' },
+                supabaseLoading: { zh: '正在连接留言系统...', en: 'Connecting to guestbook...' },
+                supabaseUnavailable: { zh: '留言系统暂时不可用,但页面其他功能可以正常使用。', en: 'Guestbook is temporarily unavailable, but the rest of the page still works.' },
+                loadFailed: { zh: '留言加载失败: ', en: 'Failed to load messages: ' },
+                sendFailed: { zh: '发送失败: ', en: 'Failed to send: ' },
+                deleteFailed: { zh: '删除失败: ', en: 'Delete failed: ' },
+                sending: { zh: '发送中...', en: 'Sending...' },
+                sent: { zh: '已发送 ✓', en: 'Sent ✓' },
+                systemUnavailable: { zh: '留言系统未连接。请稍后再试。', en: 'Guestbook is not connected. Please try again later.' },
+                deleteConfirm: { zh: '确认删除这条留言?', en: 'Delete this message?' },
+                wrongPassword: { zh: '删除失败: 管理员密码不正确。', en: 'Delete failed: wrong admin password.' },
+                deleteText: { zh: '删除', en: 'Delete' },
+                scriptLoadFailed: { zh: 'Supabase 前端库加载失败。常见原因: CDN 被网络/VPN 拦截。', en: 'Supabase frontend library failed to load. Common cause: CDN blocked by network/VPN.' },
+                scriptTimeout: { zh: 'Supabase 前端库加载超时。', en: 'Supabase frontend library load timed out.' },
+                requestTimeout: { zh: '请求 Supabase 超时。可能是网络、VPN 或 Supabase 连接问题。', en: 'Supabase request timed out. This may be a network, VPN, or Supabase connection issue.' },
+                libraryMissing: { zh: 'window.supabase.createClient 不存在。可能是 CDN 文件未正确加载。', en: 'window.supabase.createClient is missing. The CDN file may not have loaded correctly.' },
+                unknown: { zh: '未知错误', en: 'Unknown error' },
+                justNow: { zh: '刚刚', en: 'just now' }
+            };
+
+            window.addEventListener('error', function (event) {
+                const msg = event.message || (event.error && event.error.message) || t.unknown[currentLang];
+                showDebug('JS error: ' + msg);
             });
-            document.querySelectorAll('[data-zh-placeholder][data-en-placeholder]').forEach(function(el) {
-                el.placeholder = el.getAttribute('data-' + currentLang + '-placeholder');
-            });
-            if (window._messages) renderMessages(window._messages);
-        }
 
-        langBtn.addEventListener('click', function() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            window.addEventListener('unhandledrejection', function (event) {
+                const reason = event.reason;
+                const msg = reason && reason.message ? reason.message : String(reason || t.unknown[currentLang]);
+                showDebug('Unhandled promise rejection: ' + msg);
+            });
+
+            langBtn.addEventListener('click', function () {
+                currentLang = currentLang === 'zh' ? 'en' : 'zh';
+                safeSaveLang(currentLang);
+                applyLang();
+            });
+
+            form.addEventListener('submit', submitMessage);
+
+            messagesList.addEventListener('click', function (event) {
+                const button = event.target.closest('[data-delete-id]');
+                if (!button) return;
+                deleteMessage(button.getAttribute('data-delete-id'));
+            });
+
             applyLang();
-        });
+            initGuestbook();
 
-        // ========== 初始化 Supabase(带容错) ==========
-        const messagesList = document.getElementById('messagesList');
-        let supabase = null;
-
-        try {
-            if (!window.supabase || !window.supabase.createClient) {
-                throw new Error('Supabase library not loaded');
+            function safeReadLang() {
+                try {
+                    return localStorage.getItem('siteLang') === 'en' ? 'en' : 'zh';
+                } catch (err) {
+                    return 'zh';
+                }
             }
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (err) {
-            console.error('[Supabase init failed]', err);
-            messagesList.innerHTML = '<li class="messages-empty">' +
-                (currentLang === 'zh' ? '留言系统未连接' : 'Messaging system unavailable') +
-                '</li>';
-        }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const isAdmin = urlParams.get('admin') === ADMIN_PASSWORD;
-
-        // ========== 工具函数 ==========
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatTime(isoString) {
-            const date = new Date(isoString);
-            const diffMs = new Date() - date;
-            const m = Math.floor(diffMs / 60000);
-            const h = Math.floor(diffMs / 3600000);
-            const d = Math.floor(diffMs / 86400000);
-            if (currentLang === 'zh') {
-                if (m < 1) return '刚刚';
-                if (m < 60) return m + ' 分钟前';
-                if (h < 24) return h + ' 小时前';
-                if (d < 7) return d + ' 天前';
-                return (date.getMonth() + 1) + '月' + date.getDate() + '日';
-            } else {
-                if (m < 1) return 'just now';
-                if (m < 60) return m + 'm ago';
-                if (h < 24) return h + 'h ago';
-                if (d < 7) return d + 'd ago';
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            function safeSaveLang(lang) {
+                try {
+                    localStorage.setItem('siteLang', lang);
+                } catch (err) {}
             }
-        }
 
-        // ========== 留言相关 ==========
-        const form = document.getElementById('guestbookForm');
-        const inputAuthor = document.getElementById('msgAuthor');
-        const inputContent = document.getElementById('msgContent');
-        const submitBtn = document.getElementById('msgSubmit');
-        const statusEl = document.getElementById('msgStatus');
-
-        async function loadMessages() {
-            if (!supabase) return;
-            try {
-                const result = await supabase
-                    .from('messages').select('*')
-                    .order('created_at', { ascending: false }).limit(50);
-                if (result.error) throw result.error;
-                window._messages = result.data;
-                renderMessages(result.data);
-            } catch (err) {
-                console.error('[Load failed]', err);
-                messagesList.innerHTML = '<li class="messages-empty">' +
-                    (currentLang === 'zh' ? '加载失败:' : 'Load failed: ') +
-                    (err.message || 'unknown') + '</li>';
+            function tr(key) {
+                return (t[key] && t[key][currentLang]) || key;
             }
-        }
 
-        function renderMessages(messages) {
-            if (!messages || messages.length === 0) {
-                messagesList.innerHTML = '<li class="messages-empty">' +
-                    (currentLang === 'zh' ? '还没有留言,留下第一条吧' : 'No messages yet. Be the first.') +
-                    '</li>';
-                return;
-            }
-            const deleteText = currentLang === 'zh' ? '删除' : 'Delete';
-            messagesList.innerHTML = messages.map(function(msg) {
-                const del = isAdmin
-                    ? '<button class="message-delete" onclick="deleteMessage(' + msg.id + ')">' + deleteText + '</button>'
-                    : '';
-                return '<li class="message">' +
-                    '<div class="message-header">' +
-                        '<span class="message-author">' + escapeHtml(msg.author) + '</span>' +
-                        '<span class="message-time">' + formatTime(msg.created_at) + '</span>' +
-                        del +
-                    '</div>' +
-                    '<div class="message-content">' + escapeHtml(msg.content) + '</div>' +
-                '</li>';
-            }).join('');
-        }
+            function applyLang() {
+                document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+                langBtn.textContent = currentLang === 'zh' ? 'EN' : '中';
 
-        async function submitMessage(e) {
-            e.preventDefault();
-            if (!supabase) {
-                alert(currentLang === 'zh' ? '留言系统未连接' : 'System unavailable');
-                return;
-            }
-            const author = inputAuthor.value.trim();
-            const content = inputContent.value.trim();
-            if (!author || !content) return;
-            submitBtn.disabled = true;
-            statusEl.classList.remove('error');
-            statusEl.textContent = currentLang === 'zh' ? '发送中...' : 'Sending...';
-            try {
-                const result = await supabase.from('messages').insert({ author: author, content: content });
-                if (result.error) throw result.error;
-                inputAuthor.value = '';
-                inputContent.value = '';
-                statusEl.textContent = currentLang === 'zh' ? '已发送 ✓' : 'Sent ✓';
-                setTimeout(function() { statusEl.textContent = ''; }, 2500);
-                loadMessages();
-            } catch (err) {
-                console.error('[Submit failed]', err);
-                statusEl.classList.add('error');
-                statusEl.textContent = (currentLang === 'zh' ? '发送失败:' : 'Failed: ') +
-                    (err.message || 'unknown');
-            } finally {
-                submitBtn.disabled = false;
-            }
-        }
-
-        async function deleteMessage(id) {
-            if (!supabase) return;
-            if (!confirm(currentLang === 'zh' ? '确认删除这条留言?' : 'Delete this message?')) return;
-            try {
-                const result = await supabase.rpc('delete_message_with_admin', {
-                    msg_id: id, admin_password: ADMIN_PASSWORD
+                document.querySelectorAll('[data-zh][data-en]').forEach(function (el) {
+                    el.textContent = el.getAttribute('data-' + currentLang);
                 });
-                if (result.error) throw result.error;
-                if (result.data === true) loadMessages();
-                else alert(currentLang === 'zh' ? '密码错误' : 'Wrong password.');
-            } catch (err) {
-                console.error('[Delete failed]', err);
-                alert((currentLang === 'zh' ? '删除失败:' : 'Delete failed: ') + (err.message || 'unknown'));
-            }
-        }
 
-        form.addEventListener('submit', submitMessage);
-        loadMessages();
+                document.querySelectorAll('[data-zh-placeholder][data-en-placeholder]').forEach(function (el) {
+                    el.placeholder = el.getAttribute('data-' + currentLang + '-placeholder');
+                });
+
+                rerenderListState();
+            }
+
+            async function initGuestbook() {
+                setListState({ type: 'loading', message: tr('supabaseLoading') });
+
+                try {
+                    await ensureSupabaseLibrary();
+
+                    if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                        throw new Error(tr('libraryMissing'));
+                    }
+
+                    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    await loadMessages();
+                } catch (err) {
+                    sbClient = null;
+                    const message = cleanError(err) || tr('scriptLoadFailed');
+                    setListState({ type: 'error', message: tr('supabaseUnavailable') + '\n' + message });
+                    showDebug(message);
+                }
+            }
+
+            async function ensureSupabaseLibrary() {
+                if (window.supabase && typeof window.supabase.createClient === 'function') return;
+
+                const errors = [];
+
+                for (const src of SUPABASE_CDN_URLS) {
+                    try {
+                        await loadScript(src, SCRIPT_LOAD_TIMEOUT_MS);
+
+                        if (window.supabase && typeof window.supabase.createClient === 'function') {
+                            return;
+                        }
+
+                        errors.push(src + ': ' + tr('libraryMissing'));
+                    } catch (err) {
+                        errors.push(src + ': ' + cleanError(err));
+                    }
+                }
+
+                throw new Error(errors.join('\n'));
+            }
+
+            function loadScript(src, timeoutMs) {
+                return new Promise(function (resolve, reject) {
+                    const script = document.createElement('script');
+                    let settled = false;
+
+                    const timer = setTimeout(function () {
+                        if (settled) return;
+                        settled = true;
+                        script.remove();
+                        reject(new Error(tr('scriptTimeout')));
+                    }, timeoutMs);
+
+                    script.src = src;
+                    script.async = true;
+
+                    script.onload = function () {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timer);
+                        resolve();
+                    };
+
+                    script.onerror = function () {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timer);
+                        reject(new Error(tr('scriptLoadFailed')));
+                    };
+
+                    document.head.appendChild(script);
+                });
+            }
+
+            async function loadMessages() {
+                if (!sbClient) {
+                    setListState({ type: 'error', message: tr('systemUnavailable') });
+                    return;
+                }
+
+                setListState({ type: 'loading', message: tr('loading') });
+
+                try {
+                    const query = sbClient
+                        .from('messages')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .limit(50);
+
+                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
+
+                    if (result.error) throw result.error;
+
+                    setListState({ type: 'messages', messages: result.data || [] });
+                } catch (err) {
+                    const message = cleanError(err);
+                    setListState({ type: 'error', message: tr('loadFailed') + message });
+                    showDebug('Load messages failed: ' + message);
+                }
+            }
+
+            async function submitMessage(event) {
+                event.preventDefault();
+
+                if (!sbClient) {
+                    setStatus(tr('systemUnavailable'), true);
+                    showDebug(tr('systemUnavailable'));
+                    return;
+                }
+
+                const author = inputAuthor.value.trim();
+                const content = inputContent.value.trim();
+
+                if (!author || !content) return;
+
+                submitBtn.disabled = true;
+                setStatus(tr('sending'), false);
+
+                try {
+                    const query = sbClient
+                        .from('messages')
+                        .insert({ author: author, content: content });
+
+                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
+
+                    if (result.error) throw result.error;
+
+                    inputAuthor.value = '';
+                    inputContent.value = '';
+                    setStatus(tr('sent'), false);
+
+                    setTimeout(function () {
+                        setStatus('', false);
+                    }, 2500);
+
+                    await loadMessages();
+                } catch (err) {
+                    const message = cleanError(err);
+                    setStatus(tr('sendFailed') + message, true);
+                    showDebug('Submit message failed: ' + message);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            }
+
+            async function deleteMessage(id) {
+                if (!sbClient) {
+                    setStatus(tr('systemUnavailable'), true);
+                    showDebug(tr('systemUnavailable'));
+                    return;
+                }
+
+                if (!window.confirm(tr('deleteConfirm'))) return;
+
+                try {
+                    const query = sbClient.rpc('delete_message_with_admin', {
+                        msg_id: Number(id),
+                        admin_password: adminPasswordFromUrl
+                    });
+
+                    const result = await withTimeout(query, SUPABASE_QUERY_TIMEOUT_MS);
+
+                    if (result.error) throw result.error;
+
+                    if (result.data === true) {
+                        await loadMessages();
+                    } else {
+                        setStatus(tr('wrongPassword'), true);
+                        showDebug(tr('wrongPassword'));
+                    }
+                } catch (err) {
+                    const message = cleanError(err);
+                    setStatus(tr('deleteFailed') + message, true);
+                    showDebug('Delete message failed: ' + message);
+                }
+            }
+
+            function withTimeout(promiseLike, timeoutMs) {
+                return new Promise(function (resolve, reject) {
+                    const timer = setTimeout(function () {
+                        reject(new Error(tr('requestTimeout')));
+                    }, timeoutMs);
+
+                    Promise.resolve(promiseLike)
+                        .then(function (value) {
+                            clearTimeout(timer);
+                            resolve(value);
+                        })
+                        .catch(function (err) {
+                            clearTimeout(timer);
+                            reject(err);
+                        });
+                });
+            }
+
+            function setStatus(message, isError) {
+                statusEl.textContent = message;
+                statusEl.classList.toggle('error', Boolean(isError));
+            }
+
+            function setListState(nextState) {
+                listState = nextState;
+                rerenderListState();
+            }
+
+            function rerenderListState() {
+                if (!messagesList || !listState) return;
+
+                if (listState.type === 'messages') {
+                    renderMessages(listState.messages || []);
+                    return;
+                }
+
+                if (listState.type === 'loading') {
+                    messagesList.innerHTML =
+                        '<li class="messages-loading">' +
+                        escapeHtml(listState.message || tr('loading')) +
+                        '</li>';
+                    return;
+                }
+
+                if (listState.type === 'error') {
+                    messagesList.innerHTML =
+                        '<li class="messages-error">' +
+                        escapeHtml(listState.message || tr('supabaseUnavailable')) +
+                        '</li>';
+                }
+            }
+
+            function renderMessages(messages) {
+                if (!messages || messages.length === 0) {
+                    messagesList.innerHTML =
+                        '<li class="messages-empty">' +
+                        escapeHtml(tr('noMessages')) +
+                        '</li>';
+                    return;
+                }
+
+                messagesList.innerHTML = messages.map(function (msg) {
+                    const deleteButton = isAdmin
+                        ? '<button class="message-delete" type="button" data-delete-id="' +
+                          escapeHtml(String(msg.id)) +
+                          '">' +
+                          escapeHtml(tr('deleteText')) +
+                          '</button>'
+                        : '';
+
+                    return '<li class="message">' +
+                        '<div class="message-header">' +
+                            '<span class="message-author">' + escapeHtml(msg.author || '') + '</span>' +
+                            '<span class="message-time">' + escapeHtml(formatTime(msg.created_at)) + '</span>' +
+                            deleteButton +
+                        '</div>' +
+                        '<div class="message-content">' + escapeHtml(msg.content || '') + '</div>' +
+                    '</li>';
+                }).join('');
+            }
+
+            function formatTime(isoString) {
+                const date = new Date(isoString);
+
+                if (Number.isNaN(date.getTime())) return '';
+
+                const diffMs = Date.now() - date.getTime();
+                const minutes = Math.floor(diffMs / 60000);
+                const hours = Math.floor(diffMs / 3600000);
+                const days = Math.floor(diffMs / 86400000);
+
+                if (currentLang === 'zh') {
+                    if (minutes < 1) return tr('justNow');
+                    if (minutes < 60) return minutes + ' 分钟前';
+                    if (hours < 24) return hours + ' 小时前';
+                    if (days < 7) return days + ' 天前';
+                    return (date.getMonth() + 1) + '月' + date.getDate() + '日';
+                }
+
+                if (minutes < 1) return tr('justNow');
+                if (minutes < 60) return minutes + 'm ago';
+                if (hours < 24) return hours + 'h ago';
+                if (days < 7) return days + 'd ago';
+
+                return date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+
+            function cleanError(err) {
+                if (!err) return tr('unknown');
+                if (typeof err === 'string') return err;
+                if (err.message) return err.message;
+
+                try {
+                    return JSON.stringify(err);
+                } catch (jsonErr) {
+                    return String(err);
+                }
+            }
+
+            function showDebug(message) {
+                if (!debugPanel || !debugMessage) return;
+
+                debugPanel.classList.add('is-visible');
+                debugMessage.textContent = message;
+            }
+
+            function escapeHtml(value) {
+                const div = document.createElement('div');
+                div.textContent = value == null ? '' : String(value);
+                return div.innerHTML;
+            }
+        })();
     </script>
 </body>
 </html>
