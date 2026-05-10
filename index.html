@@ -214,6 +214,20 @@
     }
 
     .adminBanner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .adminBanner button {
+      flex: 0 0 auto;
+    }
+
+    .adminLoginHelp {
+      margin: -4px 0 12px;
       font-size: 13px;
       color: var(--muted);
     }
@@ -282,9 +296,6 @@
     .updateCard,
     .messageCard {
       border-top: 1px solid var(--line);
-    }
-
-    .messageCard {
       padding: 20px 0;
     }
 
@@ -296,76 +307,6 @@
     .updateCard.isHidden,
     .messageCard.isHidden {
       opacity: 0.62;
-    }
-
-    .updateSummary {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: start;
-      gap: 16px;
-      padding: 20px 0;
-      cursor: pointer;
-      list-style: none;
-    }
-
-    .updateSummary::-webkit-details-marker {
-      display: none;
-    }
-
-    .updateSummary::marker {
-      content: "";
-    }
-
-    .updateSummary:focus-visible {
-      outline: 1px solid var(--fg);
-      outline-offset: 5px;
-      border-radius: 10px;
-    }
-
-    .updateSummary:hover .updateTitle,
-    .updateSummary:focus-visible .updateTitle {
-      color: var(--muted);
-    }
-
-    .updateHead {
-      min-width: 0;
-    }
-
-    .updateSummary .updateTitle {
-      margin: 0;
-    }
-
-    .updateToggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 28px;
-      height: 28px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--muted);
-      font-size: 18px;
-      line-height: 1;
-      transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    }
-
-    .updateToggle::before {
-      content: "+";
-      transform: translateY(-1px);
-    }
-
-    .updateCard[open] .updateToggle {
-      color: var(--fg);
-      border-color: var(--fg);
-      transform: rotate(180deg);
-    }
-
-    .updateCard[open] .updateToggle::before {
-      content: "−";
-    }
-
-    .updateContent {
-      padding: 0 0 20px;
     }
 
     .meta {
@@ -481,6 +422,13 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     }
 
+    @media (max-width: 520px) {
+      .adminBanner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
     @media (min-width: 680px) {
       .page {
         padding-top: 46px;
@@ -513,8 +461,24 @@
     </header>
 
     <main>
-      <div id="adminBanner" class="adminBanner" data-admin-only hidden data-i18n="adminMode">
-        管理员模式已开启
+      <div id="adminBanner" class="adminBanner" data-admin-only hidden>
+        <span data-i18n="adminMode">管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。</span>
+        <button id="adminLogoutBtn" type="button" data-i18n="adminLogout">退出管理员模式</button>
+      </div>
+
+      <div id="adminLoginPanel" class="adminBox" hidden>
+        <form id="adminLoginForm">
+          <h2 class="sectionTitle" style="margin:0 0 14px;" data-i18n="adminLoginTitle">管理员登录</h2>
+          <p class="adminLoginHelp" data-i18n="adminLoginHelp">请输入管理员密码。密码只会临时保存在当前浏览器标签页，不会出现在网址里。</p>
+          <label>
+            <span data-i18n="adminPasswordLabel">管理员密码</span>
+            <input id="adminPasswordInput" type="password" autocomplete="current-password" data-i18n-placeholder="adminPasswordPlaceholder" placeholder="输入管理员密码" />
+          </label>
+          <div class="formActions">
+            <button id="adminLoginBtn" class="primary" type="submit" data-i18n="adminLogin">进入管理员模式</button>
+            <span id="adminLoginStatus" class="small"></span>
+          </div>
+        </form>
       </div>
 
       <section class="section">
@@ -735,9 +699,28 @@
       let editingUpdateId = null;
       let toastTimer = null;
 
+      const ADMIN_STORAGE_KEY = "hao_luo_admin_password";
       const params = new URLSearchParams(window.location.search);
-      const adminPasswordFromUrl = params.get("admin") || "";
-      const isAdmin = adminPasswordFromUrl.trim().length > 0;
+      let adminEntranceOpen = params.has("admin");
+      let adminPassword = adminEntranceOpen ? (sessionStorage.getItem(ADMIN_STORAGE_KEY) || "") : "";
+      let isAdmin = adminEntranceOpen && adminPassword.trim().length > 0;
+
+      const legacyAdminPassword = params.get("admin") || "";
+      if (adminEntranceOpen && legacyAdminPassword && legacyAdminPassword !== "1") {
+        adminPassword = legacyAdminPassword.trim();
+        if (adminPassword) {
+          sessionStorage.setItem(ADMIN_STORAGE_KEY, adminPassword);
+          isAdmin = true;
+        }
+        params.set("admin", "1");
+        const cleanSearch = params.toString();
+        const cleanUrl = `${window.location.pathname}${cleanSearch ? "?" + cleanSearch : ""}${window.location.hash}`;
+        window.history.replaceState(null, "", cleanUrl);
+      }
+
+      function getAdminPassword() {
+        return isAdmin ? adminPassword : "";
+      }
 
       let lang = localStorage.getItem("site_lang");
       if (lang !== "zh" && lang !== "en") {
@@ -749,6 +732,14 @@
           pageTitle: "Hao Luo | 个人主页",
           subtitle: "个人主页 / 持续更新",
           adminMode: "管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。",
+          adminLoginTitle: "管理员登录",
+          adminLoginHelp: "请输入管理员密码。密码只会临时保存在当前浏览器标签页，不会出现在网址里。",
+          adminPasswordLabel: "管理员密码",
+          adminPasswordPlaceholder: "输入管理员密码",
+          adminLogin: "进入管理员模式",
+          adminLoginSaved: "已进入管理员模式",
+          adminLogout: "退出管理员模式",
+          adminPasswordRequired: "请先输入管理员密码",
           aboutTitle: "ABOUT",
           nowTitle: "NOW",
           updatesTitle: "UPDATES",
@@ -822,6 +813,14 @@
           pageTitle: "Hao Luo | Homepage",
           subtitle: "Personal homepage / continuous updates",
           adminMode: "Admin mode is on. You can now add, edit, hide, or delete Updates.",
+          adminLoginTitle: "Admin login",
+          adminLoginHelp: "Enter the admin password. It will only be stored temporarily in this browser tab, not in the URL.",
+          adminPasswordLabel: "Admin password",
+          adminPasswordPlaceholder: "Enter admin password",
+          adminLogin: "Enter admin mode",
+          adminLoginSaved: "Admin mode is on",
+          adminLogout: "Exit admin mode",
+          adminPasswordRequired: "Please enter the admin password first",
           aboutTitle: "ABOUT",
           nowTitle: "NOW",
           updatesTitle: "UPDATES",
@@ -1052,6 +1051,78 @@
         document.querySelectorAll("[data-admin-only]").forEach((el) => {
           el.hidden = !isAdmin;
         });
+
+        const loginPanel = $("adminLoginPanel");
+        if (loginPanel) {
+          loginPanel.hidden = !(adminEntranceOpen && !isAdmin);
+        }
+      }
+
+      async function enterAdminMode(event) {
+        event.preventDefault();
+
+        const input = $("adminPasswordInput");
+        const password = input ? input.value.trim() : "";
+
+        if (!password) {
+          setStatus("adminLoginStatus", t("adminPasswordRequired"), true);
+          return;
+        }
+
+        sessionStorage.setItem(ADMIN_STORAGE_KEY, password);
+        adminPassword = password;
+        isAdmin = true;
+        adminEntranceOpen = true;
+
+        params.set("admin", "1");
+        const cleanSearch = params.toString();
+        const cleanUrl = `${window.location.pathname}${cleanSearch ? "?" + cleanSearch : ""}${window.location.hash}`;
+        window.history.replaceState(null, "", cleanUrl);
+
+        if (input) input.value = "";
+        setStatus("adminLoginStatus", "");
+        setupAdminView();
+        renderUpdates();
+        renderMessages();
+        showToast(t("adminLoginSaved"));
+
+        try {
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("loadFailed"), true);
+          showDebug("Load admin updates failed", errorMessage(error));
+        }
+
+        try {
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("loadFailed"), true);
+          showDebug("Load admin messages failed", errorMessage(error));
+        }
+      }
+
+      async function exitAdminMode() {
+        sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+        adminPassword = "";
+        isAdmin = false;
+        hideUpdateEditor();
+        setupAdminView();
+        renderUpdates();
+        renderMessages();
+
+        try {
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("loadFailed"), true);
+          showDebug("Load public updates failed", errorMessage(error));
+        }
+
+        try {
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("loadFailed"), true);
+          showDebug("Load public messages failed", errorMessage(error));
+        }
       }
 
       function renderProfile() {
@@ -1130,43 +1201,35 @@
           const type = trimValue(item.type || "post");
 
           return `
-            <details class="updateCard ${visible ? "" : "isHidden"}">
-              <summary class="updateSummary">
-                <div class="updateHead">
-                  <div class="meta">
-                    ${date ? `<span>${escapeHtml(date)}</span>` : ""}
-                    ${type ? `<span>${escapeHtml(type)}</span>` : ""}
-                    ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
-                  </div>
-
-                  <h3 class="updateTitle">${escapeHtml(title)}</h3>
-                </div>
-
-                <span class="updateToggle" aria-hidden="true"></span>
-              </summary>
-
-              <div class="updateContent">
-                ${body ? `<p class="updateBody">${nl2br(body)}</p>` : ""}
-
-                ${imageUrl ? `<img class="updateImage" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">` : ""}
-
-                ${linkUrl ? `
-                  <a class="linkButton" href="${escapeAttr(linkUrl)}" target="_blank" rel="noopener noreferrer">
-                    ${escapeHtml(linkLabel || t("view"))}
-                  </a>
-                ` : ""}
-
-                ${isAdmin ? `
-                  <div class="adminActions">
-                    <button class="textButton" type="button" data-update-action="edit" data-id="${escapeAttr(item.id)}">${escapeHtml(t("edit"))}</button>
-                    <button class="textButton" type="button" data-update-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
-                      ${escapeHtml(visible ? t("hide") : t("restore"))}
-                    </button>
-                    <button class="textButton" type="button" data-update-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
-                  </div>
-                ` : ""}
+            <article class="updateCard ${visible ? "" : "isHidden"}">
+              <div class="meta">
+                ${date ? `<span>${escapeHtml(date)}</span>` : ""}
+                ${type ? `<span>${escapeHtml(type)}</span>` : ""}
+                ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
               </div>
-            </details>
+
+              <h3 class="updateTitle">${escapeHtml(title)}</h3>
+
+              ${body ? `<p class="updateBody">${nl2br(body)}</p>` : ""}
+
+              ${imageUrl ? `<img class="updateImage" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">` : ""}
+
+              ${linkUrl ? `
+                <a class="linkButton" href="${escapeAttr(linkUrl)}" target="_blank" rel="noopener noreferrer">
+                  ${escapeHtml(linkLabel || t("view"))}
+                </a>
+              ` : ""}
+
+              ${isAdmin ? `
+                <div class="adminActions">
+                  <button class="textButton" type="button" data-update-action="edit" data-id="${escapeAttr(item.id)}">${escapeHtml(t("edit"))}</button>
+                  <button class="textButton" type="button" data-update-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
+                    ${escapeHtml(visible ? t("hide") : t("restore"))}
+                  </button>
+                  <button class="textButton" type="button" data-update-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                </div>
+              ` : ""}
+            </article>
           `;
         }).join("");
       }
@@ -1364,7 +1427,7 @@
           const { error } = await sbClient.rpc("update_site_setting_with_admin", {
             setting_key: "profile",
             setting_value: nextProfile,
-            admin_password: adminPasswordFromUrl
+            admin_password: getAdminPassword()
           });
 
           if (error) throw error;
@@ -1389,7 +1452,7 @@
 
         if (isAdmin) {
           result = await sbClient.rpc("get_updates_with_admin", {
-            p_admin_password: adminPasswordFromUrl
+            p_admin_password: getAdminPassword()
           });
         } else {
           result = await sbClient
@@ -1462,7 +1525,7 @@
             p_link_label_zh: $("updateLinkLabelZh").value,
             p_link_label_en: $("updateLinkLabelEn").value,
             p_visible: $("updateVisible").value === "true",
-            p_admin_password: adminPasswordFromUrl
+            p_admin_password: getAdminPassword()
           });
 
           if (error) throw error;
@@ -1485,7 +1548,7 @@
           const { error } = await sbClient.rpc("set_update_visible_with_admin", {
             p_update_id: Number(id),
             p_visible: Boolean(visible),
-            p_admin_password: adminPasswordFromUrl
+            p_admin_password: getAdminPassword()
           });
 
           if (error) throw error;
@@ -1504,7 +1567,7 @@
         try {
           const { error } = await sbClient.rpc("delete_update_with_admin", {
             p_update_id: Number(id),
-            p_admin_password: adminPasswordFromUrl
+            p_admin_password: getAdminPassword()
           });
 
           if (error) throw error;
@@ -1525,7 +1588,7 @@
 
         if (isAdmin) {
           result = await sbClient.rpc("get_messages_with_admin", {
-            admin_password: adminPasswordFromUrl
+            admin_password: getAdminPassword()
           });
         } else {
           result = await sbClient
@@ -1605,7 +1668,7 @@
           const { error } = await sbClient.rpc("set_message_visible_with_admin", {
             msg_id: Number(id),
             msg_visible: Boolean(visible),
-            admin_password: adminPasswordFromUrl
+            admin_password: getAdminPassword()
           });
 
           if (error) throw error;
@@ -1624,7 +1687,7 @@
         try {
           const { error } = await sbClient.rpc("delete_message_with_admin", {
             msg_id: Number(id),
-            admin_password: adminPasswordFromUrl
+            admin_password: getAdminPassword()
           });
 
           if (error) throw error;
@@ -1689,6 +1752,9 @@
           copyText(btn.getAttribute("data-copy"));
         });
 
+        $("adminLoginForm").addEventListener("submit", enterAdminMode);
+        $("adminLogoutBtn").addEventListener("click", exitAdminMode);
+
         $("profileForm").addEventListener("submit", saveProfile);
 
         $("newUpdateBtn").addEventListener("click", resetUpdateForm);
@@ -1707,17 +1773,6 @@
           if (action === "restore") setUpdateVisible(id, true);
           if (action === "delete") deleteUpdate(id);
         });
-
-        $("updatesList").addEventListener("toggle", (event) => {
-          const current = event.target;
-          if (!current.matches(".updateCard") || !current.open) return;
-
-          $("updatesList").querySelectorAll(".updateCard[open]").forEach((item) => {
-            if (item !== current) {
-              item.open = false;
-            }
-          });
-        }, true);
 
         $("messageForm").addEventListener("submit", sendMessage);
 
