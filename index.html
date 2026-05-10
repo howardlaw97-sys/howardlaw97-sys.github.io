@@ -828,6 +828,34 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     }
 
+    /* 骨架屏样式 */
+    .skeleton {
+      background: linear-gradient(90deg, var(--panelSoft) 25%, var(--line) 50%, var(--panelSoft) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radiusSmall);
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeletonCard {
+      padding: 18px;
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+    }
+
+    .skeletonLine {
+      height: 1em;
+      margin-bottom: 0.8em;
+    }
+
+    .skeletonLine:last-child {
+      width: 60%;
+    }
+
     @media (max-width: 680px) {
       .page {
         padding: 14px 12px 48px;
@@ -1160,6 +1188,19 @@
             </div>
 
             <div id="updatesStatus" class="statusLine" data-i18n="loadingUpdates">动态加载中...</div>
+            <!-- 骨架屏容器 -->
+            <div id="updatesSkeleton" class="updatesList">
+              <div class="skeleton skeletonCard">
+                <div class="skeleton skeletonLine" style="width: 30%;"></div>
+                <div class="skeleton skeletonLine" style="width: 80%;"></div>
+                <div class="skeleton skeletonLine" style="width: 100%;"></div>
+              </div>
+              <div class="skeleton skeletonCard">
+                <div class="skeleton skeletonLine" style="width: 30%;"></div>
+                <div class="skeleton skeletonLine" style="width: 80%;"></div>
+                <div class="skeleton skeletonLine" style="width: 100%;"></div>
+              </div>
+            </div>
             <div id="updatesList" class="updatesList"></div>
           </div>
         </div>
@@ -1196,6 +1237,8 @@
             </div>
 
             <input id="messageWebsite" class="honeypot" type="text" autocomplete="off" tabindex="-1" />
+            <!-- 防灌水时间戳 -->
+            <input type="hidden" id="messageTimestamp" value="" />
 
             <button id="sendMessageBtn" class="primary" type="submit" data-i18n="send">发布</button>
           </form>
@@ -1203,6 +1246,17 @@
           <p class="messageTips" data-i18n="messageTips">留言至少 2 个字，最多 500 字；链接最多 3 个。</p>
 
           <div id="messageStatus" class="statusLine" data-i18n="loadingMessages">留言加载中...</div>
+          <!-- 骨架屏容器 -->
+          <div id="messagesSkeleton" class="messageList">
+            <div class="skeleton skeletonCard">
+              <div class="skeleton skeletonLine" style="width: 30%;"></div>
+              <div class="skeleton skeletonLine" style="width: 80%;"></div>
+            </div>
+            <div class="skeleton skeletonCard">
+              <div class="skeleton skeletonLine" style="width: 30%;"></div>
+              <div class="skeleton skeletonLine" style="width: 80%;"></div>
+            </div>
+          </div>
           <div id="messageList" class="messageList"></div>
         </div>
       </section>
@@ -1253,8 +1307,12 @@
       const THEME_STORAGE_KEY = "hao_luo_site_theme";
       const UPDATES_COLLAPSED_KEY = "hao_luo_updates_collapsed";
       const VISITOR_SESSION_KEY = "hao_luo_visitor_identity";
-      const VISITOR_RECORD_SENT_KEY = "hao_luo_visitor_record_sent";
+      // 访客记录防重复：localStorage + 24h 时间戳
+      const VISITOR_RECORD_SENT_KEY = "hao_luo_visitor_record_last_sent_ts";
+      const VISITOR_RECORD_COOLDOWN_HOURS = 24;
       const MESSAGE_COOLDOWN_MS = 15000;
+      // 防灌水最小提交间隔（毫秒）
+      const MESSAGE_MIN_DELAY_MS = 3000;
 
       let sbClient = null;
       let messagesData = [];
@@ -1269,23 +1327,12 @@
       let siteAccessLoaded = false;
 
       const params = new URLSearchParams(window.location.search);
+      // 仅通过 ?admin 触发管理员入口，忽略值，不再支持密码在URL中
       let adminEntranceOpen = params.has("admin");
       let adminPassword = adminEntranceOpen ? (sessionStorage.getItem(ADMIN_STORAGE_KEY) || "") : "";
       let isAdmin = adminEntranceOpen && adminPassword.trim().length > 0;
 
-      const legacyAdminPassword = params.get("admin") || "";
-      if (adminEntranceOpen && legacyAdminPassword && legacyAdminPassword !== "1") {
-        adminPassword = legacyAdminPassword.trim();
-        if (adminPassword) {
-          sessionStorage.setItem(ADMIN_STORAGE_KEY, adminPassword);
-          isAdmin = true;
-        }
-        params.set("admin", "1");
-        const cleanSearch = params.toString();
-        const cleanUrl = `${window.location.pathname}${cleanSearch ? "?" + cleanSearch : ""}${window.location.hash}`;
-        window.history.replaceState(null, "", cleanUrl);
-      }
-
+      // 移除旧格式密码清退逻辑（不再处理 ?admin=密码）
       const savedUpdatesCollapsed = localStorage.getItem(UPDATES_COLLAPSED_KEY);
       if (savedUpdatesCollapsed === "true" || savedUpdatesCollapsed === "false") {
         updatesCollapsed = savedUpdatesCollapsed === "true";
@@ -1452,6 +1499,7 @@
           messageTooShort: "留言内容太短",
           messageTooManyLinks: "链接太多了",
           messageCooldown: "发布太频繁，请 {seconds} 秒后再试",
+          messageTooFast: "提交太快，请稍后再试",
           anonymous: "匿名",
           links: "个链接",
 
@@ -1582,6 +1630,7 @@
           messageTooShort: "Message is too short",
           messageTooManyLinks: "Too many links",
           messageCooldown: "Please wait {seconds}s before posting again",
+          messageTooFast: "Too fast, please try again later",
           anonymous: "Anonymous",
           links: "links",
 
@@ -1741,7 +1790,15 @@
         counterEl.classList.toggle("errorText", value.length > 500);
       }
 
+      function hideSkeleton(type) {
+        const skeletonEl = $(type + "Skeleton");
+        if (skeletonEl) skeletonEl.hidden = true;
+      }
 
+      function showSkeleton(type) {
+        const skeletonEl = $(type + "Skeleton");
+        if (skeletonEl) skeletonEl.hidden = false;
+      }
 
       function setupVisitorGate() {
         const gate = $("visitorGate");
@@ -1750,7 +1807,6 @@
 
         if (!gate || !closedOverlay) return;
 
-        // Priority 1: ?admin URL — always allow access (so admin can log in even when closed)
         if (adminEntranceOpen) {
           document.body.classList.remove("guestLocked");
           gate.hidden = true;
@@ -1758,7 +1814,6 @@
           return;
         }
 
-        // Priority 2: site is closed (and we've confirmed it from Supabase) — show closed overlay
         if (siteAccessLoaded && !siteAccessOpen) {
           document.body.classList.add("guestLocked");
           gate.hidden = true;
@@ -1766,7 +1821,6 @@
           return;
         }
 
-        // Priority 3: no visitor identity yet — show "who are you?" gate
         if (!trimValue(visitorIdentity)) {
           document.body.classList.add("guestLocked");
           closedOverlay.hidden = true;
@@ -1777,7 +1831,6 @@
           return;
         }
 
-        // Priority 4: identified visitor, site open — unlock the page
         document.body.classList.remove("guestLocked");
         gate.hidden = true;
         closedOverlay.hidden = true;
@@ -1826,13 +1879,20 @@
 
       async function recordVisitorIfNeeded() {
         if (!sbClient || isAdmin || !trimValue(visitorIdentity)) return;
-        if (sessionStorage.getItem(VISITOR_RECORD_SENT_KEY) === "1") return;
+        // 24小时防重复
+        const lastSent = localStorage.getItem(VISITOR_RECORD_SENT_KEY);
+        if (lastSent) {
+          const lastTime = Number(lastSent);
+          if (!Number.isNaN(lastTime) && (Date.now() - lastTime) < VISITOR_RECORD_COOLDOWN_HOURS * 60 * 60 * 1000) {
+            return;
+          }
+        }
 
         const { error } = await sbClient.rpc("create_visitor_record", getVisitorRecordPayload(visitorIdentity));
 
         if (error) throw error;
 
-        sessionStorage.setItem(VISITOR_RECORD_SENT_KEY, "1");
+        localStorage.setItem(VISITOR_RECORD_SENT_KEY, String(Date.now()));
       }
 
       function renderUpdatesCollapse() {
@@ -1969,6 +2029,7 @@
         isAdmin = true;
         adminEntranceOpen = true;
 
+        // 保留 ?admin，但确保无密码泄露
         params.set("admin", "1");
         const cleanSearch = params.toString();
         const cleanUrl = `${window.location.pathname}${cleanSearch ? "?" + cleanSearch : ""}${window.location.hash}`;
@@ -2092,6 +2153,8 @@
         const list = $("updatesList");
         if (!list) return;
 
+        hideSkeleton("updates");
+
         if (!updatesData.length) {
           list.innerHTML = "";
           setStatus("updatesStatus", t("noUpdates"));
@@ -2168,6 +2231,8 @@
         const list = $("messageList");
         if (!list) return;
 
+        hideSkeleton("messages");
+
         if (!messagesData.length) {
           list.innerHTML = "";
           setStatus("messageStatus", t("noMessages"));
@@ -2205,7 +2270,11 @@
         }).join("");
       }
 
-
+      function scrollToLatestMessage() {
+        const list = $("messageList");
+        if (!list || !list.lastElementChild) return;
+        list.lastElementChild.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
 
       function renderVisitorRecords() {
         const list = $("visitorRecordList");
@@ -2501,6 +2570,7 @@
         if (!sbClient) return;
 
         setStatus("updatesStatus", t("loadingUpdates"));
+        showSkeleton("updates");
 
         let result;
 
@@ -2522,6 +2592,7 @@
         updatesData = Array.isArray(result.data) ? result.data : [];
         renderUpdateFilters();
         renderUpdates();
+        hideSkeleton("updates");
       }
 
       async function saveUpdate(event) {
@@ -2638,6 +2709,7 @@
         if (!sbClient) return;
 
         setStatus("messageStatus", t("loadingMessages"));
+        showSkeleton("messages");
 
         let result;
 
@@ -2658,6 +2730,7 @@
 
         messagesData = Array.isArray(result.data) ? result.data : [];
         renderMessages();
+        hideSkeleton("messages");
       }
 
       async function loadVisitorRecords() {
@@ -2697,6 +2770,17 @@
         if (!sbClient) {
           setStatus("messageStatus", t("supabaseUnavailable"), true);
           return;
+        }
+
+        // 防灌水：检查隐藏时间戳
+        const timestampInput = $("messageTimestamp");
+        const submitTime = Date.now();
+        if (timestampInput) {
+          const formTime = Number(timestampInput.value);
+          if (formTime && (submitTime - formTime) < MESSAGE_MIN_DELAY_MS) {
+            setStatus("messageStatus", t("messageTooFast"), true);
+            return;
+          }
         }
 
         const cooldownSeconds = getMessageCooldownSeconds();
@@ -2743,9 +2827,13 @@
 
           sessionStorage.setItem(MESSAGE_LAST_SENT_KEY, String(Date.now()));
           $("messageForm").reset();
+          // 重置时间戳
+          if (timestampInput) timestampInput.value = "";
           updateMessageCounter();
           setStatus("messageStatus", t("messageSent"), false, true);
           await loadMessages();
+          // 自动滚动到最新消息
+          scrollToLatestMessage();
         } catch (error) {
           setStatus("messageStatus", t("actionFailed"), true);
           showDebug("Send message failed", errorMessage(error));
@@ -2793,8 +2881,6 @@
         }
       }
 
-
-
       async function deleteVisitorRecord(id) {
         if (!sbClient) return;
         if (!window.confirm(t("confirmDeleteVisitorRecord"))) return;
@@ -2817,6 +2903,8 @@
       async function loadSupabaseAndData() {
         setStatus("updatesStatus", t("loadingUpdates"));
         setStatus("messageStatus", t("loadingMessages"));
+        showSkeleton("updates");
+        showSkeleton("messages");
 
         try {
           await loadSupabaseScript();
@@ -2835,6 +2923,8 @@
         } catch (error) {
           setStatus("updatesStatus", t("supabaseUnavailable"), true);
           setStatus("messageStatus", t("supabaseUnavailable"), true);
+          hideSkeleton("updates");
+          hideSkeleton("messages");
           showDebug("Supabase initialization failed", errorMessage(error));
           return;
         }
@@ -2855,6 +2945,7 @@
           await loadUpdates();
         } catch (error) {
           setStatus("updatesStatus", t("loadFailed"), true);
+          hideSkeleton("updates");
           showDebug("Load updates failed", errorMessage(error));
         }
 
@@ -2862,6 +2953,7 @@
           await loadMessages();
         } catch (error) {
           setStatus("messageStatus", t("loadFailed"), true);
+          hideSkeleton("messages");
           showDebug("Load messages failed", errorMessage(error));
         }
 
@@ -2940,6 +3032,12 @@
         $("messageForm").addEventListener("submit", sendMessage);
         $("messageContent").addEventListener("input", updateMessageCounter);
 
+        // 在表单渲染时注入时间戳
+        const timestampEl = $("messageTimestamp");
+        if (timestampEl) {
+          timestampEl.value = String(Date.now());
+        }
+
         $("messageList").addEventListener("click", (event) => {
           const btn = event.target.closest("[data-message-action]");
           if (!btn) return;
@@ -2962,6 +3060,10 @@
         updateMessageCounter();
         renderUpdatesCollapse();
         loadSupabaseAndData();
+
+        // 每次页面加载时刷新留言表单的时间戳
+        const ts = $("messageTimestamp");
+        if (ts) ts.value = String(Date.now());
       });
     })();
   </script>
