@@ -709,6 +709,56 @@
       font-size: 13px;
     }
 
+    .siteAccessRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .siteAccessRow > div:first-child {
+      min-width: 0;
+      flex: 1 1 200px;
+    }
+
+    .siteAccessControl {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .siteAccessIndicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--panel);
+      line-height: 1.2;
+    }
+
+    .siteAccessIndicator::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      display: inline-block;
+    }
+
+    .siteAccessIndicator.isOpen {
+      color: var(--ok);
+    }
+
+    .siteAccessIndicator.isClosed {
+      color: var(--danger);
+    }
+
     .messageForm {
       display: grid;
       gap: 12px;
@@ -903,6 +953,20 @@
         <button id="adminLogoutBtn" type="button" data-i18n="adminLogout">退出管理员模式</button>
       </div>
 
+      <div id="siteAccessAdminPanel" class="adminBox" data-admin-only hidden>
+        <div class="siteAccessRow">
+          <div>
+            <strong data-i18n="siteAccessTitle">访客开关</strong>
+            <p class="adminLoginHelp" style="margin: 4px 0 0;" data-i18n="siteAccessHelp">关闭后，访客访问主页时会看到"主页当前不对外开放"，被阻挡在外。管理员通过 ?admin URL 不受影响。</p>
+          </div>
+          <div class="siteAccessControl">
+            <span id="siteAccessIndicator" class="siteAccessIndicator"></span>
+            <button id="siteAccessToggleBtn" type="button"></button>
+          </div>
+        </div>
+        <div id="siteAccessStatus" class="statusLine" style="margin: 10px 0 0;"></div>
+      </div>
+
       <div id="adminLoginPanel" class="adminBox" hidden>
         <form id="adminLoginForm">
           <h2 class="sectionTitle" style="margin:0 0 14px;" data-i18n="adminLoginTitle">管理员登录</h2>
@@ -998,7 +1062,7 @@
 
       <details id="visitorAdminPanel" class="adminBox" data-admin-only hidden>
         <summary data-i18n="visitorRecordsTitle">访客记录</summary>
-        <p class="adminLoginHelp" data-i18n="visitorRecordsHelp">访客回答“你是谁？”之后，会在这里留下记录。记录对普通访客不可见。</p>
+        <p class="adminLoginHelp" data-i18n="visitorRecordsHelp">访客回答"你是谁？"之后，会在这里留下记录。记录对普通访客不可见。</p>
         <div id="visitorRecordStatus" class="statusLine"></div>
         <div id="visitorRecordList" class="visitorList"></div>
       </details>
@@ -1168,6 +1232,14 @@
     </form>
   </div>
 
+  <div id="siteClosedOverlay" class="visitorGate" role="dialog" aria-modal="true" aria-labelledby="siteClosedTitle" hidden>
+    <div class="visitorGateCard">
+      <p class="visitorGateKicker" data-i18n="siteClosedKicker">CURRENTLY CLOSED</p>
+      <h2 id="siteClosedTitle" class="visitorGateTitle" data-i18n="siteClosedTitle">主页当前不对外开放</h2>
+      <p class="visitorGateHelp" data-i18n="siteClosedHelp">请稍后再来。</p>
+    </div>
+  </div>
+
   <script>
     (function () {
       "use strict";
@@ -1193,6 +1265,8 @@
       let updatesCollapsed = false;
       let visitorIdentity = sessionStorage.getItem(VISITOR_SESSION_KEY) || "";
       let toastTimer = null;
+      let siteAccessOpen = true;
+      let siteAccessLoaded = false;
 
       const params = new URLSearchParams(window.location.search);
       let adminEntranceOpen = params.has("admin");
@@ -1279,6 +1353,16 @@
           visitorNameRequired: "请先回答：你是谁？",
           visitorGateWelcome: "欢迎，{name}",
           visitorRecordFailed: "访客记录保存失败，但不影响访问。",
+          siteClosedKicker: "暂未开放",
+          siteClosedTitle: "主页当前不对外开放",
+          siteClosedHelp: "请稍后再来。",
+          siteAccessTitle: "访客开关",
+          siteAccessHelp: "关闭后，访客访问主页时会看到\"主页当前不对外开放\"，被阻挡在外。管理员通过 ?admin URL 不受影响。",
+          siteAccessOpenLabel: "开放中",
+          siteAccessClosedLabel: "已关闭",
+          siteAccessToggleClose: "关闭访问",
+          siteAccessToggleOpen: "开放访问",
+          siteAccessUpdated: "已更新",
           adminMode: "管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。保存或删除时仍会由 Supabase 校验密码。",
           adminLoginTitle: "管理员登录",
           adminLoginHelp: "请输入管理员密码。密码只会临时保存在当前浏览器标签页，不会出现在网址里。",
@@ -1311,7 +1395,7 @@
           noContact: "暂无公开联系方式",
 
           visitorRecordsTitle: "访客记录",
-          visitorRecordsHelp: "访客回答“你是谁？”之后，会在这里留下记录。记录对普通访客不可见。",
+          visitorRecordsHelp: "访客回答\"你是谁？\"之后，会在这里留下记录。记录对普通访客不可见。",
           noVisitorRecords: "暂无访客记录",
           loadingVisitorRecords: "访客记录加载中...",
           visitorRecordCount: "共 {count} 条访客记录",
@@ -1399,6 +1483,16 @@
           visitorNameRequired: "Please answer: who are you?",
           visitorGateWelcome: "Welcome, {name}",
           visitorRecordFailed: "Visitor record failed to save, but access is allowed.",
+          siteClosedKicker: "CURRENTLY CLOSED",
+          siteClosedTitle: "This site is currently closed to visitors",
+          siteClosedHelp: "Please check back later.",
+          siteAccessTitle: "Visitor access",
+          siteAccessHelp: "When off, visitors will see a closed message and be blocked. Admins (via the ?admin URL) are not affected.",
+          siteAccessOpenLabel: "Open",
+          siteAccessClosedLabel: "Closed",
+          siteAccessToggleClose: "Close access",
+          siteAccessToggleOpen: "Open access",
+          siteAccessUpdated: "Updated",
           adminMode: "Admin mode is on. You can now add, edit, hide, or delete Updates. Supabase will still verify the password when saving or deleting.",
           adminLoginTitle: "Admin login",
           adminLoginHelp: "Enter the admin password. It will only be stored temporarily in this browser tab, not in the URL.",
@@ -1431,7 +1525,7 @@
           noContact: "No public contact yet",
 
           visitorRecordsTitle: "Visitor records",
-          visitorRecordsHelp: "After visitors answer “Who are you?”, their records appear here. Ordinary visitors cannot see them.",
+          visitorRecordsHelp: "After visitors answer \"Who are you?\", their records appear here. Ordinary visitors cannot see them.",
           noVisitorRecords: "No visitor records yet",
           loadingVisitorRecords: "Loading visitor records...",
           visitorRecordCount: "{count} visitor records",
@@ -1651,21 +1745,42 @@
 
       function setupVisitorGate() {
         const gate = $("visitorGate");
+        const closedOverlay = $("siteClosedOverlay");
         const input = $("visitorNameInput");
-        const shouldAsk = !adminEntranceOpen && !trimValue(visitorIdentity);
 
-        if (!gate) return;
+        if (!gate || !closedOverlay) return;
 
-        if (shouldAsk) {
+        // Priority 1: ?admin URL — always allow access (so admin can log in even when closed)
+        if (adminEntranceOpen) {
+          document.body.classList.remove("guestLocked");
+          gate.hidden = true;
+          closedOverlay.hidden = true;
+          return;
+        }
+
+        // Priority 2: site is closed (and we've confirmed it from Supabase) — show closed overlay
+        if (siteAccessLoaded && !siteAccessOpen) {
           document.body.classList.add("guestLocked");
+          gate.hidden = true;
+          closedOverlay.hidden = false;
+          return;
+        }
+
+        // Priority 3: no visitor identity yet — show "who are you?" gate
+        if (!trimValue(visitorIdentity)) {
+          document.body.classList.add("guestLocked");
+          closedOverlay.hidden = true;
           gate.hidden = false;
           setTimeout(() => {
             if (input) input.focus();
           }, 80);
-        } else {
-          document.body.classList.remove("guestLocked");
-          gate.hidden = true;
+          return;
         }
+
+        // Priority 4: identified visitor, site open — unlock the page
+        document.body.classList.remove("guestLocked");
+        gate.hidden = true;
+        closedOverlay.hidden = true;
       }
 
       function unlockVisitorGate() {
@@ -1823,6 +1938,7 @@
         renderMessages();
         renderVisitorRecords();
         renderUpdatesCollapse();
+        renderSiteAccessAdmin();
         setupVisitorGate();
       }
 
@@ -2257,6 +2373,81 @@
         }
       }
 
+      async function loadSiteAccess() {
+        if (!sbClient) return;
+
+        const { data, error } = await sbClient
+          .from("site_settings")
+          .select("value")
+          .eq("key", "site_access")
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data && data.value && typeof data.value.open === "boolean") {
+          siteAccessOpen = data.value.open;
+        } else {
+          siteAccessOpen = true;
+        }
+
+        siteAccessLoaded = true;
+        renderSiteAccessAdmin();
+        setupVisitorGate();
+      }
+
+      function renderSiteAccessAdmin() {
+        const indicator = $("siteAccessIndicator");
+        const btn = $("siteAccessToggleBtn");
+        if (!indicator || !btn) return;
+
+        if (siteAccessOpen) {
+          indicator.textContent = t("siteAccessOpenLabel");
+          indicator.classList.add("isOpen");
+          indicator.classList.remove("isClosed");
+          btn.textContent = t("siteAccessToggleClose");
+        } else {
+          indicator.textContent = t("siteAccessClosedLabel");
+          indicator.classList.add("isClosed");
+          indicator.classList.remove("isOpen");
+          btn.textContent = t("siteAccessToggleOpen");
+        }
+      }
+
+      async function toggleSiteAccess() {
+        if (!sbClient) {
+          setStatus("siteAccessStatus", t("supabaseUnavailable"), true);
+          return;
+        }
+
+        const btn = $("siteAccessToggleBtn");
+        const nextOpen = !siteAccessOpen;
+
+        btn.disabled = true;
+        setStatus("siteAccessStatus", t("saving"));
+
+        try {
+          const { error } = await sbClient.rpc("update_site_setting_with_admin", {
+            setting_key: "site_access",
+            setting_value: { open: nextOpen },
+            admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          siteAccessOpen = nextOpen;
+          siteAccessLoaded = true;
+          renderSiteAccessAdmin();
+          setupVisitorGate();
+          setStatus("siteAccessStatus", t("siteAccessUpdated"), false, true);
+          showToast(t("siteAccessUpdated"));
+        } catch (error) {
+          setStatus("siteAccessStatus", t("actionFailed"), true);
+          showDebug("Toggle site access failed", errorMessage(error));
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
       async function saveProfile(event) {
         event.preventDefault();
 
@@ -2649,6 +2840,12 @@
         }
 
         try {
+          await loadSiteAccess();
+        } catch (error) {
+          showDebug("Load site access failed", errorMessage(error));
+        }
+
+        try {
           await loadProfile();
         } catch (error) {
           showDebug("Load profile failed", errorMessage(error));
@@ -2695,6 +2892,8 @@
 
         $("adminLoginForm").addEventListener("submit", enterAdminMode);
         $("adminLogoutBtn").addEventListener("click", exitAdminMode);
+
+        $("siteAccessToggleBtn").addEventListener("click", toggleSiteAccess);
 
         $("profileForm").addEventListener("submit", saveProfile);
 
