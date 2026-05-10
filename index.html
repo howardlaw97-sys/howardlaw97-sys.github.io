@@ -238,6 +238,62 @@
       display: none !important;
     }
 
+
+    body.guestLocked {
+      overflow: hidden;
+    }
+
+    body.guestLocked .page {
+      opacity: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .visitorGate {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(251, 250, 247, 0.86);
+      backdrop-filter: blur(18px);
+    }
+
+    html[data-theme="dark"] .visitorGate {
+      background: rgba(17, 17, 15, 0.88);
+    }
+
+    .visitorGateCard {
+      width: min(100%, 460px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .visitorGateKicker {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      font-weight: 800;
+    }
+
+    .visitorGateTitle {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 8vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .visitorGateHelp {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     .page {
       width: min(100%, 900px);
       margin: 0 auto;
@@ -347,6 +403,33 @@
       justify-content: space-between;
       gap: 16px;
       margin: 0 0 18px;
+    }
+
+
+    .sectionActions {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .collapseButton {
+      min-height: 32px;
+      padding: 6px 11px;
+      border-color: var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .collapseButton:hover {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+
+    .collapsibleContent {
+      margin-top: 4px;
     }
 
     .sectionTitle {
@@ -502,6 +585,41 @@
     .messageList {
       display: grid;
       gap: 12px;
+    }
+
+
+    .visitorList {
+      display: grid;
+      gap: 10px;
+    }
+
+    .visitorRecordCard {
+      border: 1px solid var(--line);
+      border-radius: var(--radiusSmall);
+      background: var(--panelSoft);
+      padding: 13px;
+      font-size: 13px;
+    }
+
+    .visitorRecordTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .visitorRecordName {
+      color: var(--fg);
+      font-weight: 750;
+    }
+
+    .visitorRecordGrid {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
     }
 
     .updateCard,
@@ -710,6 +828,14 @@
         flex-direction: column;
       }
 
+      .sectionHeader {
+        align-items: flex-start;
+      }
+
+      .sectionActions {
+        justify-content: flex-start;
+      }
+
       .contactItem {
         grid-template-columns: 1fr;
         gap: 6px;
@@ -747,7 +873,7 @@
   </style>
 </head>
 
-<body>
+<body class="guestLocked">
   <a class="skipLink" href="#mainContent">跳过导航，直接进入正文</a>
 
   <div class="page">
@@ -755,7 +881,7 @@
       <div>
         <p class="heroKicker" data-i18n="heroKicker">PERSONAL WEBSITE</p>
         <h1 class="brand">HAO<br>LUO</h1>
-        <p class="subtitle" data-i18n="subtitle">个人主页 / 持续更新</p>
+        <p class="subtitle" data-i18n="subtitle">个人主页</p>
 
         <nav class="quickNav" aria-label="Page sections">
           <a href="#aboutSection" data-i18n="aboutTitle">ABOUT</a>
@@ -870,96 +996,108 @@
         </form>
       </details>
 
+      <details id="visitorAdminPanel" class="adminBox" data-admin-only hidden>
+        <summary data-i18n="visitorRecordsTitle">访客记录</summary>
+        <p class="adminLoginHelp" data-i18n="visitorRecordsHelp">访客回答“你是谁？”之后，会在这里留下记录。记录对普通访客不可见。</p>
+        <div id="visitorRecordStatus" class="statusLine"></div>
+        <div id="visitorRecordList" class="visitorList"></div>
+      </details>
+
       <section class="section" id="updatesSection">
         <div class="sectionInner">
           <div class="sectionHeader">
             <h2 class="sectionTitle" data-i18n="updatesTitle">UPDATES</h2>
-            <button id="newUpdateBtn" type="button" data-admin-only hidden data-i18n="newUpdate">新增</button>
+            <div class="sectionActions">
+              <button id="updatesToggleBtn" class="collapseButton" type="button" aria-expanded="false" aria-controls="updatesContent" data-i18n="expandUpdates">展开</button>
+              <button id="newUpdateBtn" type="button" data-admin-only hidden data-i18n="newUpdate">新增</button>
+            </div>
           </div>
 
-          <div id="updateFilters" class="filterBar" aria-label="Update filters"></div>
+          <div id="updatesContent" class="collapsibleContent" hidden>
+            <div id="updateFilters" class="filterBar" aria-label="Update filters"></div>
 
-          <div id="updateEditor" class="adminBox hidden" data-admin-only hidden>
-            <h3 id="updateFormTitle" class="sectionTitle" style="margin:0 0 16px;">新增动态</h3>
+            <div id="updateEditor" class="adminBox hidden" data-admin-only hidden>
+              <h3 id="updateFormTitle" class="sectionTitle" style="margin:0 0 16px;">新增动态</h3>
 
-            <form id="updateForm">
-              <div class="formGrid two">
+              <form id="updateForm">
+                <div class="formGrid two">
+                  <label>
+                    <span data-i18n="updateType">类型</span>
+                    <select id="updateType">
+                      <option value="post">post</option>
+                      <option value="note">note</option>
+                      <option value="project">project</option>
+                      <option value="link">link</option>
+                      <option value="image">image</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span data-i18n="visible">公开显示</span>
+                    <select id="updateVisible">
+                      <option value="true" data-i18n="visibleYes">公开</option>
+                      <option value="false" data-i18n="visibleNo">隐藏</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div class="formGrid two">
+                  <label>
+                    <span data-i18n="titleZh">中文标题</span>
+                    <input id="updateTitleZh" type="text" autocomplete="off" />
+                  </label>
+
+                  <label>
+                    <span data-i18n="titleEn">英文标题</span>
+                    <input id="updateTitleEn" type="text" autocomplete="off" />
+                  </label>
+                </div>
+
+                <div class="formGrid two">
+                  <label>
+                    <span data-i18n="bodyZh">中文正文</span>
+                    <textarea id="updateBodyZh"></textarea>
+                  </label>
+
+                  <label>
+                    <span data-i18n="bodyEn">英文正文</span>
+                    <textarea id="updateBodyEn"></textarea>
+                  </label>
+                </div>
+
                 <label>
-                  <span data-i18n="updateType">类型</span>
-                  <select id="updateType">
-                    <option value="post">post</option>
-                    <option value="note">note</option>
-                    <option value="project">project</option>
-                    <option value="link">link</option>
-                    <option value="image">image</option>
-                  </select>
+                  <span data-i18n="imageUrl">图片 URL，只接受 http / https</span>
+                  <input id="updateImageUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/image.jpg" />
                 </label>
 
                 <label>
-                  <span data-i18n="visible">公开显示</span>
-                  <select id="updateVisible">
-                    <option value="true" data-i18n="visibleYes">公开</option>
-                    <option value="false" data-i18n="visibleNo">隐藏</option>
-                  </select>
-                </label>
-              </div>
-
-              <div class="formGrid two">
-                <label>
-                  <span data-i18n="titleZh">中文标题</span>
-                  <input id="updateTitleZh" type="text" autocomplete="off" />
+                  <span data-i18n="linkUrl">外部链接 URL，只接受 http / https</span>
+                  <input id="updateLinkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com" />
                 </label>
 
-                <label>
-                  <span data-i18n="titleEn">英文标题</span>
-                  <input id="updateTitleEn" type="text" autocomplete="off" />
-                </label>
-              </div>
+                <div class="formGrid two">
+                  <label>
+                    <span data-i18n="linkLabelZh">中文链接按钮文字</span>
+                    <input id="updateLinkLabelZh" type="text" autocomplete="off" placeholder="查看" />
+                  </label>
 
-              <div class="formGrid two">
-                <label>
-                  <span data-i18n="bodyZh">中文正文</span>
-                  <textarea id="updateBodyZh"></textarea>
-                </label>
+                  <label>
+                    <span data-i18n="linkLabelEn">英文链接按钮文字</span>
+                    <input id="updateLinkLabelEn" type="text" autocomplete="off" placeholder="View" />
+                  </label>
+                </div>
 
-                <label>
-                  <span data-i18n="bodyEn">英文正文</span>
-                  <textarea id="updateBodyEn"></textarea>
-                </label>
-              </div>
+                <div class="formActions">
+                  <button id="saveUpdateBtn" class="primary" type="submit" data-i18n="save">保存</button>
+                  <button id="cancelUpdateBtn" type="button" data-i18n="cancel">取消</button>
+                  <span id="updateSaveStatus" class="small"></span>
+                </div>
+              </form>
+            </div>
 
-              <label>
-                <span data-i18n="imageUrl">图片 URL，只接受 http / https</span>
-                <input id="updateImageUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/image.jpg" />
-              </label>
-
-              <label>
-                <span data-i18n="linkUrl">外部链接 URL，只接受 http / https</span>
-                <input id="updateLinkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com" />
-              </label>
-
-              <div class="formGrid two">
-                <label>
-                  <span data-i18n="linkLabelZh">中文链接按钮文字</span>
-                  <input id="updateLinkLabelZh" type="text" autocomplete="off" placeholder="查看" />
-                </label>
-
-                <label>
-                  <span data-i18n="linkLabelEn">英文链接按钮文字</span>
-                  <input id="updateLinkLabelEn" type="text" autocomplete="off" placeholder="View" />
-                </label>
-              </div>
-
-              <div class="formActions">
-                <button id="saveUpdateBtn" class="primary" type="submit" data-i18n="save">保存</button>
-                <button id="cancelUpdateBtn" type="button" data-i18n="cancel">取消</button>
-                <span id="updateSaveStatus" class="small"></span>
-              </div>
-            </form>
+            <div id="updatesStatus" class="statusLine" data-i18n="loadingUpdates">动态加载中...</div>
+            <div id="updatesList" class="updatesList"></div>
           </div>
-
-          <div id="updatesStatus" class="statusLine" data-i18n="loadingUpdates">动态加载中...</div>
-          <div id="updatesList" class="updatesList"></div>
         </div>
       </section>
 
@@ -1014,6 +1152,22 @@
 
   <div id="toast" class="toast hidden"></div>
 
+  <div id="visitorGate" class="visitorGate" role="dialog" aria-modal="true" aria-labelledby="visitorGateTitle" hidden>
+    <form id="visitorGateForm" class="visitorGateCard">
+      <p class="visitorGateKicker" data-i18n="visitorGateKicker">VISITOR CHECK</p>
+      <h2 id="visitorGateTitle" class="visitorGateTitle" data-i18n="visitorGateQuestion">你是谁？</h2>
+      <p class="visitorGateHelp" data-i18n="visitorGateHelp">请输入你的名字、昵称，或一句能说明身份的话。提交后即可访问。</p>
+      <label>
+        <span data-i18n="visitorNameLabel">你的身份</span>
+        <input id="visitorNameInput" type="text" maxlength="40" required autocomplete="name" data-i18n-placeholder="visitorNamePlaceholder" placeholder="例如：老朋友 / 同学 / 张三" />
+      </label>
+      <div class="formActions">
+        <button id="visitorGateBtn" class="primary" type="submit" data-i18n="visitorGateEnter">进入</button>
+        <span id="visitorGateStatus" class="small"></span>
+      </div>
+    </form>
+  </div>
+
   <script>
     (function () {
       "use strict";
@@ -1025,13 +1179,19 @@
       const ADMIN_STORAGE_KEY = "hao_luo_admin_password";
       const MESSAGE_LAST_SENT_KEY = "hao_luo_message_last_sent";
       const THEME_STORAGE_KEY = "hao_luo_site_theme";
+      const UPDATES_COLLAPSED_KEY = "hao_luo_updates_collapsed";
+      const VISITOR_SESSION_KEY = "hao_luo_visitor_identity";
+      const VISITOR_RECORD_SENT_KEY = "hao_luo_visitor_record_sent";
       const MESSAGE_COOLDOWN_MS = 15000;
 
       let sbClient = null;
       let messagesData = [];
+      let visitorRecordsData = [];
       let updatesData = [];
       let editingUpdateId = null;
       let updateFilter = "all";
+      let updatesCollapsed = false;
+      let visitorIdentity = sessionStorage.getItem(VISITOR_SESSION_KEY) || "";
       let toastTimer = null;
 
       const params = new URLSearchParams(window.location.search);
@@ -1050,6 +1210,13 @@
         const cleanSearch = params.toString();
         const cleanUrl = `${window.location.pathname}${cleanSearch ? "?" + cleanSearch : ""}${window.location.hash}`;
         window.history.replaceState(null, "", cleanUrl);
+      }
+
+      const savedUpdatesCollapsed = localStorage.getItem(UPDATES_COLLAPSED_KEY);
+      if (savedUpdatesCollapsed === "true" || savedUpdatesCollapsed === "false") {
+        updatesCollapsed = savedUpdatesCollapsed === "true";
+      } else {
+        updatesCollapsed = !isAdmin;
       }
 
       function getInitialTheme() {
@@ -1100,9 +1267,18 @@
         zh: {
           pageTitle: "Hao Luo | 个人主页",
           heroKicker: "PERSONAL WEBSITE",
-          subtitle: "个人主页 / 持续更新",
+          subtitle: "个人主页",
           themeDark: "切换到深色模式",
           themeLight: "切换到浅色模式",
+          visitorGateKicker: "VISITOR CHECK",
+          visitorGateQuestion: "你是谁？",
+          visitorGateHelp: "请输入你的名字、昵称，或一句能说明身份的话。提交后即可访问。",
+          visitorNameLabel: "你的身份",
+          visitorNamePlaceholder: "例如：老朋友 / 同学 / 张三",
+          visitorGateEnter: "进入",
+          visitorNameRequired: "请先回答：你是谁？",
+          visitorGateWelcome: "欢迎，{name}",
+          visitorRecordFailed: "访客记录保存失败，但不影响访问。",
           adminMode: "管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。保存或删除时仍会由 Supabase 校验密码。",
           adminLoginTitle: "管理员登录",
           adminLoginHelp: "请输入管理员密码。密码只会临时保存在当前浏览器标签页，不会出现在网址里。",
@@ -1116,6 +1292,8 @@
           nowTitle: "NOW",
           updatesTitle: "UPDATES",
           messagesTitle: "MESSAGES",
+          expandUpdates: "展开",
+          collapseUpdates: "收起",
 
           editProfile: "编辑个人信息 / 联系方式",
           bioZh: "中文简介",
@@ -1131,6 +1309,19 @@
           copy: "复制",
           copied: "已复制",
           noContact: "暂无公开联系方式",
+
+          visitorRecordsTitle: "访客记录",
+          visitorRecordsHelp: "访客回答“你是谁？”之后，会在这里留下记录。记录对普通访客不可见。",
+          noVisitorRecords: "暂无访客记录",
+          loadingVisitorRecords: "访客记录加载中...",
+          visitorRecordCount: "共 {count} 条访客记录",
+          visitorName: "访客",
+          visitorPath: "访问页面",
+          visitorReferrer: "来源",
+          visitorLang: "语言",
+          visitorTimezone: "时区",
+          directVisit: "直接访问 / 无来源",
+          confirmDeleteVisitorRecord: "确定删除这条访客记录吗？删除后无法恢复。",
 
           newUpdate: "新增",
           updateFormNew: "新增动态",
@@ -1196,9 +1387,18 @@
         en: {
           pageTitle: "Hao Luo | Homepage",
           heroKicker: "PERSONAL WEBSITE",
-          subtitle: "Personal homepage / continuous updates",
+          subtitle: "Personal homepage",
           themeDark: "Switch to dark mode",
           themeLight: "Switch to light mode",
+          visitorGateKicker: "VISITOR CHECK",
+          visitorGateQuestion: "Who are you?",
+          visitorGateHelp: "Enter your name, nickname, or a short identity note. You can enter after submitting.",
+          visitorNameLabel: "Your identity",
+          visitorNamePlaceholder: "e.g. old friend / classmate / Alex",
+          visitorGateEnter: "Enter",
+          visitorNameRequired: "Please answer: who are you?",
+          visitorGateWelcome: "Welcome, {name}",
+          visitorRecordFailed: "Visitor record failed to save, but access is allowed.",
           adminMode: "Admin mode is on. You can now add, edit, hide, or delete Updates. Supabase will still verify the password when saving or deleting.",
           adminLoginTitle: "Admin login",
           adminLoginHelp: "Enter the admin password. It will only be stored temporarily in this browser tab, not in the URL.",
@@ -1212,6 +1412,8 @@
           nowTitle: "NOW",
           updatesTitle: "UPDATES",
           messagesTitle: "MESSAGES",
+          expandUpdates: "Expand",
+          collapseUpdates: "Collapse",
 
           editProfile: "Edit profile / contacts",
           bioZh: "Chinese bio",
@@ -1227,6 +1429,19 @@
           copy: "Copy",
           copied: "Copied",
           noContact: "No public contact yet",
+
+          visitorRecordsTitle: "Visitor records",
+          visitorRecordsHelp: "After visitors answer “Who are you?”, their records appear here. Ordinary visitors cannot see them.",
+          noVisitorRecords: "No visitor records yet",
+          loadingVisitorRecords: "Loading visitor records...",
+          visitorRecordCount: "{count} visitor records",
+          visitorName: "Visitor",
+          visitorPath: "Visited page",
+          visitorReferrer: "Referrer",
+          visitorLang: "Language",
+          visitorTimezone: "Time zone",
+          directVisit: "Direct visit / no referrer",
+          confirmDeleteVisitorRecord: "Delete this visitor record? This cannot be undone.",
 
           newUpdate: "New",
           updateFormNew: "New update",
@@ -1359,6 +1574,17 @@
         return `${y}.${m}.${d}`;
       }
 
+      function formatDateTime(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        const hh = String(date.getHours()).padStart(2, "0");
+        const mm = String(date.getMinutes()).padStart(2, "0");
+        return `${y}.${m}.${d} ${hh}:${mm}`;
+      }
+
       function showToast(message) {
         const el = $("toast");
         if (!el) return;
@@ -1419,6 +1645,96 @@
         linkCounterEl.textContent = lang === "zh" ? `${links} ${t("links")}` : `${links} ${t("links")}`;
         linkCounterEl.classList.toggle("errorText", links > 3);
         counterEl.classList.toggle("errorText", value.length > 500);
+      }
+
+
+
+      function setupVisitorGate() {
+        const gate = $("visitorGate");
+        const input = $("visitorNameInput");
+        const shouldAsk = !adminEntranceOpen && !trimValue(visitorIdentity);
+
+        if (!gate) return;
+
+        if (shouldAsk) {
+          document.body.classList.add("guestLocked");
+          gate.hidden = false;
+          setTimeout(() => {
+            if (input) input.focus();
+          }, 80);
+        } else {
+          document.body.classList.remove("guestLocked");
+          gate.hidden = true;
+        }
+      }
+
+      function unlockVisitorGate() {
+        const gate = $("visitorGate");
+        document.body.classList.remove("guestLocked");
+        if (gate) gate.hidden = true;
+      }
+
+      async function submitVisitorGate(event) {
+        event.preventDefault();
+
+        const input = $("visitorNameInput");
+        const answer = trimValue(input ? input.value : "").slice(0, 40);
+
+        if (!answer) {
+          setStatus("visitorGateStatus", t("visitorNameRequired"), true);
+          return;
+        }
+
+        visitorIdentity = answer;
+        sessionStorage.setItem(VISITOR_SESSION_KEY, visitorIdentity);
+        unlockVisitorGate();
+        showToast(t("visitorGateWelcome").replace("{name}", visitorIdentity));
+
+        try {
+          await recordVisitorIfNeeded();
+        } catch (error) {
+          showDebug("Save visitor record failed", errorMessage(error));
+          showToast(t("visitorRecordFailed"));
+        }
+      }
+
+      function getVisitorRecordPayload(name) {
+        return {
+          p_name: trimValue(name).slice(0, 40),
+          p_path: `${window.location.pathname}${window.location.search}${window.location.hash}`.slice(0, 140),
+          p_referrer: String(document.referrer || "").slice(0, 140),
+          p_lang: String(navigator.language || "").slice(0, 30),
+          p_timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone || "").slice(0, 60),
+          p_user_agent: String(navigator.userAgent || "").slice(0, 220)
+        };
+      }
+
+      async function recordVisitorIfNeeded() {
+        if (!sbClient || isAdmin || !trimValue(visitorIdentity)) return;
+        if (sessionStorage.getItem(VISITOR_RECORD_SENT_KEY) === "1") return;
+
+        const { error } = await sbClient.rpc("create_visitor_record", getVisitorRecordPayload(visitorIdentity));
+
+        if (error) throw error;
+
+        sessionStorage.setItem(VISITOR_RECORD_SENT_KEY, "1");
+      }
+
+      function renderUpdatesCollapse() {
+        const content = $("updatesContent");
+        const btn = $("updatesToggleBtn");
+        if (!content || !btn) return;
+
+        content.hidden = updatesCollapsed;
+        btn.textContent = updatesCollapsed ? t("expandUpdates") : t("collapseUpdates");
+        btn.setAttribute("aria-expanded", updatesCollapsed ? "false" : "true");
+        btn.setAttribute("title", updatesCollapsed ? t("expandUpdates") : t("collapseUpdates"));
+      }
+
+      function setUpdatesCollapsed(collapsed) {
+        updatesCollapsed = Boolean(collapsed);
+        localStorage.setItem(UPDATES_COLLAPSED_KEY, updatesCollapsed ? "true" : "false");
+        renderUpdatesCollapse();
       }
 
       function getUpdateTypeLabel(type) {
@@ -1505,6 +1821,9 @@
         renderProfile();
         renderUpdates();
         renderMessages();
+        renderVisitorRecords();
+        renderUpdatesCollapse();
+        setupVisitorGate();
       }
 
       function setupAdminView() {
@@ -1542,8 +1861,14 @@
         if (input) input.value = "";
         setStatus("adminLoginStatus", "");
         setupAdminView();
+        if (localStorage.getItem(UPDATES_COLLAPSED_KEY) === null) {
+          updatesCollapsed = false;
+        }
         renderUpdates();
         renderMessages();
+        renderVisitorRecords();
+        renderUpdatesCollapse();
+        setupVisitorGate();
         showToast(t("adminLoginSaved"));
 
         try {
@@ -1559,6 +1884,13 @@
           setStatus("messageStatus", t("loadFailed"), true);
           showDebug("Load admin messages failed", errorMessage(error));
         }
+
+        try {
+          await loadVisitorRecords();
+        } catch (error) {
+          setStatus("visitorRecordStatus", t("loadFailed"), true);
+          showDebug("Load visitor records failed", errorMessage(error));
+        }
       }
 
       async function exitAdminMode() {
@@ -1566,9 +1898,11 @@
         adminPassword = "";
         isAdmin = false;
         hideUpdateEditor();
+        visitorRecordsData = [];
         setupAdminView();
         renderUpdates();
         renderMessages();
+        renderVisitorRecords();
 
         try {
           await loadUpdates();
@@ -1755,11 +2089,60 @@
         }).join("");
       }
 
+
+
+      function renderVisitorRecords() {
+        const list = $("visitorRecordList");
+        if (!list) return;
+
+        if (!isAdmin) {
+          list.innerHTML = "";
+          setStatus("visitorRecordStatus", "");
+          return;
+        }
+
+        if (!visitorRecordsData.length) {
+          list.innerHTML = "";
+          setStatus("visitorRecordStatus", t("noVisitorRecords"));
+          return;
+        }
+
+        setStatus("visitorRecordStatus", t("visitorRecordCount").replace("{count}", visitorRecordsData.length));
+
+        list.innerHTML = visitorRecordsData.map((item) => {
+          const name = trimValue(item.name) || t("anonymous");
+          const date = formatDateTime(item.created_at);
+          const path = trimValue(item.path) || "/";
+          const referrer = trimValue(item.referrer) || t("directVisit");
+          const visitorLang = trimValue(item.lang) || "-";
+          const timezone = trimValue(item.timezone) || "-";
+
+          return `
+            <article class="visitorRecordCard">
+              <div class="visitorRecordTop">
+                <span class="visitorRecordName">${escapeHtml(name)}</span>
+                ${date ? `<span class="small">${escapeHtml(date)}</span>` : ""}
+              </div>
+              <div class="visitorRecordGrid">
+                <div><strong>${escapeHtml(t("visitorPath"))}：</strong>${escapeHtml(path)}</div>
+                <div><strong>${escapeHtml(t("visitorReferrer"))}：</strong>${escapeHtml(referrer)}</div>
+                <div><strong>${escapeHtml(t("visitorLang"))}：</strong>${escapeHtml(visitorLang)}</div>
+                <div><strong>${escapeHtml(t("visitorTimezone"))}：</strong>${escapeHtml(timezone)}</div>
+              </div>
+              <div class="adminActions">
+                <button class="textButton dangerText" type="button" data-visitor-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
       function showUpdateEditor(isEditing) {
         const editor = $("updateEditor");
         const title = $("updateFormTitle");
         if (!editor) return;
 
+        setUpdatesCollapsed(false);
         editor.hidden = false;
         editor.classList.remove("hidden");
 
@@ -2086,6 +2469,27 @@
         renderMessages();
       }
 
+      async function loadVisitorRecords() {
+        if (!sbClient) return;
+
+        if (!isAdmin) {
+          visitorRecordsData = [];
+          renderVisitorRecords();
+          return;
+        }
+
+        setStatus("visitorRecordStatus", t("loadingVisitorRecords"));
+
+        const result = await sbClient.rpc("get_visitor_records_with_admin", {
+          p_admin_password: getAdminPassword()
+        });
+
+        if (result.error) throw result.error;
+
+        visitorRecordsData = Array.isArray(result.data) ? result.data : [];
+        renderVisitorRecords();
+      }
+
       function getMessageCooldownSeconds() {
         const lastSent = Number(sessionStorage.getItem(MESSAGE_LAST_SENT_KEY) || "0");
         if (!lastSent) return 0;
@@ -2198,6 +2602,27 @@
         }
       }
 
+
+
+      async function deleteVisitorRecord(id) {
+        if (!sbClient) return;
+        if (!window.confirm(t("confirmDeleteVisitorRecord"))) return;
+
+        try {
+          const { error } = await sbClient.rpc("delete_visitor_record_with_admin", {
+            p_record_id: Number(id),
+            p_admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          await loadVisitorRecords();
+        } catch (error) {
+          setStatus("visitorRecordStatus", t("actionFailed"), true);
+          showDebug("Delete visitor record failed", errorMessage(error));
+        }
+      }
+
       async function loadSupabaseAndData() {
         setStatus("updatesStatus", t("loadingUpdates"));
         setStatus("messageStatus", t("loadingMessages"));
@@ -2210,6 +2635,12 @@
           }
 
           sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+          try {
+            await recordVisitorIfNeeded();
+          } catch (visitorError) {
+            showDebug("Save visitor record failed", errorMessage(visitorError));
+          }
         } catch (error) {
           setStatus("updatesStatus", t("supabaseUnavailable"), true);
           setStatus("messageStatus", t("supabaseUnavailable"), true);
@@ -2236,9 +2667,18 @@
           setStatus("messageStatus", t("loadFailed"), true);
           showDebug("Load messages failed", errorMessage(error));
         }
+
+        try {
+          await loadVisitorRecords();
+        } catch (error) {
+          setStatus("visitorRecordStatus", t("loadFailed"), true);
+          showDebug("Load visitor records failed", errorMessage(error));
+        }
       }
 
       function bindEvents() {
+        $("visitorGateForm").addEventListener("submit", submitVisitorGate);
+
         $("themeBtn").addEventListener("click", toggleTheme);
 
         $("langBtn").addEventListener("click", () => {
@@ -2257,6 +2697,10 @@
         $("adminLogoutBtn").addEventListener("click", exitAdminMode);
 
         $("profileForm").addEventListener("submit", saveProfile);
+
+        $("updatesToggleBtn").addEventListener("click", () => {
+          setUpdatesCollapsed(!updatesCollapsed);
+        });
 
         $("newUpdateBtn").addEventListener("click", resetUpdateForm);
         $("cancelUpdateBtn").addEventListener("click", hideUpdateEditor);
@@ -2284,6 +2728,16 @@
           if (action === "delete") deleteUpdate(id);
         });
 
+        $("visitorRecordList").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-visitor-action]");
+          if (!btn) return;
+
+          const action = btn.getAttribute("data-visitor-action");
+          const id = btn.getAttribute("data-id");
+
+          if (action === "delete") deleteVisitorRecord(id);
+        });
+
         $("messageForm").addEventListener("submit", sendMessage);
         $("messageContent").addEventListener("input", updateMessageCounter);
 
@@ -2303,9 +2757,11 @@
       document.addEventListener("DOMContentLoaded", () => {
         applyTheme();
         setupAdminView();
+        setupVisitorGate();
         bindEvents();
         applyLanguage();
         updateMessageCounter();
+        renderUpdatesCollapse();
         loadSupabaseAndData();
       });
     })();
