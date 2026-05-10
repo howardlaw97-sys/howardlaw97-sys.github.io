@@ -282,6 +282,9 @@
     .updateCard,
     .messageCard {
       border-top: 1px solid var(--line);
+    }
+
+    .messageCard {
       padding: 20px 0;
     }
 
@@ -293,6 +296,76 @@
     .updateCard.isHidden,
     .messageCard.isHidden {
       opacity: 0.62;
+    }
+
+    .updateSummary {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 16px;
+      padding: 20px 0;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .updateSummary::-webkit-details-marker {
+      display: none;
+    }
+
+    .updateSummary::marker {
+      content: "";
+    }
+
+    .updateSummary:focus-visible {
+      outline: 1px solid var(--fg);
+      outline-offset: 5px;
+      border-radius: 10px;
+    }
+
+    .updateSummary:hover .updateTitle,
+    .updateSummary:focus-visible .updateTitle {
+      color: var(--muted);
+    }
+
+    .updateHead {
+      min-width: 0;
+    }
+
+    .updateSummary .updateTitle {
+      margin: 0;
+    }
+
+    .updateToggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1;
+      transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .updateToggle::before {
+      content: "+";
+      transform: translateY(-1px);
+    }
+
+    .updateCard[open] .updateToggle {
+      color: var(--fg);
+      border-color: var(--fg);
+      transform: rotate(180deg);
+    }
+
+    .updateCard[open] .updateToggle::before {
+      content: "−";
+    }
+
+    .updateContent {
+      padding: 0 0 20px;
     }
 
     .meta {
@@ -1057,35 +1130,43 @@
           const type = trimValue(item.type || "post");
 
           return `
-            <article class="updateCard ${visible ? "" : "isHidden"}">
-              <div class="meta">
-                ${date ? `<span>${escapeHtml(date)}</span>` : ""}
-                ${type ? `<span>${escapeHtml(type)}</span>` : ""}
-                ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
-              </div>
+            <details class="updateCard ${visible ? "" : "isHidden"}">
+              <summary class="updateSummary">
+                <div class="updateHead">
+                  <div class="meta">
+                    ${date ? `<span>${escapeHtml(date)}</span>` : ""}
+                    ${type ? `<span>${escapeHtml(type)}</span>` : ""}
+                    ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
+                  </div>
 
-              <h3 class="updateTitle">${escapeHtml(title)}</h3>
-
-              ${body ? `<p class="updateBody">${nl2br(body)}</p>` : ""}
-
-              ${imageUrl ? `<img class="updateImage" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">` : ""}
-
-              ${linkUrl ? `
-                <a class="linkButton" href="${escapeAttr(linkUrl)}" target="_blank" rel="noopener noreferrer">
-                  ${escapeHtml(linkLabel || t("view"))}
-                </a>
-              ` : ""}
-
-              ${isAdmin ? `
-                <div class="adminActions">
-                  <button class="textButton" type="button" data-update-action="edit" data-id="${escapeAttr(item.id)}">${escapeHtml(t("edit"))}</button>
-                  <button class="textButton" type="button" data-update-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
-                    ${escapeHtml(visible ? t("hide") : t("restore"))}
-                  </button>
-                  <button class="textButton" type="button" data-update-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                  <h3 class="updateTitle">${escapeHtml(title)}</h3>
                 </div>
-              ` : ""}
-            </article>
+
+                <span class="updateToggle" aria-hidden="true"></span>
+              </summary>
+
+              <div class="updateContent">
+                ${body ? `<p class="updateBody">${nl2br(body)}</p>` : ""}
+
+                ${imageUrl ? `<img class="updateImage" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">` : ""}
+
+                ${linkUrl ? `
+                  <a class="linkButton" href="${escapeAttr(linkUrl)}" target="_blank" rel="noopener noreferrer">
+                    ${escapeHtml(linkLabel || t("view"))}
+                  </a>
+                ` : ""}
+
+                ${isAdmin ? `
+                  <div class="adminActions">
+                    <button class="textButton" type="button" data-update-action="edit" data-id="${escapeAttr(item.id)}">${escapeHtml(t("edit"))}</button>
+                    <button class="textButton" type="button" data-update-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
+                      ${escapeHtml(visible ? t("hide") : t("restore"))}
+                    </button>
+                    <button class="textButton" type="button" data-update-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                  </div>
+                ` : ""}
+              </div>
+            </details>
           `;
         }).join("");
       }
@@ -1626,6 +1707,17 @@
           if (action === "restore") setUpdateVisible(id, true);
           if (action === "delete") deleteUpdate(id);
         });
+
+        $("updatesList").addEventListener("toggle", (event) => {
+          const current = event.target;
+          if (!current.matches(".updateCard") || !current.open) return;
+
+          $("updatesList").querySelectorAll(".updateCard[open]").forEach((item) => {
+            if (item !== current) {
+              item.open = false;
+            }
+          });
+        }, true);
 
         $("messageForm").addEventListener("submit", sendMessage);
 
