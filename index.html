@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -57,6 +57,20 @@
       --radiusSmall: 12px;
     }
 
+    html[data-theme="dark"] {
+      --bg: #11110f;
+      --fg: #f5f0e8;
+      --muted: #b6afa4;
+      --soft: #8f887d;
+      --line: #302d28;
+      --panel: #191815;
+      --panelSoft: #201e1a;
+      --danger: #ff8a8a;
+      --ok: #8fd19e;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+      --shadowSmall: 0 8px 26px rgba(0, 0, 0, 0.22);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -77,6 +91,14 @@
       font-size: 16px;
       line-height: 1.65;
       letter-spacing: 0.01em;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at top left, rgba(245, 240, 232, 0.08), transparent 30%),
+        radial-gradient(circle at 80% 12%, rgba(220, 180, 110, 0.10), transparent 26%),
+        var(--bg);
     }
 
     a {
@@ -178,7 +200,7 @@
       background: var(--panel);
       color: var(--fg);
       outline: none;
-      transition: border-color 0.16s ease, box-shadow 0.16s ease;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, color 0.16s ease;
     }
 
     textarea {
@@ -191,6 +213,12 @@
     select:focus {
       border-color: var(--fg);
       box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.07);
+    }
+
+    html[data-theme="dark"] input:focus,
+    html[data-theme="dark"] textarea:focus,
+    html[data-theme="dark"] select:focus {
+      box-shadow: 0 0 0 3px rgba(245, 240, 232, 0.10);
     }
 
     label {
@@ -229,6 +257,11 @@
       background: rgba(255, 255, 255, 0.74);
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
+    }
+
+    html[data-theme="dark"] .siteHeader {
+      border-color: rgba(245, 240, 232, 0.09);
+      background: rgba(25, 24, 21, 0.78);
     }
 
     .heroKicker {
@@ -301,6 +334,11 @@
       background: rgba(255, 255, 255, 0.72);
       box-shadow: var(--shadowSmall);
       padding: 24px;
+    }
+
+    html[data-theme="dark"] .sectionInner {
+      border-color: rgba(245, 240, 232, 0.09);
+      background: rgba(25, 24, 21, 0.74);
     }
 
     .sectionHeader {
@@ -640,7 +678,7 @@
       }
 
       .heroKicker {
-        margin-right: 72px;
+        margin-right: 126px;
       }
 
       .section {
@@ -728,6 +766,7 @@
       </div>
 
       <div class="topActions">
+        <button id="themeBtn" type="button" aria-label="Toggle theme">🌙</button>
         <button id="langBtn" type="button" aria-label="Switch language">EN</button>
       </div>
     </header>
@@ -985,6 +1024,7 @@
 
       const ADMIN_STORAGE_KEY = "hao_luo_admin_password";
       const MESSAGE_LAST_SENT_KEY = "hao_luo_message_last_sent";
+      const THEME_STORAGE_KEY = "hao_luo_site_theme";
       const MESSAGE_COOLDOWN_MS = 15000;
 
       let sbClient = null;
@@ -1012,6 +1052,41 @@
         window.history.replaceState(null, "", cleanUrl);
       }
 
+      function getInitialTheme() {
+        const saved = localStorage.getItem(THEME_STORAGE_KEY);
+        if (saved === "light" || saved === "dark") return saved;
+
+        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return "dark";
+        }
+
+        return "light";
+      }
+
+      let theme = getInitialTheme();
+
+      function applyTheme() {
+        document.documentElement.setAttribute("data-theme", theme);
+
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute("content", theme === "dark" ? "#11110f" : "#fbfaf7");
+        }
+
+        const themeBtn = $("themeBtn");
+        if (themeBtn) {
+          themeBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+          themeBtn.setAttribute("aria-label", theme === "dark" ? t("themeLight") : t("themeDark"));
+          themeBtn.setAttribute("title", theme === "dark" ? t("themeLight") : t("themeDark"));
+        }
+      }
+
+      function toggleTheme() {
+        theme = theme === "dark" ? "light" : "dark";
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+        applyTheme();
+      }
+
       function getAdminPassword() {
         return isAdmin ? adminPassword : "";
       }
@@ -1026,6 +1101,8 @@
           pageTitle: "Hao Luo | 个人主页",
           heroKicker: "PERSONAL WEBSITE",
           subtitle: "个人主页 / 持续更新",
+          themeDark: "切换到深色模式",
+          themeLight: "切换到浅色模式",
           adminMode: "管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。保存或删除时仍会由 Supabase 校验密码。",
           adminLoginTitle: "管理员登录",
           adminLoginHelp: "请输入管理员密码。密码只会临时保存在当前浏览器标签页，不会出现在网址里。",
@@ -1120,6 +1197,8 @@
           pageTitle: "Hao Luo | Homepage",
           heroKicker: "PERSONAL WEBSITE",
           subtitle: "Personal homepage / continuous updates",
+          themeDark: "Switch to dark mode",
+          themeLight: "Switch to light mode",
           adminMode: "Admin mode is on. You can now add, edit, hide, or delete Updates. Supabase will still verify the password when saving or deleting.",
           adminLoginTitle: "Admin login",
           adminLoginHelp: "Enter the admin password. It will only be stored temporarily in this browser tab, not in the URL.",
@@ -1420,6 +1499,7 @@
           langBtn.textContent = lang === "zh" ? "EN" : "中文";
         }
 
+        applyTheme();
         renderUpdateFilters();
         updateMessageCounter();
         renderProfile();
@@ -2159,6 +2239,8 @@
       }
 
       function bindEvents() {
+        $("themeBtn").addEventListener("click", toggleTheme);
+
         $("langBtn").addEventListener("click", () => {
           lang = lang === "zh" ? "en" : "zh";
           localStorage.setItem("site_lang", lang);
@@ -2219,6 +2301,7 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        applyTheme();
         setupAdminView();
         bindEvents();
         applyLanguage();
