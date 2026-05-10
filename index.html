@@ -50,6 +50,7 @@
       --panel: #ffffff;
       --panelSoft: #f4f1eb;
       --danger: #b00020;
+      --ok: #137333;
       --shadow: 0 18px 50px rgba(20, 20, 20, 0.06);
       --shadowSmall: 0 8px 26px rgba(20, 20, 20, 0.05);
       --radius: 18px;
@@ -160,6 +161,11 @@
       color: var(--muted);
       border-bottom-color: var(--muted);
       transform: none;
+    }
+
+    button.dangerText {
+      color: var(--danger);
+      border-bottom-color: var(--danger);
     }
 
     input,
@@ -327,8 +333,13 @@
       color: var(--muted);
     }
 
+    .okText {
+      color: var(--ok);
+    }
+
     .adminBanner,
-    .adminBox {
+    .adminBox,
+    .noticeBox {
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--panel);
@@ -348,6 +359,12 @@
 
     .adminBanner button {
       flex: 0 0 auto;
+    }
+
+    .noticeBox {
+      background: var(--panelSoft);
+      color: var(--muted);
+      font-size: 13px;
     }
 
     .adminLoginHelp {
@@ -510,7 +527,32 @@
     .messageForm {
       display: grid;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
+    }
+
+    .messageTextareaWrap {
+      display: grid;
+      gap: 6px;
+    }
+
+    .counterLine {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 0 2px;
+    }
+
+    .counterLine strong {
+      font-weight: 650;
+      color: var(--fg);
+    }
+
+    .messageTips {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
     }
 
     .honeypot {
@@ -865,18 +907,26 @@
               placeholder="你的名字"
             />
 
-            <textarea
-              id="messageContent"
-              maxlength="500"
-              required
-              data-i18n-placeholder="messagePlaceholder"
-              placeholder="写点什么..."
-            ></textarea>
+            <div class="messageTextareaWrap">
+              <textarea
+                id="messageContent"
+                maxlength="500"
+                required
+                data-i18n-placeholder="messagePlaceholder"
+                placeholder="写点什么..."
+              ></textarea>
+              <div class="counterLine">
+                <span id="messageCounter">0 / 500</span>
+                <span id="messageLinkCounter">0 links</span>
+              </div>
+            </div>
 
             <input id="messageWebsite" class="honeypot" type="text" autocomplete="off" tabindex="-1" />
 
             <button id="sendMessageBtn" class="primary" type="submit" data-i18n="send">发布</button>
           </form>
+
+          <p class="messageTips" data-i18n="messageTips">留言至少 2 个字，最多 500 字；链接最多 3 个。</p>
 
           <div id="messageStatus" class="statusLine" data-i18n="loadingMessages">留言加载中...</div>
           <div id="messageList" class="messageList"></div>
@@ -900,13 +950,16 @@
       const SUPABASE_KEY = "sb_publishable_fbPvPbTmOfum_628MVQE-w_i6-dlorB";
       const SUPABASE_CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
+      const ADMIN_STORAGE_KEY = "hao_luo_admin_password";
+      const MESSAGE_LAST_SENT_KEY = "hao_luo_message_last_sent";
+      const MESSAGE_COOLDOWN_MS = 15000;
+
       let sbClient = null;
       let messagesData = [];
       let updatesData = [];
       let editingUpdateId = null;
       let toastTimer = null;
 
-      const ADMIN_STORAGE_KEY = "hao_luo_admin_password";
       const params = new URLSearchParams(window.location.search);
       let adminEntranceOpen = params.has("admin");
       let adminPassword = adminEntranceOpen ? (sessionStorage.getItem(ADMIN_STORAGE_KEY) || "") : "";
@@ -939,7 +992,7 @@
           pageTitle: "Hao Luo | 个人主页",
           heroKicker: "PERSONAL WEBSITE",
           subtitle: "个人主页 / 持续更新",
-          adminMode: "管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。",
+          adminMode: "管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。保存或删除时仍会由 Supabase 校验密码。",
           adminLoginTitle: "管理员登录",
           adminLoginHelp: "请输入管理员密码。密码只会临时保存在当前浏览器标签页，不会出现在网址里。",
           adminPasswordLabel: "管理员密码",
@@ -994,6 +1047,7 @@
 
           namePlaceholder: "你的名字",
           messagePlaceholder: "写点什么...",
+          messageTips: "留言至少 2 个字，最多 500 字；链接最多 3 个。",
           send: "发布",
           sending: "发布中...",
           loadingMessages: "留言加载中...",
@@ -1002,7 +1056,9 @@
           messageSent: "已发布",
           messageTooShort: "留言内容太短",
           messageTooManyLinks: "链接太多了",
+          messageCooldown: "发布太频繁，请 {seconds} 秒后再试",
           anonymous: "匿名",
+          links: "个链接",
 
           edit: "编辑",
           hide: "隐藏",
@@ -1021,7 +1077,7 @@
           pageTitle: "Hao Luo | Homepage",
           heroKicker: "PERSONAL WEBSITE",
           subtitle: "Personal homepage / continuous updates",
-          adminMode: "Admin mode is on. You can now add, edit, hide, or delete Updates.",
+          adminMode: "Admin mode is on. You can now add, edit, hide, or delete Updates. Supabase will still verify the password when saving or deleting.",
           adminLoginTitle: "Admin login",
           adminLoginHelp: "Enter the admin password. It will only be stored temporarily in this browser tab, not in the URL.",
           adminPasswordLabel: "Admin password",
@@ -1076,6 +1132,7 @@
 
           namePlaceholder: "Your name",
           messagePlaceholder: "Write something...",
+          messageTips: "At least 2 characters, up to 500 characters; max 3 links.",
           send: "Send",
           sending: "Sending...",
           loadingMessages: "Loading messages...",
@@ -1084,7 +1141,9 @@
           messageSent: "Sent",
           messageTooShort: "Message is too short",
           messageTooManyLinks: "Too many links",
+          messageCooldown: "Please wait {seconds}s before posting again",
           anonymous: "Anonymous",
+          links: "links",
 
           edit: "Edit",
           hide: "Hide",
@@ -1150,6 +1209,10 @@
         return String(value || "").trim();
       }
 
+      function linkCount(value) {
+        return (String(value || "").match(/https?:\/\//gi) || []).length;
+      }
+
       function chooseText(zh, en, fallback) {
         const primary = lang === "zh" ? zh : en;
         const secondary = lang === "zh" ? en : zh;
@@ -1204,11 +1267,27 @@
         }
       }
 
-      function setStatus(id, message, isError) {
+      function setStatus(id, message, isError, isOk) {
         const el = $(id);
         if (!el) return;
         el.textContent = message || "";
         el.classList.toggle("errorText", Boolean(isError));
+        el.classList.toggle("okText", Boolean(isOk));
+      }
+
+      function updateMessageCounter() {
+        const contentEl = $("messageContent");
+        const counterEl = $("messageCounter");
+        const linkCounterEl = $("messageLinkCounter");
+        if (!contentEl || !counterEl || !linkCounterEl) return;
+
+        const value = contentEl.value || "";
+        const links = linkCount(value);
+
+        counterEl.textContent = `${value.length} / 500`;
+        linkCounterEl.textContent = lang === "zh" ? `${links} ${t("links")}` : `${links} ${t("links")}`;
+        linkCounterEl.classList.toggle("errorText", links > 3);
+        counterEl.classList.toggle("errorText", value.length > 500);
       }
 
       function mergeProfile(value) {
@@ -1251,6 +1330,7 @@
           langBtn.textContent = lang === "zh" ? "EN" : "中文";
         }
 
+        updateMessageCounter();
         renderProfile();
         renderUpdates();
         renderMessages();
@@ -1435,7 +1515,7 @@
                   <button class="textButton" type="button" data-update-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
                     ${escapeHtml(visible ? t("hide") : t("restore"))}
                   </button>
-                  <button class="textButton" type="button" data-update-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                  <button class="textButton dangerText" type="button" data-update-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
                 </div>
               ` : ""}
             </article>
@@ -1476,7 +1556,7 @@
                   <button class="textButton" type="button" data-message-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
                     ${escapeHtml(visible ? t("hide") : t("restore"))}
                   </button>
-                  <button class="textButton" type="button" data-message-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                  <button class="textButton dangerText" type="button" data-message-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
                 </div>
               ` : ""}
             </article>
@@ -1643,7 +1723,7 @@
 
           profileData = mergeProfile(nextProfile);
           renderProfile();
-          setStatus("profileSaveStatus", t("saved"));
+          setStatus("profileSaveStatus", t("saved"), false, true);
         } catch (error) {
           setStatus("profileSaveStatus", t("actionFailed"), true);
           showDebug("Save profile failed", errorMessage(error));
@@ -1814,6 +1894,16 @@
         renderMessages();
       }
 
+      function getMessageCooldownSeconds() {
+        const lastSent = Number(sessionStorage.getItem(MESSAGE_LAST_SENT_KEY) || "0");
+        if (!lastSent) return 0;
+
+        const elapsed = Date.now() - lastSent;
+        const remaining = MESSAGE_COOLDOWN_MS - elapsed;
+
+        return remaining > 0 ? Math.ceil(remaining / 1000) : 0;
+      }
+
       async function sendMessage(event) {
         event.preventDefault();
 
@@ -1822,10 +1912,17 @@
           return;
         }
 
+        const cooldownSeconds = getMessageCooldownSeconds();
+        if (cooldownSeconds > 0) {
+          setStatus("messageStatus", t("messageCooldown").replace("{seconds}", cooldownSeconds), true);
+          return;
+        }
+
         const honeypot = trimValue($("messageWebsite").value);
         if (honeypot) {
           $("messageForm").reset();
-          setStatus("messageStatus", t("messageSent"));
+          updateMessageCounter();
+          setStatus("messageStatus", t("messageSent"), false, true);
           return;
         }
 
@@ -1837,8 +1934,7 @@
           return;
         }
 
-        const linkCount = (content.match(/https?:\/\//gi) || []).length;
-        if (linkCount > 3) {
+        if (linkCount(content) > 3) {
           setStatus("messageStatus", t("messageTooManyLinks"), true);
           return;
         }
@@ -1858,8 +1954,10 @@
 
           if (error) throw error;
 
+          sessionStorage.setItem(MESSAGE_LAST_SENT_KEY, String(Date.now()));
           $("messageForm").reset();
-          setStatus("messageStatus", t("messageSent"));
+          updateMessageCounter();
+          setStatus("messageStatus", t("messageSent"), false, true);
           await loadMessages();
         } catch (error) {
           setStatus("messageStatus", t("actionFailed"), true);
@@ -1984,6 +2082,7 @@
         });
 
         $("messageForm").addEventListener("submit", sendMessage);
+        $("messageContent").addEventListener("input", updateMessageCounter);
 
         $("messageList").addEventListener("click", (event) => {
           const btn = event.target.closest("[data-message-action]");
@@ -2002,6 +2101,7 @@
         setupAdminView();
         bindEvents();
         applyLanguage();
+        updateMessageCounter();
         loadSupabaseAndData();
       });
     })();
