@@ -431,6 +431,35 @@
       color: var(--danger);
     }
 
+    .filterBar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: -2px 0 18px;
+    }
+
+    .filterButton {
+      min-height: 32px;
+      padding: 6px 11px;
+      border-color: var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .filterButton:hover {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+
+    .filterButton.isActive {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+
     .updatesList,
     .messageList {
       display: grid;
@@ -627,11 +656,13 @@
         font-size: 17px;
       }
 
-      .quickNav {
+      .quickNav,
+      .filterBar {
         gap: 7px;
       }
 
-      .quickNav a {
+      .quickNav a,
+      .filterButton {
         font-size: 12px;
         padding: 7px 10px;
       }
@@ -703,7 +734,7 @@
 
     <main id="mainContent">
       <div id="adminBanner" class="adminBanner" data-admin-only hidden>
-        <span data-i18n="adminMode">管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。</span>
+        <span data-i18n="adminMode">管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。保存或删除时仍会由 Supabase 校验密码。</span>
         <button id="adminLogoutBtn" type="button" data-i18n="adminLogout">退出管理员模式</button>
       </div>
 
@@ -806,6 +837,8 @@
             <h2 class="sectionTitle" data-i18n="updatesTitle">UPDATES</h2>
             <button id="newUpdateBtn" type="button" data-admin-only hidden data-i18n="newUpdate">新增</button>
           </div>
+
+          <div id="updateFilters" class="filterBar" aria-label="Update filters"></div>
 
           <div id="updateEditor" class="adminBox hidden" data-admin-only hidden>
             <h3 id="updateFormTitle" class="sectionTitle" style="margin:0 0 16px;">新增动态</h3>
@@ -958,6 +991,7 @@
       let messagesData = [];
       let updatesData = [];
       let editingUpdateId = null;
+      let updateFilter = "all";
       let toastTimer = null;
 
       const params = new URLSearchParams(window.location.search);
@@ -1038,12 +1072,21 @@
           linkLabelEn: "英文链接按钮文字",
           loadingUpdates: "动态加载中...",
           noUpdates: "暂无动态",
+          noUpdatesInFilter: "当前分类暂无动态",
           updateCount: "共 {count} 条动态",
+          updateCountFiltered: "显示 {shown} / {total} 条动态",
           updateSaved: "动态已保存",
           updateRequired: "标题、正文、图片 URL 或外部链接至少填写一项",
           invalidUrl: "URL 必须以 http:// 或 https:// 开头",
           untitledUpdate: "未命名动态",
           view: "查看",
+
+          filterAll: "全部",
+          filterPost: "文章",
+          filterNote: "笔记",
+          filterProject: "项目",
+          filterLink: "链接",
+          filterImage: "图片",
 
           namePlaceholder: "你的名字",
           messagePlaceholder: "写点什么...",
@@ -1123,12 +1166,21 @@
           linkLabelEn: "English link button label",
           loadingUpdates: "Loading updates...",
           noUpdates: "No updates yet",
+          noUpdatesInFilter: "No updates in this category",
           updateCount: "{count} updates",
+          updateCountFiltered: "Showing {shown} / {total} updates",
           updateSaved: "Update saved",
           updateRequired: "Please fill in at least one title, body, image URL, or external link",
           invalidUrl: "URL must start with http:// or https://",
           untitledUpdate: "Untitled update",
           view: "View",
+
+          filterAll: "All",
+          filterPost: "Posts",
+          filterNote: "Notes",
+          filterProject: "Projects",
+          filterLink: "Links",
+          filterImage: "Images",
 
           namePlaceholder: "Your name",
           messagePlaceholder: "Write something...",
@@ -1290,6 +1342,44 @@
         counterEl.classList.toggle("errorText", value.length > 500);
       }
 
+      function getUpdateTypeLabel(type) {
+        const value = String(type || "").trim().toLowerCase();
+
+        if (value === "post") return t("filterPost");
+        if (value === "note") return t("filterNote");
+        if (value === "project") return t("filterProject");
+        if (value === "link") return t("filterLink");
+        if (value === "image") return t("filterImage");
+
+        return value || "post";
+      }
+
+      function renderUpdateFilters() {
+        const el = $("updateFilters");
+        if (!el) return;
+
+        const filters = [
+          ["all", t("filterAll")],
+          ["post", t("filterPost")],
+          ["note", t("filterNote")],
+          ["project", t("filterProject")],
+          ["link", t("filterLink")],
+          ["image", t("filterImage")]
+        ];
+
+        el.innerHTML = filters.map(([value, label]) => {
+          const active = updateFilter === value;
+          return `
+            <button
+              type="button"
+              class="filterButton ${active ? "isActive" : ""}"
+              data-update-filter="${escapeAttr(value)}"
+              aria-pressed="${active ? "true" : "false"}"
+            >${escapeHtml(label)}</button>
+          `;
+        }).join("");
+      }
+
       function mergeProfile(value) {
         const next = {
           bio: { zh: "", en: "" },
@@ -1330,6 +1420,7 @@
           langBtn.textContent = lang === "zh" ? "EN" : "中文";
         }
 
+        renderUpdateFilters();
         updateMessageCounter();
         renderProfile();
         renderUpdates();
@@ -1477,9 +1568,29 @@
           return;
         }
 
-        setStatus("updatesStatus", t("updateCount").replace("{count}", updatesData.length));
+        const filteredUpdates = updatesData.filter((item) => {
+          if (updateFilter === "all") return true;
+          return String(item.type || "post").toLowerCase() === updateFilter;
+        });
 
-        list.innerHTML = updatesData.map((item) => {
+        if (!filteredUpdates.length) {
+          list.innerHTML = "";
+          setStatus("updatesStatus", t("noUpdatesInFilter"));
+          return;
+        }
+
+        if (updateFilter === "all") {
+          setStatus("updatesStatus", t("updateCount").replace("{count}", updatesData.length));
+        } else {
+          setStatus(
+            "updatesStatus",
+            t("updateCountFiltered")
+              .replace("{shown}", filteredUpdates.length)
+              .replace("{total}", updatesData.length)
+          );
+        }
+
+        list.innerHTML = filteredUpdates.map((item) => {
           const visible = item.visible !== false;
           const date = formatDate(item.created_at);
           const title = chooseText(item.title_zh, item.title_en, t("untitledUpdate"));
@@ -1493,7 +1604,7 @@
             <article class="updateCard ${visible ? "" : "isHidden"}">
               <div class="meta">
                 ${date ? `<span>${escapeHtml(date)}</span>` : ""}
-                ${type ? `<span>${escapeHtml(type)}</span>` : ""}
+                ${type ? `<span class="pill">${escapeHtml(getUpdateTypeLabel(type))}</span>` : ""}
                 ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
               </div>
 
@@ -1755,6 +1866,7 @@
         if (result.error) throw result.error;
 
         updatesData = Array.isArray(result.data) ? result.data : [];
+        renderUpdateFilters();
         renderUpdates();
       }
 
@@ -2067,6 +2179,15 @@
         $("newUpdateBtn").addEventListener("click", resetUpdateForm);
         $("cancelUpdateBtn").addEventListener("click", hideUpdateEditor);
         $("updateForm").addEventListener("submit", saveUpdate);
+
+        $("updateFilters").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-update-filter]");
+          if (!btn) return;
+
+          updateFilter = btn.getAttribute("data-update-filter") || "all";
+          renderUpdateFilters();
+          renderUpdates();
+        });
 
         $("updatesList").addEventListener("click", (event) => {
           const btn = event.target.closest("[data-update-action]");
