@@ -3,7 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>Hao Luo | 个人主页</title>
+  <meta name="description" content="Hao Luo 的个人主页，记录个人简介、近况、动态、联系方式和访客留言。" />
+  <meta name="keywords" content="Hao Luo, Luo Hao, 个人主页, personal website, homepage" />
+  <meta name="author" content="Hao Luo" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <link rel="canonical" href="https://howardlaw97-sys.github.io/" />
+
+  <meta property="og:title" content="Hao Luo | 个人主页" />
+  <meta property="og:description" content="个人简介、近况、动态、联系方式和留言。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://howardlaw97-sys.github.io/" />
+  <meta property="og:site_name" content="Hao Luo" />
+  <meta property="og:locale" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Hao Luo | 个人主页" />
+  <meta name="twitter:description" content="个人简介、近况、动态、联系方式和留言。" />
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111111'/%3E%3Ctext x='50%25' y='56%25' text-anchor='middle' font-size='25' font-family='Arial, sans-serif' fill='white' font-weight='700'%3EHL%3C/text%3E%3C/svg%3E"
+  />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Hao Luo",
+    "url": "https://howardlaw97-sys.github.io/",
+    "sameAs": []
+  }
+  </script>
 
   <style>
     :root {
@@ -39,6 +74,24 @@
       color: inherit;
       text-decoration: none;
       border-bottom: 1px solid var(--fg);
+    }
+
+    .skipLink {
+      position: absolute;
+      left: 18px;
+      top: -60px;
+      z-index: 100;
+      background: var(--fg);
+      color: var(--bg);
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      transition: top 0.2s ease;
+    }
+
+    .skipLink:focus {
+      top: 14px;
     }
 
     button,
@@ -427,6 +480,15 @@
         align-items: flex-start;
         flex-direction: column;
       }
+
+      .contactItem {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .contactItem button {
+        width: fit-content;
+      }
     }
 
     @media (min-width: 680px) {
@@ -448,6 +510,8 @@
 </head>
 
 <body>
+  <a class="skipLink" href="#mainContent">跳过导航，直接进入正文</a>
+
   <div class="page">
     <header class="siteHeader">
       <div>
@@ -456,11 +520,11 @@
       </div>
 
       <div class="topActions">
-        <button id="langBtn" type="button">EN</button>
+        <button id="langBtn" type="button" aria-label="Switch language">EN</button>
       </div>
     </header>
 
-    <main>
+    <main id="mainContent">
       <div id="adminBanner" class="adminBanner" data-admin-only hidden>
         <span data-i18n="adminMode">管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。</span>
         <button id="adminLogoutBtn" type="button" data-i18n="adminLogout">退出管理员模式</button>
@@ -1212,7 +1276,7 @@
 
               ${body ? `<p class="updateBody">${nl2br(body)}</p>` : ""}
 
-              ${imageUrl ? `<img class="updateImage" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">` : ""}
+              ${imageUrl ? `<img class="updateImage" src="${escapeAttr(imageUrl)}" alt="${escapeAttr(title)}" loading="lazy">` : ""}
 
               ${linkUrl ? `
                 <a class="linkButton" href="${escapeAttr(linkUrl)}" target="_blank" rel="noopener noreferrer">
