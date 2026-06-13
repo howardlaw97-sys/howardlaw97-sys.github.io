@@ -1,0 +1,3090 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Hao Luo | 个人主页</title>
+  <meta name="description" content="Hao Luo 的个人主页，记录个人简介、近况、动态、联系方式和访客留言。" />
+  <meta name="keywords" content="Hao Luo, Luo Hao, 个人主页, personal website, homepage" />
+  <meta name="author" content="Hao Luo" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#fbfaf7" />
+
+  <link rel="canonical" href="https://howardlaw97-sys.github.io/" />
+
+  <meta property="og:title" content="Hao Luo | 个人主页" />
+  <meta property="og:description" content="个人简介、近况、动态、联系方式和留言。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://howardlaw97-sys.github.io/" />
+  <meta property="og:site_name" content="Hao Luo" />
+  <meta property="og:locale" content="zh_CN" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Hao Luo | 个人主页" />
+  <meta name="twitter:description" content="个人简介、近况、动态、联系方式和留言。" />
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111111'/%3E%3Ctext x='50%25' y='56%25' text-anchor='middle' font-size='25' font-family='Arial, sans-serif' fill='white' font-weight='700'%3EHL%3C/text%3E%3C/svg%3E"
+  />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Hao Luo",
+    "url": "https://howardlaw97-sys.github.io/",
+    "sameAs": []
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #fbfaf7;
+      --fg: #111111;
+      --muted: #666666;
+      --soft: #999999;
+      --line: #e7e2da;
+      --panel: #ffffff;
+      --panelSoft: #f4f1eb;
+      --danger: #b00020;
+      --ok: #137333;
+      --shadow: 0 18px 50px rgba(20, 20, 20, 0.06);
+      --shadowSmall: 0 8px 26px rgba(20, 20, 20, 0.05);
+      --radius: 18px;
+      --radiusSmall: 12px;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #11110f;
+      --fg: #f5f0e8;
+      --muted: #b6afa4;
+      --soft: #8f887d;
+      --line: #302d28;
+      --panel: #191815;
+      --panelSoft: #201e1a;
+      --danger: #ff8a8a;
+      --ok: #8fd19e;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+      --shadowSmall: 0 8px 26px rgba(0, 0, 0, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(17, 17, 17, 0.055), transparent 30%),
+        radial-gradient(circle at 80% 12%, rgba(120, 100, 60, 0.08), transparent 26%),
+        var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      letter-spacing: 0.01em;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at top left, rgba(245, 240, 232, 0.08), transparent 30%),
+        radial-gradient(circle at 80% 12%, rgba(220, 180, 110, 0.10), transparent 26%),
+        var(--bg);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid var(--fg);
+      text-underline-offset: 3px;
+    }
+
+    .skipLink {
+      position: absolute;
+      left: 18px;
+      top: -60px;
+      z-index: 100;
+      background: var(--fg);
+      color: var(--bg);
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      transition: top 0.2s ease;
+    }
+
+    .skipLink:focus {
+      top: 14px;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--fg);
+      background: var(--panel);
+      color: var(--fg);
+      border-radius: 999px;
+      padding: 8px 14px;
+      cursor: pointer;
+      line-height: 1.2;
+      min-height: 38px;
+      transition: transform 0.16s ease, background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+    }
+
+    button:hover {
+      background: var(--fg);
+      color: var(--bg);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    button.primary {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    button.primary:hover {
+      background: var(--panel);
+      color: var(--fg);
+    }
+
+    button.textButton {
+      min-height: auto;
+      border: 0;
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--fg);
+      border-bottom: 1px solid var(--fg);
+    }
+
+    button.textButton:hover {
+      background: transparent;
+      color: var(--muted);
+      border-bottom-color: var(--muted);
+      transform: none;
+    }
+
+    button.dangerText {
+      color: var(--danger);
+      border-bottom-color: var(--danger);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radiusSmall);
+      padding: 11px 12px;
+      background: var(--panel);
+      color: var(--fg);
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, color 0.16s ease;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--fg);
+      box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.07);
+    }
+
+    html[data-theme="dark"] input:focus,
+    html[data-theme="dark"] textarea:focus,
+    html[data-theme="dark"] select:focus {
+      box-shadow: 0 0 0 3px rgba(245, 240, 232, 0.10);
+    }
+
+    label {
+      display: block;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    label span {
+      display: block;
+      margin: 0 0 6px;
+    }
+
+    [hidden],
+    .hidden {
+      display: none !important;
+    }
+
+
+    body.guestLocked {
+      overflow: hidden;
+    }
+
+    body.guestLocked .page {
+      opacity: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .visitorGate {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(251, 250, 247, 0.86);
+      backdrop-filter: blur(18px);
+    }
+
+    html[data-theme="dark"] .visitorGate {
+      background: rgba(17, 17, 15, 0.88);
+    }
+
+    .visitorGateCard {
+      width: min(100%, 460px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .visitorGateKicker {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      font-weight: 800;
+    }
+
+    .visitorGateTitle {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 8vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .visitorGateHelp {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .page {
+      width: min(100%, 900px);
+      margin: 0 auto;
+      padding: 28px 18px 64px;
+    }
+
+    .siteHeader {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: start;
+      padding: 28px;
+      margin: 8px 0 22px;
+      border: 1px solid rgba(17, 17, 17, 0.08);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    html[data-theme="dark"] .siteHeader {
+      border-color: rgba(245, 240, 232, 0.09);
+      background: rgba(25, 24, 21, 0.78);
+    }
+
+    .heroKicker {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      font-weight: 700;
+    }
+
+    .brand {
+      margin: 0;
+      font-size: clamp(48px, 15vw, 112px);
+      line-height: 0.86;
+      letter-spacing: -0.075em;
+      font-weight: 850;
+    }
+
+    .subtitle {
+      max-width: 560px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: clamp(18px, 4vw, 28px);
+      line-height: 1.42;
+      letter-spacing: 0.015em;
+    }
+
+    .topActions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .quickNav {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .quickNav a {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--fg);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 13px;
+      line-height: 1.2;
+      transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+    }
+
+    .quickNav a:hover {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+      transform: translateY(-1px);
+    }
+
+    .section {
+      scroll-margin-top: 20px;
+      padding: 30px 0;
+    }
+
+    .sectionInner {
+      border: 1px solid rgba(17, 17, 17, 0.08);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadowSmall);
+      padding: 24px;
+    }
+
+    html[data-theme="dark"] .sectionInner {
+      border-color: rgba(245, 240, 232, 0.09);
+      background: rgba(25, 24, 21, 0.74);
+    }
+
+    .sectionHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 18px;
+    }
+
+
+    .sectionActions {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .collapseButton {
+      min-height: 32px;
+      padding: 6px 11px;
+      border-color: var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .collapseButton:hover {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+
+    .collapsibleContent {
+      margin-top: 4px;
+    }
+
+    .sectionTitle {
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      font-weight: 800;
+    }
+
+    .bodyText {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.78;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .okText {
+      color: var(--ok);
+    }
+
+    .adminBanner,
+    .adminBox,
+    .noticeBox {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 15px;
+      margin: 0 0 18px;
+      box-shadow: var(--shadowSmall);
+    }
+
+    .adminBanner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .adminBanner button {
+      flex: 0 0 auto;
+    }
+
+    .noticeBox {
+      background: var(--panelSoft);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .adminLoginHelp {
+      margin: -4px 0 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    details.adminBox summary {
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .formGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      margin-top: 16px;
+    }
+
+    .formActions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .contacts {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .contactItem {
+      display: grid;
+      grid-template-columns: 92px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radiusSmall);
+      background: var(--panel);
+      font-size: 14px;
+    }
+
+    .contactName {
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .contactValue {
+      overflow-wrap: anywhere;
+    }
+
+    .statusLine {
+      margin: 8px 0 14px;
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .errorText {
+      color: var(--danger);
+    }
+
+    .filterBar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: -2px 0 18px;
+    }
+
+    .filterButton {
+      min-height: 32px;
+      padding: 6px 11px;
+      border-color: var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .filterButton:hover {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+
+    .filterButton.isActive {
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+
+    .updatesList,
+    .messageList {
+      display: grid;
+      gap: 12px;
+    }
+
+
+    .visitorList {
+      display: grid;
+      gap: 10px;
+    }
+
+    .visitorRecordCard {
+      border: 1px solid var(--line);
+      border-radius: var(--radiusSmall);
+      background: var(--panelSoft);
+      padding: 13px;
+      font-size: 13px;
+    }
+
+    .visitorRecordTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .visitorRecordName {
+      color: var(--fg);
+      font-weight: 750;
+    }
+
+    .visitorRecordGrid {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .updateCard,
+    .messageCard {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(20, 20, 20, 0.035);
+    }
+
+    .updateCard.isHidden,
+    .messageCard.isHidden {
+      opacity: 0.62;
+      background: var(--panelSoft);
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .updateTitle {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.35;
+      letter-spacing: -0.025em;
+    }
+
+    .updateBody,
+    .messageBody {
+      margin: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .updateImage {
+      display: block;
+      width: 100%;
+      max-height: 480px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      background: var(--panelSoft);
+    }
+
+    .linkButton {
+      display: inline-block;
+      margin-top: 14px;
+      border: 1px solid var(--fg);
+      border-radius: 999px;
+      padding: 8px 14px;
+      line-height: 1.2;
+      transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
+    }
+
+    .linkButton:hover {
+      background: var(--fg);
+      color: var(--bg);
+      transform: translateY(-1px);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+      background: var(--panel);
+    }
+
+    .adminActions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+      font-size: 13px;
+    }
+
+    .siteAccessRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .siteAccessRow > div:first-child {
+      min-width: 0;
+      flex: 1 1 200px;
+    }
+
+    .siteAccessControl {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .siteAccessIndicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--panel);
+      line-height: 1.2;
+    }
+
+    .siteAccessIndicator::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      display: inline-block;
+    }
+
+    .siteAccessIndicator.isOpen {
+      color: var(--ok);
+    }
+
+    .siteAccessIndicator.isClosed {
+      color: var(--danger);
+    }
+
+    .messageForm {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .messageTextareaWrap {
+      display: grid;
+      gap: 6px;
+    }
+
+    .counterLine {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 0 2px;
+    }
+
+    .counterLine strong {
+      font-weight: 650;
+      color: var(--fg);
+    }
+
+    .messageTips {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .honeypot {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .debugPanel {
+      border-top: 1px solid var(--line);
+      margin-top: 20px;
+      padding-top: 20px;
+    }
+
+    .debugPanel pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      font-size: 12px;
+      color: var(--danger);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      background: var(--fg);
+      color: var(--bg);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      z-index: 99;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    /* 骨架屏样式 */
+    .skeleton {
+      background: linear-gradient(90deg, var(--panelSoft) 25%, var(--line) 50%, var(--panelSoft) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radiusSmall);
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeletonCard {
+      padding: 18px;
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+    }
+
+    .skeletonLine {
+      height: 1em;
+      margin-bottom: 0.8em;
+    }
+
+    .skeletonLine:last-child {
+      width: 60%;
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding: 14px 12px 48px;
+      }
+
+      .siteHeader {
+        grid-template-columns: 1fr;
+        padding: 22px;
+        border-radius: 24px;
+      }
+
+      .topActions {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+      }
+
+      .heroKicker {
+        margin-right: 126px;
+      }
+
+      .section {
+        padding: 11px 0;
+      }
+
+      .sectionInner {
+        padding: 19px;
+        border-radius: 20px;
+      }
+
+      .bodyText {
+        font-size: 17px;
+      }
+
+      .quickNav,
+      .filterBar {
+        gap: 7px;
+      }
+
+      .quickNav a,
+      .filterButton {
+        font-size: 12px;
+        padding: 7px 10px;
+      }
+
+      .adminBanner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .sectionHeader {
+        align-items: flex-start;
+      }
+
+      .sectionActions {
+        justify-content: flex-start;
+      }
+
+      .contactItem {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .contactItem button {
+        width: fit-content;
+      }
+
+      .messageForm button {
+        width: 100%;
+      }
+
+      .updateCard,
+      .messageCard {
+        padding: 16px;
+      }
+
+      .updateTitle {
+        font-size: 20px;
+      }
+    }
+
+    @media (min-width: 680px) {
+      .formGrid.two {
+        grid-template-columns: 1fr 1fr;
+        column-gap: 14px;
+      }
+
+      .messageForm {
+        grid-template-columns: 180px 1fr auto;
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+
+<body class="guestLocked">
+  <a class="skipLink" href="#mainContent">跳过导航，直接进入正文</a>
+
+  <div class="page">
+    <header class="siteHeader">
+      <div>
+        <p class="heroKicker" data-i18n="heroKicker">PERSONAL WEBSITE</p>
+        <h1 class="brand">HAO<br>LUO</h1>
+        <p class="subtitle" data-i18n="subtitle">个人主页</p>
+
+        <nav class="quickNav" aria-label="Page sections">
+          <a href="#aboutSection" data-i18n="aboutTitle">ABOUT</a>
+          <a href="#nowSection" data-i18n="nowTitle">NOW</a>
+          <a href="#updatesSection" data-i18n="updatesTitle">UPDATES</a>
+          <a href="#messagesSection" data-i18n="messagesTitle">MESSAGES</a>
+        </nav>
+      </div>
+
+      <div class="topActions">
+        <button id="themeBtn" type="button" aria-label="Toggle theme">🌙</button>
+        <button id="langBtn" type="button" aria-label="Switch language">EN</button>
+      </div>
+    </header>
+
+    <main id="mainContent">
+      <div id="adminBanner" class="adminBanner" data-admin-only hidden>
+        <span data-i18n="adminMode">管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。保存或删除时仍会由 Supabase 校验密码。</span>
+        <button id="adminLogoutBtn" type="button" data-i18n="adminLogout">退出管理员模式</button>
+      </div>
+
+      <div id="siteAccessAdminPanel" class="adminBox" data-admin-only hidden>
+        <div class="siteAccessRow">
+          <div>
+            <strong data-i18n="siteAccessTitle">访客开关</strong>
+            <p class="adminLoginHelp" style="margin: 4px 0 0;" data-i18n="siteAccessHelp">关闭后，访客访问主页时会看到"主页当前不对外开放"，被阻挡在外。管理员通过 ?admin URL 不受影响。</p>
+          </div>
+          <div class="siteAccessControl">
+            <span id="siteAccessIndicator" class="siteAccessIndicator"></span>
+            <button id="siteAccessToggleBtn" type="button"></button>
+          </div>
+        </div>
+        <div id="siteAccessStatus" class="statusLine" style="margin: 10px 0 0;"></div>
+      </div>
+
+      <div id="adminLoginPanel" class="adminBox" hidden>
+        <form id="adminLoginForm">
+          <h2 class="sectionTitle" style="margin:0 0 14px;" data-i18n="adminLoginTitle">管理员登录</h2>
+          <p class="adminLoginHelp" data-i18n="adminLoginHelp">请输入管理员密码。密码只会临时保存在当前浏览器标签页，不会出现在网址里。</p>
+          <label>
+            <span data-i18n="adminPasswordLabel">管理员密码</span>
+            <input id="adminPasswordInput" type="password" autocomplete="current-password" data-i18n-placeholder="adminPasswordPlaceholder" placeholder="输入管理员密码" />
+          </label>
+          <div class="formActions">
+            <button id="adminLoginBtn" class="primary" type="submit" data-i18n="adminLogin">进入管理员模式</button>
+            <span id="adminLoginStatus" class="small"></span>
+          </div>
+        </form>
+      </div>
+
+      <section class="section" id="aboutSection">
+        <div class="sectionInner">
+          <div class="sectionHeader">
+            <h2 class="sectionTitle" data-i18n="aboutTitle">ABOUT</h2>
+          </div>
+
+          <p id="bioText" class="bodyText"></p>
+          <div id="contactList" class="contacts"></div>
+        </div>
+      </section>
+
+      <section class="section" id="nowSection">
+        <div class="sectionInner">
+          <div class="sectionHeader">
+            <h2 class="sectionTitle" data-i18n="nowTitle">NOW</h2>
+          </div>
+
+          <p id="nowText" class="bodyText"></p>
+        </div>
+      </section>
+
+      <details id="adminProfilePanel" class="adminBox" data-admin-only hidden>
+        <summary data-i18n="editProfile">编辑个人信息 / 联系方式</summary>
+
+        <form id="profileForm">
+          <div class="formGrid two">
+            <label>
+              <span data-i18n="bioZh">中文简介</span>
+              <textarea id="editBioZh"></textarea>
+            </label>
+
+            <label>
+              <span data-i18n="bioEn">英文简介</span>
+              <textarea id="editBioEn"></textarea>
+            </label>
+          </div>
+
+          <div class="formGrid two">
+            <label>
+              <span data-i18n="nowZh">中文 Now</span>
+              <textarea id="editNowZh"></textarea>
+            </label>
+
+            <label>
+              <span data-i18n="nowEn">英文 Now</span>
+              <textarea id="editNowEn"></textarea>
+            </label>
+          </div>
+
+          <div class="formGrid two">
+            <label>
+              <span>Email</span>
+              <input id="editEmail" type="text" autocomplete="off" />
+            </label>
+
+            <label>
+              <span data-i18n="phone">电话</span>
+              <input id="editPhone" type="text" autocomplete="off" />
+            </label>
+
+            <label>
+              <span>WeChat</span>
+              <input id="editWechat" type="text" autocomplete="off" />
+            </label>
+
+            <label>
+              <span>QQ</span>
+              <input id="editQq" type="text" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="formActions">
+            <button id="saveProfileBtn" class="primary" type="submit" data-i18n="save">保存</button>
+            <span id="profileSaveStatus" class="small"></span>
+          </div>
+        </form>
+      </details>
+
+      <details id="visitorAdminPanel" class="adminBox" data-admin-only hidden>
+        <summary data-i18n="visitorRecordsTitle">访客记录</summary>
+        <p class="adminLoginHelp" data-i18n="visitorRecordsHelp">访客回答"你是谁？"之后，会在这里留下记录。记录对普通访客不可见。</p>
+        <div id="visitorRecordStatus" class="statusLine"></div>
+        <div id="visitorRecordList" class="visitorList"></div>
+      </details>
+
+      <section class="section" id="updatesSection">
+        <div class="sectionInner">
+          <div class="sectionHeader">
+            <h2 class="sectionTitle" data-i18n="updatesTitle">UPDATES</h2>
+            <div class="sectionActions">
+              <button id="updatesToggleBtn" class="collapseButton" type="button" aria-expanded="false" aria-controls="updatesContent" data-i18n="expandUpdates">展开</button>
+              <button id="newUpdateBtn" type="button" data-admin-only hidden data-i18n="newUpdate">新增</button>
+            </div>
+          </div>
+
+          <div id="updatesContent" class="collapsibleContent" hidden>
+            <div id="updateFilters" class="filterBar" aria-label="Update filters"></div>
+
+            <div id="updateEditor" class="adminBox hidden" data-admin-only hidden>
+              <h3 id="updateFormTitle" class="sectionTitle" style="margin:0 0 16px;">新增动态</h3>
+
+              <form id="updateForm">
+                <div class="formGrid two">
+                  <label>
+                    <span data-i18n="updateType">类型</span>
+                    <select id="updateType">
+                      <option value="post">post</option>
+                      <option value="note">note</option>
+                      <option value="project">project</option>
+                      <option value="link">link</option>
+                      <option value="image">image</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    <span data-i18n="visible">公开显示</span>
+                    <select id="updateVisible">
+                      <option value="true" data-i18n="visibleYes">公开</option>
+                      <option value="false" data-i18n="visibleNo">隐藏</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div class="formGrid two">
+                  <label>
+                    <span data-i18n="titleZh">中文标题</span>
+                    <input id="updateTitleZh" type="text" autocomplete="off" />
+                  </label>
+
+                  <label>
+                    <span data-i18n="titleEn">英文标题</span>
+                    <input id="updateTitleEn" type="text" autocomplete="off" />
+                  </label>
+                </div>
+
+                <div class="formGrid two">
+                  <label>
+                    <span data-i18n="bodyZh">中文正文</span>
+                    <textarea id="updateBodyZh"></textarea>
+                  </label>
+
+                  <label>
+                    <span data-i18n="bodyEn">英文正文</span>
+                    <textarea id="updateBodyEn"></textarea>
+                  </label>
+                </div>
+
+                <label>
+                  <span data-i18n="imageUrl">图片 URL，只接受 http / https</span>
+                  <input id="updateImageUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/image.jpg" />
+                </label>
+
+                <label>
+                  <span data-i18n="linkUrl">外部链接 URL，只接受 http / https</span>
+                  <input id="updateLinkUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com" />
+                </label>
+
+                <div class="formGrid two">
+                  <label>
+                    <span data-i18n="linkLabelZh">中文链接按钮文字</span>
+                    <input id="updateLinkLabelZh" type="text" autocomplete="off" placeholder="查看" />
+                  </label>
+
+                  <label>
+                    <span data-i18n="linkLabelEn">英文链接按钮文字</span>
+                    <input id="updateLinkLabelEn" type="text" autocomplete="off" placeholder="View" />
+                  </label>
+                </div>
+
+                <div class="formActions">
+                  <button id="saveUpdateBtn" class="primary" type="submit" data-i18n="save">保存</button>
+                  <button id="cancelUpdateBtn" type="button" data-i18n="cancel">取消</button>
+                  <span id="updateSaveStatus" class="small"></span>
+                </div>
+              </form>
+            </div>
+
+            <div id="updatesStatus" class="statusLine" data-i18n="loadingUpdates">动态加载中...</div>
+            <!-- 骨架屏容器 -->
+            <div id="updatesSkeleton" class="updatesList">
+              <div class="skeleton skeletonCard">
+                <div class="skeleton skeletonLine" style="width: 30%;"></div>
+                <div class="skeleton skeletonLine" style="width: 80%;"></div>
+                <div class="skeleton skeletonLine" style="width: 100%;"></div>
+              </div>
+              <div class="skeleton skeletonCard">
+                <div class="skeleton skeletonLine" style="width: 30%;"></div>
+                <div class="skeleton skeletonLine" style="width: 80%;"></div>
+                <div class="skeleton skeletonLine" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div id="updatesList" class="updatesList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="messagesSection">
+        <div class="sectionInner">
+          <div class="sectionHeader">
+            <h2 class="sectionTitle" data-i18n="messagesTitle">MESSAGES</h2>
+          </div>
+
+          <form id="messageForm" class="messageForm">
+            <input
+              id="messageAuthor"
+              type="text"
+              maxlength="40"
+              autocomplete="name"
+              data-i18n-placeholder="namePlaceholder"
+              placeholder="你的名字"
+            />
+
+            <div class="messageTextareaWrap">
+              <textarea
+                id="messageContent"
+                maxlength="500"
+                required
+                data-i18n-placeholder="messagePlaceholder"
+                placeholder="写点什么..."
+              ></textarea>
+              <div class="counterLine">
+                <span id="messageCounter">0 / 500</span>
+                <span id="messageLinkCounter">0 links</span>
+              </div>
+            </div>
+
+            <input id="messageWebsite" class="honeypot" type="text" autocomplete="off" tabindex="-1" />
+            <!-- 防灌水时间戳 -->
+            <input type="hidden" id="messageTimestamp" value="" />
+
+            <button id="sendMessageBtn" class="primary" type="submit" data-i18n="send">发布</button>
+          </form>
+
+          <p class="messageTips" data-i18n="messageTips">留言至少 2 个字，最多 500 字；链接最多 3 个。</p>
+
+          <div id="messageStatus" class="statusLine" data-i18n="loadingMessages">留言加载中...</div>
+          <!-- 骨架屏容器 -->
+          <div id="messagesSkeleton" class="messageList">
+            <div class="skeleton skeletonCard">
+              <div class="skeleton skeletonLine" style="width: 30%;"></div>
+              <div class="skeleton skeletonLine" style="width: 80%;"></div>
+            </div>
+            <div class="skeleton skeletonCard">
+              <div class="skeleton skeletonLine" style="width: 30%;"></div>
+              <div class="skeleton skeletonLine" style="width: 80%;"></div>
+            </div>
+          </div>
+          <div id="messageList" class="messageList"></div>
+        </div>
+      </section>
+
+      <section id="debugPanel" class="debugPanel hidden">
+        <h2 class="sectionTitle">DEBUG</h2>
+        <pre id="debugLog"></pre>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <div id="visitorGate" class="visitorGate" role="dialog" aria-modal="true" aria-labelledby="visitorGateTitle" hidden>
+    <form id="visitorGateForm" class="visitorGateCard">
+      <p class="visitorGateKicker" data-i18n="visitorGateKicker">VISITOR CHECK</p>
+      <h2 id="visitorGateTitle" class="visitorGateTitle" data-i18n="visitorGateQuestion">你是谁？</h2>
+      <p class="visitorGateHelp" data-i18n="visitorGateHelp">请输入你的名字、昵称，或一句能说明身份的话。提交后即可访问。</p>
+      <label>
+        <span data-i18n="visitorNameLabel">你的身份</span>
+        <input id="visitorNameInput" type="text" maxlength="40" required autocomplete="name" data-i18n-placeholder="visitorNamePlaceholder" placeholder="例如：老朋友 / 同学 / 张三" />
+      </label>
+      <div class="formActions">
+        <button id="visitorGateBtn" class="primary" type="submit" data-i18n="visitorGateEnter">进入</button>
+        <span id="visitorGateStatus" class="small"></span>
+      </div>
+    </form>
+  </div>
+
+  <div id="siteClosedOverlay" class="visitorGate" role="dialog" aria-modal="true" aria-labelledby="siteClosedTitle" hidden>
+    <div class="visitorGateCard">
+      <p class="visitorGateKicker" data-i18n="siteClosedKicker">CURRENTLY CLOSED</p>
+      <h2 id="siteClosedTitle" class="visitorGateTitle" data-i18n="siteClosedTitle">主页当前不对外开放</h2>
+      <p class="visitorGateHelp" data-i18n="siteClosedHelp">请稍后再来。</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const SUPABASE_URL = "https://wzbqabzlmfassgmyyowj.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_fbPvPbTmOfum_628MVQE-w_i6-dlorB";
+      // 锁定具体版本，避免上游小版本变化影响线上；缓存命中也更稳。
+      const SUPABASE_VERSION = "2.108.1";
+      // 主用 jsdelivr，失败时回退到 unpkg（多一个 CDN 兜底，降低单点故障）。
+      const SUPABASE_CDNS = [
+        `https://cdn.jsdelivr.net/npm/@supabase/supabase-js@${SUPABASE_VERSION}/dist/umd/supabase.js`,
+        `https://unpkg.com/@supabase/supabase-js@${SUPABASE_VERSION}/dist/umd/supabase.js`
+      ];
+
+      const ADMIN_STORAGE_KEY = "hao_luo_admin_password";
+      const MESSAGE_LAST_SENT_KEY = "hao_luo_message_last_sent";
+      const THEME_STORAGE_KEY = "hao_luo_site_theme";
+      const UPDATES_COLLAPSED_KEY = "hao_luo_updates_collapsed";
+      const VISITOR_SESSION_KEY = "hao_luo_visitor_identity";
+      // 访客记录防重复：localStorage + 24h 时间戳
+      const VISITOR_RECORD_SENT_KEY = "hao_luo_visitor_record_last_sent_ts";
+      const VISITOR_RECORD_COOLDOWN_HOURS = 24;
+      const MESSAGE_COOLDOWN_MS = 15000;
+      // 防灌水最小提交间隔（毫秒）
+      const MESSAGE_MIN_DELAY_MS = 3000;
+
+      let sbClient = null;
+      let messagesData = [];
+      let visitorRecordsData = [];
+      let updatesData = [];
+      let editingUpdateId = null;
+      let updateFilter = "all";
+      let updatesCollapsed = false;
+      let visitorIdentity = sessionStorage.getItem(VISITOR_SESSION_KEY) || "";
+      let toastTimer = null;
+      let siteAccessOpen = true;
+      let siteAccessLoaded = false;
+
+      const params = new URLSearchParams(window.location.search);
+      // 仅通过 ?admin 触发管理员入口，忽略值，不再支持密码在URL中
+      let adminEntranceOpen = params.has("admin");
+      let adminPassword = adminEntranceOpen ? (sessionStorage.getItem(ADMIN_STORAGE_KEY) || "") : "";
+      let isAdmin = adminEntranceOpen && adminPassword.trim().length > 0;
+
+      // 移除旧格式密码清退逻辑（不再处理 ?admin=密码）
+      const savedUpdatesCollapsed = localStorage.getItem(UPDATES_COLLAPSED_KEY);
+      if (savedUpdatesCollapsed === "true" || savedUpdatesCollapsed === "false") {
+        updatesCollapsed = savedUpdatesCollapsed === "true";
+      } else {
+        updatesCollapsed = !isAdmin;
+      }
+
+      function getInitialTheme() {
+        const saved = localStorage.getItem(THEME_STORAGE_KEY);
+        if (saved === "light" || saved === "dark") return saved;
+
+        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return "dark";
+        }
+
+        return "light";
+      }
+
+      let theme = getInitialTheme();
+
+      function applyTheme() {
+        document.documentElement.setAttribute("data-theme", theme);
+
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute("content", theme === "dark" ? "#11110f" : "#fbfaf7");
+        }
+
+        const themeBtn = $("themeBtn");
+        if (themeBtn) {
+          themeBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+          themeBtn.setAttribute("aria-label", theme === "dark" ? t("themeLight") : t("themeDark"));
+          themeBtn.setAttribute("title", theme === "dark" ? t("themeLight") : t("themeDark"));
+        }
+      }
+
+      function toggleTheme() {
+        theme = theme === "dark" ? "light" : "dark";
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+        applyTheme();
+      }
+
+      function getAdminPassword() {
+        return isAdmin ? adminPassword : "";
+      }
+
+      let lang = localStorage.getItem("site_lang");
+      if (lang !== "zh" && lang !== "en") {
+        lang = (navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en";
+      }
+
+      const I18N = {
+        zh: {
+          pageTitle: "Hao Luo | 个人主页",
+          heroKicker: "PERSONAL WEBSITE",
+          subtitle: "个人主页",
+          themeDark: "切换到深色模式",
+          themeLight: "切换到浅色模式",
+          visitorGateKicker: "VISITOR CHECK",
+          visitorGateQuestion: "你是谁？",
+          visitorGateHelp: "请输入你的名字、昵称，或一句能说明身份的话。提交后即可访问。",
+          visitorNameLabel: "你的身份",
+          visitorNamePlaceholder: "例如：老朋友 / 同学 / 张三",
+          visitorGateEnter: "进入",
+          visitorNameRequired: "请先回答：你是谁？",
+          visitorGateWelcome: "欢迎，{name}",
+          visitorRecordFailed: "访客记录保存失败，但不影响访问。",
+          siteClosedKicker: "暂未开放",
+          siteClosedTitle: "主页当前不对外开放",
+          siteClosedHelp: "请稍后再来。",
+          siteAccessTitle: "访客开关",
+          siteAccessHelp: "关闭后，访客访问主页时会看到\"主页当前不对外开放\"，被阻挡在外。管理员通过 ?admin URL 不受影响。",
+          siteAccessOpenLabel: "开放中",
+          siteAccessClosedLabel: "已关闭",
+          siteAccessToggleClose: "关闭访问",
+          siteAccessToggleOpen: "开放访问",
+          siteAccessUpdated: "已更新",
+          adminMode: "管理员模式已开启。你现在可以新增、编辑、隐藏或删除 Updates。保存或删除时仍会由 Supabase 校验密码。",
+          adminLoginTitle: "管理员登录",
+          adminLoginHelp: "请输入管理员密码。密码只会临时保存在当前浏览器标签页，不会出现在网址里。",
+          adminPasswordLabel: "管理员密码",
+          adminPasswordPlaceholder: "输入管理员密码",
+          adminLogin: "进入管理员模式",
+          adminLoginSaved: "已进入管理员模式",
+          adminLogout: "退出管理员模式",
+          adminPasswordRequired: "请先输入管理员密码",
+          aboutTitle: "ABOUT",
+          nowTitle: "NOW",
+          updatesTitle: "UPDATES",
+          messagesTitle: "MESSAGES",
+          expandUpdates: "展开",
+          collapseUpdates: "收起",
+
+          editProfile: "编辑个人信息 / 联系方式",
+          bioZh: "中文简介",
+          bioEn: "英文简介",
+          nowZh: "中文 Now",
+          nowEn: "英文 Now",
+          phone: "电话",
+          save: "保存",
+          saving: "保存中...",
+          saved: "已保存",
+          cancel: "取消",
+
+          copy: "复制",
+          copied: "已复制",
+          noContact: "暂无公开联系方式",
+
+          visitorRecordsTitle: "访客记录",
+          visitorRecordsHelp: "访客回答\"你是谁？\"之后，会在这里留下记录。记录对普通访客不可见。",
+          noVisitorRecords: "暂无访客记录",
+          loadingVisitorRecords: "访客记录加载中...",
+          visitorRecordCount: "共 {count} 条访客记录",
+          visitorName: "访客",
+          visitorPath: "访问页面",
+          visitorReferrer: "来源",
+          visitorLang: "语言",
+          visitorTimezone: "时区",
+          directVisit: "直接访问 / 无来源",
+          confirmDeleteVisitorRecord: "确定删除这条访客记录吗？删除后无法恢复。",
+
+          newUpdate: "新增",
+          updateFormNew: "新增动态",
+          updateFormEdit: "编辑动态",
+          updateType: "类型",
+          visible: "公开显示",
+          visibleYes: "公开",
+          visibleNo: "隐藏",
+          titleZh: "中文标题",
+          titleEn: "英文标题",
+          bodyZh: "中文正文",
+          bodyEn: "英文正文",
+          imageUrl: "图片 URL，只接受 http:// 或 https://",
+          linkUrl: "外部链接 URL，只接受 http:// 或 https://",
+          linkLabelZh: "中文链接按钮文字",
+          linkLabelEn: "英文链接按钮文字",
+          loadingUpdates: "动态加载中...",
+          noUpdates: "暂无动态",
+          noUpdatesInFilter: "当前分类暂无动态",
+          updateCount: "共 {count} 条动态",
+          updateCountFiltered: "显示 {shown} / {total} 条动态",
+          updateSaved: "动态已保存",
+          updateRequired: "标题、正文、图片 URL 或外部链接至少填写一项",
+          invalidUrl: "URL 必须以 http:// 或 https:// 开头",
+          untitledUpdate: "未命名动态",
+          view: "查看",
+
+          filterAll: "全部",
+          filterPost: "文章",
+          filterNote: "笔记",
+          filterProject: "项目",
+          filterLink: "链接",
+          filterImage: "图片",
+
+          namePlaceholder: "你的名字",
+          messagePlaceholder: "写点什么...",
+          messageTips: "留言至少 2 个字，最多 500 字；链接最多 3 个。",
+          send: "发布",
+          sending: "发布中...",
+          loadingMessages: "留言加载中...",
+          noMessages: "暂无留言",
+          messageCount: "共 {count} 条留言",
+          messageSent: "已发布",
+          messageTooShort: "留言内容太短",
+          messageTooManyLinks: "链接太多了",
+          messageCooldown: "发布太频繁，请 {seconds} 秒后再试",
+          messageTooFast: "提交太快，请稍后再试",
+          anonymous: "匿名",
+          links: "个链接",
+
+          edit: "编辑",
+          hide: "隐藏",
+          restore: "恢复",
+          delete: "删除",
+          hidden: "已隐藏",
+          confirmDeleteUpdate: "确定删除这条动态吗？删除后无法恢复。",
+          confirmDeleteMessage: "确定删除这条留言吗？删除后无法恢复。",
+
+          supabaseUnavailable: "Supabase 加载失败。前端语言切换仍可使用。",
+          loadFailed: "加载失败，请查看页面底部 DEBUG。",
+          actionFailed: "操作失败，请查看页面底部 DEBUG。"
+        },
+
+        en: {
+          pageTitle: "Hao Luo | Homepage",
+          heroKicker: "PERSONAL WEBSITE",
+          subtitle: "Personal homepage",
+          themeDark: "Switch to dark mode",
+          themeLight: "Switch to light mode",
+          visitorGateKicker: "VISITOR CHECK",
+          visitorGateQuestion: "Who are you?",
+          visitorGateHelp: "Enter your name, nickname, or a short identity note. You can enter after submitting.",
+          visitorNameLabel: "Your identity",
+          visitorNamePlaceholder: "e.g. old friend / classmate / Alex",
+          visitorGateEnter: "Enter",
+          visitorNameRequired: "Please answer: who are you?",
+          visitorGateWelcome: "Welcome, {name}",
+          visitorRecordFailed: "Visitor record failed to save, but access is allowed.",
+          siteClosedKicker: "CURRENTLY CLOSED",
+          siteClosedTitle: "This site is currently closed to visitors",
+          siteClosedHelp: "Please check back later.",
+          siteAccessTitle: "Visitor access",
+          siteAccessHelp: "When off, visitors will see a closed message and be blocked. Admins (via the ?admin URL) are not affected.",
+          siteAccessOpenLabel: "Open",
+          siteAccessClosedLabel: "Closed",
+          siteAccessToggleClose: "Close access",
+          siteAccessToggleOpen: "Open access",
+          siteAccessUpdated: "Updated",
+          adminMode: "Admin mode is on. You can now add, edit, hide, or delete Updates. Supabase will still verify the password when saving or deleting.",
+          adminLoginTitle: "Admin login",
+          adminLoginHelp: "Enter the admin password. It will only be stored temporarily in this browser tab, not in the URL.",
+          adminPasswordLabel: "Admin password",
+          adminPasswordPlaceholder: "Enter admin password",
+          adminLogin: "Enter admin mode",
+          adminLoginSaved: "Admin mode is on",
+          adminLogout: "Exit admin mode",
+          adminPasswordRequired: "Please enter the admin password first",
+          aboutTitle: "ABOUT",
+          nowTitle: "NOW",
+          updatesTitle: "UPDATES",
+          messagesTitle: "MESSAGES",
+          expandUpdates: "Expand",
+          collapseUpdates: "Collapse",
+
+          editProfile: "Edit profile / contacts",
+          bioZh: "Chinese bio",
+          bioEn: "English bio",
+          nowZh: "Chinese Now",
+          nowEn: "English Now",
+          phone: "Phone",
+          save: "Save",
+          saving: "Saving...",
+          saved: "Saved",
+          cancel: "Cancel",
+
+          copy: "Copy",
+          copied: "Copied",
+          noContact: "No public contact yet",
+
+          visitorRecordsTitle: "Visitor records",
+          visitorRecordsHelp: "After visitors answer \"Who are you?\", their records appear here. Ordinary visitors cannot see them.",
+          noVisitorRecords: "No visitor records yet",
+          loadingVisitorRecords: "Loading visitor records...",
+          visitorRecordCount: "{count} visitor records",
+          visitorName: "Visitor",
+          visitorPath: "Visited page",
+          visitorReferrer: "Referrer",
+          visitorLang: "Language",
+          visitorTimezone: "Time zone",
+          directVisit: "Direct visit / no referrer",
+          confirmDeleteVisitorRecord: "Delete this visitor record? This cannot be undone.",
+
+          newUpdate: "New",
+          updateFormNew: "New update",
+          updateFormEdit: "Edit update",
+          updateType: "Type",
+          visible: "Visibility",
+          visibleYes: "Visible",
+          visibleNo: "Hidden",
+          titleZh: "Chinese title",
+          titleEn: "English title",
+          bodyZh: "Chinese body",
+          bodyEn: "English body",
+          imageUrl: "Image URL, http:// or https:// only",
+          linkUrl: "External link URL, http:// or https:// only",
+          linkLabelZh: "Chinese link button label",
+          linkLabelEn: "English link button label",
+          loadingUpdates: "Loading updates...",
+          noUpdates: "No updates yet",
+          noUpdatesInFilter: "No updates in this category",
+          updateCount: "{count} updates",
+          updateCountFiltered: "Showing {shown} / {total} updates",
+          updateSaved: "Update saved",
+          updateRequired: "Please fill in at least one title, body, image URL, or external link",
+          invalidUrl: "URL must start with http:// or https://",
+          untitledUpdate: "Untitled update",
+          view: "View",
+
+          filterAll: "All",
+          filterPost: "Posts",
+          filterNote: "Notes",
+          filterProject: "Projects",
+          filterLink: "Links",
+          filterImage: "Images",
+
+          namePlaceholder: "Your name",
+          messagePlaceholder: "Write something...",
+          messageTips: "At least 2 characters, up to 500 characters; max 3 links.",
+          send: "Send",
+          sending: "Sending...",
+          loadingMessages: "Loading messages...",
+          noMessages: "No messages yet",
+          messageCount: "{count} messages",
+          messageSent: "Sent",
+          messageTooShort: "Message is too short",
+          messageTooManyLinks: "Too many links",
+          messageCooldown: "Please wait {seconds}s before posting again",
+          messageTooFast: "Too fast, please try again later",
+          anonymous: "Anonymous",
+          links: "links",
+
+          edit: "Edit",
+          hide: "Hide",
+          restore: "Restore",
+          delete: "Delete",
+          hidden: "Hidden",
+          confirmDeleteUpdate: "Delete this update? This cannot be undone.",
+          confirmDeleteMessage: "Delete this message? This cannot be undone.",
+
+          supabaseUnavailable: "Supabase failed to load. Language switching still works.",
+          loadFailed: "Failed to load. See DEBUG at the bottom.",
+          actionFailed: "Action failed. See DEBUG at the bottom."
+        }
+      };
+
+      let profileData = {
+        bio: {
+          zh: "这里是我的个人主页。",
+          en: "This is my personal homepage."
+        },
+        now: {
+          zh: "正在持续更新这个页面。",
+          en: "Currently updating this page."
+        },
+        contacts: {
+          email: "",
+          phone: "",
+          wechat: "",
+          qq: ""
+        }
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function t(key) {
+        return (I18N[lang] && I18N[lang][key]) || I18N.zh[key] || key;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function escapeAttr(value) {
+        return escapeHtml(value);
+      }
+
+      function nl2br(value) {
+        return escapeHtml(value).replace(/\n/g, "<br>");
+      }
+
+      function safeHttpUrl(value) {
+        const url = String(value || "").trim();
+        if (/^https?:\/\//i.test(url)) return url;
+        return "";
+      }
+
+      function trimValue(value) {
+        return String(value || "").trim();
+      }
+
+      function linkCount(value) {
+        return (String(value || "").match(/https?:\/\//gi) || []).length;
+      }
+
+      function chooseText(zh, en, fallback) {
+        const primary = lang === "zh" ? zh : en;
+        const secondary = lang === "zh" ? en : zh;
+        return trimValue(primary) || trimValue(secondary) || fallback || "";
+      }
+
+      function formatDate(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}.${m}.${d}`;
+      }
+
+      function formatDateTime(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        const hh = String(date.getHours()).padStart(2, "0");
+        const mm = String(date.getMinutes()).padStart(2, "0");
+        return `${y}.${m}.${d} ${hh}:${mm}`;
+      }
+
+      function showToast(message) {
+        const el = $("toast");
+        if (!el) return;
+
+        el.textContent = message;
+        el.classList.remove("hidden");
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          el.classList.add("hidden");
+        }, 1800);
+      }
+
+      function showDebug(message, detail) {
+        const panel = $("debugPanel");
+        const log = $("debugLog");
+        if (!panel || !log) return;
+
+        const time = new Date().toLocaleTimeString();
+        const safeDetail = detail ? String(detail) : "";
+        log.textContent += `[${time}] ${message}${safeDetail ? "\n" + safeDetail : ""}\n\n`;
+        panel.classList.remove("hidden");
+
+        try {
+          console.error(message, detail || "");
+        } catch (_) {}
+      }
+
+      function errorMessage(error) {
+        if (!error) return "";
+        if (typeof error === "string") return error;
+        if (error.message) return error.message;
+        try {
+          return JSON.stringify(error);
+        } catch (_) {
+          return String(error);
+        }
+      }
+
+      function setStatus(id, message, isError, isOk) {
+        const el = $(id);
+        if (!el) return;
+        el.textContent = message || "";
+        el.classList.toggle("errorText", Boolean(isError));
+        el.classList.toggle("okText", Boolean(isOk));
+      }
+
+      function updateMessageCounter() {
+        const contentEl = $("messageContent");
+        const counterEl = $("messageCounter");
+        const linkCounterEl = $("messageLinkCounter");
+        if (!contentEl || !counterEl || !linkCounterEl) return;
+
+        const value = contentEl.value || "";
+        const links = linkCount(value);
+
+        counterEl.textContent = `${value.length} / 500`;
+        linkCounterEl.textContent = lang === "zh" ? `${links} ${t("links")}` : `${links} ${t("links")}`;
+        linkCounterEl.classList.toggle("errorText", links > 3);
+        counterEl.classList.toggle("errorText", value.length > 500);
+      }
+
+      function hideSkeleton(type) {
+        const skeletonEl = $(type + "Skeleton");
+        if (skeletonEl) skeletonEl.hidden = true;
+      }
+
+      function showSkeleton(type) {
+        const skeletonEl = $(type + "Skeleton");
+        if (skeletonEl) skeletonEl.hidden = false;
+      }
+
+      function setupVisitorGate() {
+        const gate = $("visitorGate");
+        const closedOverlay = $("siteClosedOverlay");
+        const input = $("visitorNameInput");
+
+        if (!gate || !closedOverlay) return;
+
+        if (adminEntranceOpen) {
+          document.body.classList.remove("guestLocked");
+          gate.hidden = true;
+          closedOverlay.hidden = true;
+          return;
+        }
+
+        if (siteAccessLoaded && !siteAccessOpen) {
+          document.body.classList.add("guestLocked");
+          gate.hidden = true;
+          closedOverlay.hidden = false;
+          return;
+        }
+
+        if (!trimValue(visitorIdentity)) {
+          document.body.classList.add("guestLocked");
+          closedOverlay.hidden = true;
+          gate.hidden = false;
+          setTimeout(() => {
+            if (input) input.focus();
+          }, 80);
+          return;
+        }
+
+        document.body.classList.remove("guestLocked");
+        gate.hidden = true;
+        closedOverlay.hidden = true;
+      }
+
+      function unlockVisitorGate() {
+        const gate = $("visitorGate");
+        document.body.classList.remove("guestLocked");
+        if (gate) gate.hidden = true;
+      }
+
+      async function submitVisitorGate(event) {
+        event.preventDefault();
+
+        const input = $("visitorNameInput");
+        const answer = trimValue(input ? input.value : "").slice(0, 40);
+
+        if (!answer) {
+          setStatus("visitorGateStatus", t("visitorNameRequired"), true);
+          return;
+        }
+
+        visitorIdentity = answer;
+        sessionStorage.setItem(VISITOR_SESSION_KEY, visitorIdentity);
+        unlockVisitorGate();
+        showToast(t("visitorGateWelcome").replace("{name}", visitorIdentity));
+
+        try {
+          await recordVisitorIfNeeded();
+        } catch (error) {
+          showDebug("Save visitor record failed", errorMessage(error));
+          showToast(t("visitorRecordFailed"));
+        }
+      }
+
+      function getVisitorRecordPayload(name) {
+        return {
+          p_name: trimValue(name).slice(0, 40),
+          p_path: `${window.location.pathname}${window.location.search}${window.location.hash}`.slice(0, 140),
+          p_referrer: String(document.referrer || "").slice(0, 140),
+          p_lang: String(navigator.language || "").slice(0, 30),
+          p_timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone || "").slice(0, 60),
+          p_user_agent: String(navigator.userAgent || "").slice(0, 220)
+        };
+      }
+
+      async function recordVisitorIfNeeded() {
+        if (!sbClient || isAdmin || !trimValue(visitorIdentity)) return;
+        // 24小时防重复
+        const lastSent = localStorage.getItem(VISITOR_RECORD_SENT_KEY);
+        if (lastSent) {
+          const lastTime = Number(lastSent);
+          if (!Number.isNaN(lastTime) && (Date.now() - lastTime) < VISITOR_RECORD_COOLDOWN_HOURS * 60 * 60 * 1000) {
+            return;
+          }
+        }
+
+        const { error } = await sbClient.rpc("create_visitor_record", getVisitorRecordPayload(visitorIdentity));
+
+        if (error) throw error;
+
+        localStorage.setItem(VISITOR_RECORD_SENT_KEY, String(Date.now()));
+      }
+
+      function renderUpdatesCollapse() {
+        const content = $("updatesContent");
+        const btn = $("updatesToggleBtn");
+        if (!content || !btn) return;
+
+        content.hidden = updatesCollapsed;
+        btn.textContent = updatesCollapsed ? t("expandUpdates") : t("collapseUpdates");
+        btn.setAttribute("aria-expanded", updatesCollapsed ? "false" : "true");
+        btn.setAttribute("title", updatesCollapsed ? t("expandUpdates") : t("collapseUpdates"));
+      }
+
+      function setUpdatesCollapsed(collapsed) {
+        updatesCollapsed = Boolean(collapsed);
+        localStorage.setItem(UPDATES_COLLAPSED_KEY, updatesCollapsed ? "true" : "false");
+        renderUpdatesCollapse();
+      }
+
+      function getUpdateTypeLabel(type) {
+        const value = String(type || "").trim().toLowerCase();
+
+        if (value === "post") return t("filterPost");
+        if (value === "note") return t("filterNote");
+        if (value === "project") return t("filterProject");
+        if (value === "link") return t("filterLink");
+        if (value === "image") return t("filterImage");
+
+        return value || "post";
+      }
+
+      function renderUpdateFilters() {
+        const el = $("updateFilters");
+        if (!el) return;
+
+        const filters = [
+          ["all", t("filterAll")],
+          ["post", t("filterPost")],
+          ["note", t("filterNote")],
+          ["project", t("filterProject")],
+          ["link", t("filterLink")],
+          ["image", t("filterImage")]
+        ];
+
+        el.innerHTML = filters.map(([value, label]) => {
+          const active = updateFilter === value;
+          return `
+            <button
+              type="button"
+              class="filterButton ${active ? "isActive" : ""}"
+              data-update-filter="${escapeAttr(value)}"
+              aria-pressed="${active ? "true" : "false"}"
+            >${escapeHtml(label)}</button>
+          `;
+        }).join("");
+      }
+
+      function mergeProfile(value) {
+        const next = {
+          bio: { zh: "", en: "" },
+          now: { zh: "", en: "" },
+          contacts: { email: "", phone: "", wechat: "", qq: "" }
+        };
+
+        const source = value && typeof value === "object" ? value : {};
+
+        next.bio.zh = trimValue(source.bio && source.bio.zh) || profileData.bio.zh || "";
+        next.bio.en = trimValue(source.bio && source.bio.en) || profileData.bio.en || "";
+        next.now.zh = trimValue(source.now && source.now.zh) || profileData.now.zh || "";
+        next.now.en = trimValue(source.now && source.now.en) || profileData.now.en || "";
+        next.contacts.email = trimValue(source.contacts && source.contacts.email);
+        next.contacts.phone = trimValue(source.contacts && source.contacts.phone);
+        next.contacts.wechat = trimValue(source.contacts && source.contacts.wechat);
+        next.contacts.qq = trimValue(source.contacts && source.contacts.qq);
+
+        return next;
+      }
+
+      function applyLanguage() {
+        document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+        document.title = t("pageTitle");
+
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          el.textContent = t(key);
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-placeholder");
+          el.setAttribute("placeholder", t(key));
+        });
+
+        const langBtn = $("langBtn");
+        if (langBtn) {
+          langBtn.textContent = lang === "zh" ? "EN" : "中文";
+        }
+
+        applyTheme();
+        renderUpdateFilters();
+        updateMessageCounter();
+        renderProfile();
+        renderUpdates();
+        renderMessages();
+        renderVisitorRecords();
+        renderUpdatesCollapse();
+        renderSiteAccessAdmin();
+        setupVisitorGate();
+      }
+
+      function setupAdminView() {
+        document.querySelectorAll("[data-admin-only]").forEach((el) => {
+          el.hidden = !isAdmin;
+        });
+
+        const loginPanel = $("adminLoginPanel");
+        if (loginPanel) {
+          loginPanel.hidden = !(adminEntranceOpen && !isAdmin);
+        }
+      }
+
+      async function enterAdminMode(event) {
+        event.preventDefault();
+
+        const input = $("adminPasswordInput");
+        const password = input ? input.value.trim() : "";
+
+        if (!password) {
+          setStatus("adminLoginStatus", t("adminPasswordRequired"), true);
+          return;
+        }
+
+        sessionStorage.setItem(ADMIN_STORAGE_KEY, password);
+        adminPassword = password;
+        isAdmin = true;
+        adminEntranceOpen = true;
+
+        // 保留 ?admin，但确保无密码泄露
+        params.set("admin", "1");
+        const cleanSearch = params.toString();
+        const cleanUrl = `${window.location.pathname}${cleanSearch ? "?" + cleanSearch : ""}${window.location.hash}`;
+        window.history.replaceState(null, "", cleanUrl);
+
+        if (input) input.value = "";
+        setStatus("adminLoginStatus", "");
+        setupAdminView();
+        if (localStorage.getItem(UPDATES_COLLAPSED_KEY) === null) {
+          updatesCollapsed = false;
+        }
+        renderUpdates();
+        renderMessages();
+        renderVisitorRecords();
+        renderUpdatesCollapse();
+        setupVisitorGate();
+        showToast(t("adminLoginSaved"));
+
+        try {
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("loadFailed"), true);
+          showDebug("Load admin updates failed", errorMessage(error));
+        }
+
+        try {
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("loadFailed"), true);
+          showDebug("Load admin messages failed", errorMessage(error));
+        }
+
+        try {
+          await loadVisitorRecords();
+        } catch (error) {
+          setStatus("visitorRecordStatus", t("loadFailed"), true);
+          showDebug("Load visitor records failed", errorMessage(error));
+        }
+      }
+
+      async function exitAdminMode() {
+        sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+        adminPassword = "";
+        isAdmin = false;
+        hideUpdateEditor();
+        visitorRecordsData = [];
+        setupAdminView();
+        renderUpdates();
+        renderMessages();
+        renderVisitorRecords();
+
+        try {
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("loadFailed"), true);
+          showDebug("Load public updates failed", errorMessage(error));
+        }
+
+        try {
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("loadFailed"), true);
+          showDebug("Load public messages failed", errorMessage(error));
+        }
+      }
+
+      function renderProfile() {
+        const bioText = $("bioText");
+        const nowText = $("nowText");
+        const contactList = $("contactList");
+
+        if (bioText) {
+          bioText.innerHTML = nl2br(chooseText(profileData.bio.zh, profileData.bio.en, ""));
+        }
+
+        if (nowText) {
+          nowText.innerHTML = nl2br(chooseText(profileData.now.zh, profileData.now.en, ""));
+        }
+
+        if (contactList) {
+          const contacts = [
+            ["email", "Email", profileData.contacts.email],
+            ["phone", t("phone"), profileData.contacts.phone],
+            ["wechat", "WeChat", profileData.contacts.wechat],
+            ["qq", "QQ", profileData.contacts.qq]
+          ].filter((item) => trimValue(item[2]));
+
+          if (!contacts.length) {
+            contactList.innerHTML = `<p class="muted">${escapeHtml(t("noContact"))}</p>`;
+          } else {
+            contactList.innerHTML = contacts.map(([key, label, value]) => {
+              return `
+                <div class="contactItem">
+                  <span class="contactName">${escapeHtml(label)}</span>
+                  <span class="contactValue">${escapeHtml(value)}</span>
+                  <button type="button" data-copy="${escapeAttr(value)}">${escapeHtml(t("copy"))}</button>
+                </div>
+              `;
+            }).join("");
+          }
+        }
+
+        fillProfileEditor();
+      }
+
+      function fillProfileEditor() {
+        const form = $("profileForm");
+        if (!form || form.contains(document.activeElement)) return;
+
+        $("editBioZh").value = profileData.bio.zh || "";
+        $("editBioEn").value = profileData.bio.en || "";
+        $("editNowZh").value = profileData.now.zh || "";
+        $("editNowEn").value = profileData.now.en || "";
+        $("editEmail").value = profileData.contacts.email || "";
+        $("editPhone").value = profileData.contacts.phone || "";
+        $("editWechat").value = profileData.contacts.wechat || "";
+        $("editQq").value = profileData.contacts.qq || "";
+      }
+
+      function renderUpdates() {
+        const list = $("updatesList");
+        if (!list) return;
+
+        hideSkeleton("updates");
+
+        if (!updatesData.length) {
+          list.innerHTML = "";
+          setStatus("updatesStatus", t("noUpdates"));
+          return;
+        }
+
+        const filteredUpdates = updatesData.filter((item) => {
+          if (updateFilter === "all") return true;
+          return String(item.type || "post").toLowerCase() === updateFilter;
+        });
+
+        if (!filteredUpdates.length) {
+          list.innerHTML = "";
+          setStatus("updatesStatus", t("noUpdatesInFilter"));
+          return;
+        }
+
+        if (updateFilter === "all") {
+          setStatus("updatesStatus", t("updateCount").replace("{count}", updatesData.length));
+        } else {
+          setStatus(
+            "updatesStatus",
+            t("updateCountFiltered")
+              .replace("{shown}", filteredUpdates.length)
+              .replace("{total}", updatesData.length)
+          );
+        }
+
+        list.innerHTML = filteredUpdates.map((item) => {
+          const visible = item.visible !== false;
+          const date = formatDate(item.created_at);
+          const title = chooseText(item.title_zh, item.title_en, t("untitledUpdate"));
+          const body = chooseText(item.body_zh, item.body_en, "");
+          const imageUrl = safeHttpUrl(item.image_url);
+          const linkUrl = safeHttpUrl(item.link_url);
+          const linkLabel = chooseText(item.link_label_zh, item.link_label_en, t("view"));
+          const type = trimValue(item.type || "post");
+
+          return `
+            <article class="updateCard ${visible ? "" : "isHidden"}">
+              <div class="meta">
+                ${date ? `<span>${escapeHtml(date)}</span>` : ""}
+                ${type ? `<span class="pill">${escapeHtml(getUpdateTypeLabel(type))}</span>` : ""}
+                ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
+              </div>
+
+              <h3 class="updateTitle">${escapeHtml(title)}</h3>
+
+              ${body ? `<p class="updateBody">${nl2br(body)}</p>` : ""}
+
+              ${imageUrl ? `<img class="updateImage" src="${escapeAttr(imageUrl)}" alt="${escapeAttr(title)}" loading="lazy">` : ""}
+
+              ${linkUrl ? `
+                <a class="linkButton" href="${escapeAttr(linkUrl)}" target="_blank" rel="noopener noreferrer">
+                  ${escapeHtml(linkLabel || t("view"))}
+                </a>
+              ` : ""}
+
+              ${isAdmin ? `
+                <div class="adminActions">
+                  <button class="textButton" type="button" data-update-action="edit" data-id="${escapeAttr(item.id)}">${escapeHtml(t("edit"))}</button>
+                  <button class="textButton" type="button" data-update-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
+                    ${escapeHtml(visible ? t("hide") : t("restore"))}
+                  </button>
+                  <button class="textButton dangerText" type="button" data-update-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                </div>
+              ` : ""}
+            </article>
+          `;
+        }).join("");
+      }
+
+      function renderMessages() {
+        const list = $("messageList");
+        if (!list) return;
+
+        hideSkeleton("messages");
+
+        if (!messagesData.length) {
+          list.innerHTML = "";
+          setStatus("messageStatus", t("noMessages"));
+          return;
+        }
+
+        setStatus("messageStatus", t("messageCount").replace("{count}", messagesData.length));
+
+        list.innerHTML = messagesData.map((item) => {
+          const visible = item.visible !== false;
+          const author = trimValue(item.author) || t("anonymous");
+          const date = formatDate(item.created_at);
+          const content = trimValue(item.content);
+
+          return `
+            <article class="messageCard ${visible ? "" : "isHidden"}">
+              <div class="meta">
+                <span>${escapeHtml(author)}</span>
+                ${date ? `<span>${escapeHtml(date)}</span>` : ""}
+                ${isAdmin && !visible ? `<span class="pill">${escapeHtml(t("hidden"))}</span>` : ""}
+              </div>
+
+              <p class="messageBody">${nl2br(content)}</p>
+
+              ${isAdmin ? `
+                <div class="adminActions">
+                  <button class="textButton" type="button" data-message-action="${visible ? "hide" : "restore"}" data-id="${escapeAttr(item.id)}">
+                    ${escapeHtml(visible ? t("hide") : t("restore"))}
+                  </button>
+                  <button class="textButton dangerText" type="button" data-message-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+                </div>
+              ` : ""}
+            </article>
+          `;
+        }).join("");
+      }
+
+      function scrollToLatestMessage() {
+        const list = $("messageList");
+        if (!list || !list.lastElementChild) return;
+        list.lastElementChild.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function renderVisitorRecords() {
+        const list = $("visitorRecordList");
+        if (!list) return;
+
+        if (!isAdmin) {
+          list.innerHTML = "";
+          setStatus("visitorRecordStatus", "");
+          return;
+        }
+
+        if (!visitorRecordsData.length) {
+          list.innerHTML = "";
+          setStatus("visitorRecordStatus", t("noVisitorRecords"));
+          return;
+        }
+
+        setStatus("visitorRecordStatus", t("visitorRecordCount").replace("{count}", visitorRecordsData.length));
+
+        list.innerHTML = visitorRecordsData.map((item) => {
+          const name = trimValue(item.name) || t("anonymous");
+          const date = formatDateTime(item.created_at);
+          const path = trimValue(item.path) || "/";
+          const referrer = trimValue(item.referrer) || t("directVisit");
+          const visitorLang = trimValue(item.lang) || "-";
+          const timezone = trimValue(item.timezone) || "-";
+
+          return `
+            <article class="visitorRecordCard">
+              <div class="visitorRecordTop">
+                <span class="visitorRecordName">${escapeHtml(name)}</span>
+                ${date ? `<span class="small">${escapeHtml(date)}</span>` : ""}
+              </div>
+              <div class="visitorRecordGrid">
+                <div><strong>${escapeHtml(t("visitorPath"))}：</strong>${escapeHtml(path)}</div>
+                <div><strong>${escapeHtml(t("visitorReferrer"))}：</strong>${escapeHtml(referrer)}</div>
+                <div><strong>${escapeHtml(t("visitorLang"))}：</strong>${escapeHtml(visitorLang)}</div>
+                <div><strong>${escapeHtml(t("visitorTimezone"))}：</strong>${escapeHtml(timezone)}</div>
+              </div>
+              <div class="adminActions">
+                <button class="textButton dangerText" type="button" data-visitor-action="delete" data-id="${escapeAttr(item.id)}">${escapeHtml(t("delete"))}</button>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function showUpdateEditor(isEditing) {
+        const editor = $("updateEditor");
+        const title = $("updateFormTitle");
+        if (!editor) return;
+
+        setUpdatesCollapsed(false);
+        editor.hidden = false;
+        editor.classList.remove("hidden");
+
+        if (title) {
+          title.textContent = isEditing ? t("updateFormEdit") : t("updateFormNew");
+        }
+
+        setStatus("updateSaveStatus", "");
+        editor.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function hideUpdateEditor() {
+        const editor = $("updateEditor");
+        if (!editor) return;
+
+        editor.classList.add("hidden");
+        editingUpdateId = null;
+        setStatus("updateSaveStatus", "");
+      }
+
+      function resetUpdateForm() {
+        editingUpdateId = null;
+
+        $("updateType").value = "post";
+        $("updateVisible").value = "true";
+        $("updateTitleZh").value = "";
+        $("updateTitleEn").value = "";
+        $("updateBodyZh").value = "";
+        $("updateBodyEn").value = "";
+        $("updateImageUrl").value = "";
+        $("updateLinkUrl").value = "";
+        $("updateLinkLabelZh").value = "";
+        $("updateLinkLabelEn").value = "";
+
+        showUpdateEditor(false);
+      }
+
+      function editUpdate(id) {
+        const item = updatesData.find((entry) => String(entry.id) === String(id));
+        if (!item) return;
+
+        editingUpdateId = item.id;
+
+        $("updateType").value = item.type || "post";
+        $("updateVisible").value = item.visible === false ? "false" : "true";
+        $("updateTitleZh").value = item.title_zh || "";
+        $("updateTitleEn").value = item.title_en || "";
+        $("updateBodyZh").value = item.body_zh || "";
+        $("updateBodyEn").value = item.body_en || "";
+        $("updateImageUrl").value = item.image_url || "";
+        $("updateLinkUrl").value = item.link_url || "";
+        $("updateLinkLabelZh").value = item.link_label_zh || "";
+        $("updateLinkLabelEn").value = item.link_label_en || "";
+
+        showUpdateEditor(true);
+      }
+
+      async function copyText(value) {
+        const text = String(value || "");
+        if (!text) return;
+
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.setAttribute("readonly", "");
+            textarea.style.position = "absolute";
+            textarea.style.left = "-9999px";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+          }
+
+          showToast(t("copied"));
+        } catch (error) {
+          showDebug("Copy failed", errorMessage(error));
+        }
+      }
+
+      function loadScriptFrom(src) {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = src;
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error("Failed to load script: " + src));
+          document.head.appendChild(script);
+        });
+      }
+
+      async function loadSupabaseScript() {
+        if (window.supabase && typeof window.supabase.createClient === "function") {
+          return;
+        }
+
+        let lastError = null;
+
+        // 依次尝试每个 CDN，加载成功且 supabase 可用就停止；全部失败才抛错。
+        for (const src of SUPABASE_CDNS) {
+          try {
+            await loadScriptFrom(src);
+            if (window.supabase && typeof window.supabase.createClient === "function") {
+              return;
+            }
+            lastError = new Error("Script loaded but window.supabase is unavailable: " + src);
+          } catch (error) {
+            lastError = error;
+          }
+        }
+
+        throw lastError || new Error("Failed to load Supabase from all CDNs");
+      }
+
+      async function loadProfile() {
+        if (!sbClient) return;
+
+        const { data, error } = await sbClient
+          .from("site_settings")
+          .select("value")
+          .eq("key", "profile")
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data && data.value) {
+          profileData = mergeProfile(data.value);
+          renderProfile();
+        }
+      }
+
+      async function loadSiteAccess() {
+        if (!sbClient) return;
+
+        const { data, error } = await sbClient
+          .from("site_settings")
+          .select("value")
+          .eq("key", "site_access")
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data && data.value && typeof data.value.open === "boolean") {
+          siteAccessOpen = data.value.open;
+        } else {
+          siteAccessOpen = true;
+        }
+
+        siteAccessLoaded = true;
+        renderSiteAccessAdmin();
+        setupVisitorGate();
+      }
+
+      function renderSiteAccessAdmin() {
+        const indicator = $("siteAccessIndicator");
+        const btn = $("siteAccessToggleBtn");
+        if (!indicator || !btn) return;
+
+        if (siteAccessOpen) {
+          indicator.textContent = t("siteAccessOpenLabel");
+          indicator.classList.add("isOpen");
+          indicator.classList.remove("isClosed");
+          btn.textContent = t("siteAccessToggleClose");
+        } else {
+          indicator.textContent = t("siteAccessClosedLabel");
+          indicator.classList.add("isClosed");
+          indicator.classList.remove("isOpen");
+          btn.textContent = t("siteAccessToggleOpen");
+        }
+      }
+
+      async function toggleSiteAccess() {
+        if (!sbClient) {
+          setStatus("siteAccessStatus", t("supabaseUnavailable"), true);
+          return;
+        }
+
+        const btn = $("siteAccessToggleBtn");
+        const nextOpen = !siteAccessOpen;
+
+        btn.disabled = true;
+        setStatus("siteAccessStatus", t("saving"));
+
+        try {
+          const { error } = await sbClient.rpc("update_site_setting_with_admin", {
+            setting_key: "site_access",
+            setting_value: { open: nextOpen },
+            admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          siteAccessOpen = nextOpen;
+          siteAccessLoaded = true;
+          renderSiteAccessAdmin();
+          setupVisitorGate();
+          setStatus("siteAccessStatus", t("siteAccessUpdated"), false, true);
+          showToast(t("siteAccessUpdated"));
+        } catch (error) {
+          setStatus("siteAccessStatus", t("actionFailed"), true);
+          showDebug("Toggle site access failed", errorMessage(error));
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      async function saveProfile(event) {
+        event.preventDefault();
+
+        if (!sbClient) {
+          setStatus("profileSaveStatus", t("supabaseUnavailable"), true);
+          return;
+        }
+
+        const btn = $("saveProfileBtn");
+        btn.disabled = true;
+        setStatus("profileSaveStatus", t("saving"));
+
+        const nextProfile = {
+          bio: {
+            zh: $("editBioZh").value,
+            en: $("editBioEn").value
+          },
+          now: {
+            zh: $("editNowZh").value,
+            en: $("editNowEn").value
+          },
+          contacts: {
+            email: $("editEmail").value,
+            phone: $("editPhone").value,
+            wechat: $("editWechat").value,
+            qq: $("editQq").value
+          }
+        };
+
+        try {
+          const { error } = await sbClient.rpc("update_site_setting_with_admin", {
+            setting_key: "profile",
+            setting_value: nextProfile,
+            admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          profileData = mergeProfile(nextProfile);
+          renderProfile();
+          setStatus("profileSaveStatus", t("saved"), false, true);
+        } catch (error) {
+          setStatus("profileSaveStatus", t("actionFailed"), true);
+          showDebug("Save profile failed", errorMessage(error));
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      async function loadUpdates() {
+        if (!sbClient) return;
+
+        setStatus("updatesStatus", t("loadingUpdates"));
+        showSkeleton("updates");
+
+        let result;
+
+        if (isAdmin) {
+          result = await sbClient.rpc("get_updates_with_admin", {
+            p_admin_password: getAdminPassword()
+          });
+        } else {
+          result = await sbClient
+            .from("updates")
+            .select("*")
+            .eq("visible", true)
+            .order("created_at", { ascending: false })
+            .limit(100);
+        }
+
+        if (result.error) throw result.error;
+
+        updatesData = Array.isArray(result.data) ? result.data : [];
+        renderUpdateFilters();
+        renderUpdates();
+        hideSkeleton("updates");
+      }
+
+      async function saveUpdate(event) {
+        event.preventDefault();
+
+        if (!sbClient) {
+          setStatus("updateSaveStatus", t("supabaseUnavailable"), true);
+          return;
+        }
+
+        const titleZh = $("updateTitleZh").value;
+        const titleEn = $("updateTitleEn").value;
+        const bodyZh = $("updateBodyZh").value;
+        const bodyEn = $("updateBodyEn").value;
+        const imageUrl = $("updateImageUrl").value.trim();
+        const linkUrl = $("updateLinkUrl").value.trim();
+
+        const hasAnyContent = [
+          titleZh,
+          titleEn,
+          bodyZh,
+          bodyEn,
+          imageUrl,
+          linkUrl
+        ].some((value) => trimValue(value));
+
+        if (!hasAnyContent) {
+          setStatus("updateSaveStatus", t("updateRequired"), true);
+          return;
+        }
+
+        if (imageUrl && !safeHttpUrl(imageUrl)) {
+          setStatus("updateSaveStatus", t("invalidUrl"), true);
+          return;
+        }
+
+        if (linkUrl && !safeHttpUrl(linkUrl)) {
+          setStatus("updateSaveStatus", t("invalidUrl"), true);
+          return;
+        }
+
+        const btn = $("saveUpdateBtn");
+        btn.disabled = true;
+        setStatus("updateSaveStatus", t("saving"));
+
+        try {
+          const { error } = await sbClient.rpc("save_update_with_admin", {
+            p_update_id: editingUpdateId,
+            p_update_type: $("updateType").value || "post",
+            p_title_zh: titleZh,
+            p_title_en: titleEn,
+            p_body_zh: bodyZh,
+            p_body_en: bodyEn,
+            p_image_url: imageUrl,
+            p_link_url: linkUrl,
+            p_link_label_zh: $("updateLinkLabelZh").value,
+            p_link_label_en: $("updateLinkLabelEn").value,
+            p_visible: $("updateVisible").value === "true",
+            p_admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          hideUpdateEditor();
+          await loadUpdates();
+          showToast(t("updateSaved"));
+        } catch (error) {
+          setStatus("updateSaveStatus", t("actionFailed"), true);
+          showDebug("Save update failed", errorMessage(error));
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      async function setUpdateVisible(id, visible) {
+        if (!sbClient) return;
+
+        try {
+          const { error } = await sbClient.rpc("set_update_visible_with_admin", {
+            p_update_id: Number(id),
+            p_visible: Boolean(visible),
+            p_admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("actionFailed"), true);
+          showDebug("Set update visible failed", errorMessage(error));
+        }
+      }
+
+      async function deleteUpdate(id) {
+        if (!sbClient) return;
+        if (!window.confirm(t("confirmDeleteUpdate"))) return;
+
+        try {
+          const { error } = await sbClient.rpc("delete_update_with_admin", {
+            p_update_id: Number(id),
+            p_admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          await loadUpdates();
+        } catch (error) {
+          setStatus("updatesStatus", t("actionFailed"), true);
+          showDebug("Delete update failed", errorMessage(error));
+        }
+      }
+
+      async function loadMessages() {
+        if (!sbClient) return;
+
+        setStatus("messageStatus", t("loadingMessages"));
+        showSkeleton("messages");
+
+        let result;
+
+        if (isAdmin) {
+          result = await sbClient.rpc("get_messages_with_admin", {
+            admin_password: getAdminPassword()
+          });
+        } else {
+          result = await sbClient
+            .from("messages")
+            .select("*")
+            .eq("visible", true)
+            .order("created_at", { ascending: false })
+            .limit(50);
+        }
+
+        if (result.error) throw result.error;
+
+        messagesData = Array.isArray(result.data) ? result.data : [];
+        renderMessages();
+        hideSkeleton("messages");
+      }
+
+      async function loadVisitorRecords() {
+        if (!sbClient) return;
+
+        if (!isAdmin) {
+          visitorRecordsData = [];
+          renderVisitorRecords();
+          return;
+        }
+
+        setStatus("visitorRecordStatus", t("loadingVisitorRecords"));
+
+        const result = await sbClient.rpc("get_visitor_records_with_admin", {
+          p_admin_password: getAdminPassword()
+        });
+
+        if (result.error) throw result.error;
+
+        visitorRecordsData = Array.isArray(result.data) ? result.data : [];
+        renderVisitorRecords();
+      }
+
+      function getMessageCooldownSeconds() {
+        const lastSent = Number(sessionStorage.getItem(MESSAGE_LAST_SENT_KEY) || "0");
+        if (!lastSent) return 0;
+
+        const elapsed = Date.now() - lastSent;
+        const remaining = MESSAGE_COOLDOWN_MS - elapsed;
+
+        return remaining > 0 ? Math.ceil(remaining / 1000) : 0;
+      }
+
+      async function sendMessage(event) {
+        event.preventDefault();
+
+        if (!sbClient) {
+          setStatus("messageStatus", t("supabaseUnavailable"), true);
+          return;
+        }
+
+        // 防灌水：检查隐藏时间戳
+        const timestampInput = $("messageTimestamp");
+        const submitTime = Date.now();
+        if (timestampInput) {
+          const formTime = Number(timestampInput.value);
+          if (formTime && (submitTime - formTime) < MESSAGE_MIN_DELAY_MS) {
+            setStatus("messageStatus", t("messageTooFast"), true);
+            return;
+          }
+        }
+
+        const cooldownSeconds = getMessageCooldownSeconds();
+        if (cooldownSeconds > 0) {
+          setStatus("messageStatus", t("messageCooldown").replace("{seconds}", cooldownSeconds), true);
+          return;
+        }
+
+        const honeypot = trimValue($("messageWebsite").value);
+        if (honeypot) {
+          $("messageForm").reset();
+          updateMessageCounter();
+          setStatus("messageStatus", t("messageSent"), false, true);
+          return;
+        }
+
+        const author = trimValue($("messageAuthor").value).slice(0, 40) || t("anonymous");
+        const content = trimValue($("messageContent").value).slice(0, 500);
+
+        if (content.length < 2) {
+          setStatus("messageStatus", t("messageTooShort"), true);
+          return;
+        }
+
+        if (linkCount(content) > 3) {
+          setStatus("messageStatus", t("messageTooManyLinks"), true);
+          return;
+        }
+
+        const btn = $("sendMessageBtn");
+        btn.disabled = true;
+        btn.textContent = t("sending");
+
+        try {
+          const { error } = await sbClient
+            .from("messages")
+            .insert({
+              author,
+              content,
+              visible: true
+            });
+
+          if (error) throw error;
+
+          sessionStorage.setItem(MESSAGE_LAST_SENT_KEY, String(Date.now()));
+          $("messageForm").reset();
+          // 重置时间戳
+          if (timestampInput) timestampInput.value = "";
+          updateMessageCounter();
+          setStatus("messageStatus", t("messageSent"), false, true);
+          await loadMessages();
+          // 自动滚动到最新消息
+          scrollToLatestMessage();
+        } catch (error) {
+          setStatus("messageStatus", t("actionFailed"), true);
+          showDebug("Send message failed", errorMessage(error));
+        } finally {
+          btn.disabled = false;
+          btn.textContent = t("send");
+        }
+      }
+
+      async function setMessageVisible(id, visible) {
+        if (!sbClient) return;
+
+        try {
+          const { error } = await sbClient.rpc("set_message_visible_with_admin", {
+            msg_id: Number(id),
+            msg_visible: Boolean(visible),
+            admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("actionFailed"), true);
+          showDebug("Set message visible failed", errorMessage(error));
+        }
+      }
+
+      async function deleteMessage(id) {
+        if (!sbClient) return;
+        if (!window.confirm(t("confirmDeleteMessage"))) return;
+
+        try {
+          const { error } = await sbClient.rpc("delete_message_with_admin", {
+            msg_id: Number(id),
+            admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          await loadMessages();
+        } catch (error) {
+          setStatus("messageStatus", t("actionFailed"), true);
+          showDebug("Delete message failed", errorMessage(error));
+        }
+      }
+
+      async function deleteVisitorRecord(id) {
+        if (!sbClient) return;
+        if (!window.confirm(t("confirmDeleteVisitorRecord"))) return;
+
+        try {
+          const { error } = await sbClient.rpc("delete_visitor_record_with_admin", {
+            p_record_id: Number(id),
+            p_admin_password: getAdminPassword()
+          });
+
+          if (error) throw error;
+
+          await loadVisitorRecords();
+        } catch (error) {
+          setStatus("visitorRecordStatus", t("actionFailed"), true);
+          showDebug("Delete visitor record failed", errorMessage(error));
+        }
+      }
+
+      async function loadSupabaseAndData() {
+        setStatus("updatesStatus", t("loadingUpdates"));
+        setStatus("messageStatus", t("loadingMessages"));
+        showSkeleton("updates");
+        showSkeleton("messages");
+
+        try {
+          await loadSupabaseScript();
+
+          if (!window.supabase || typeof window.supabase.createClient !== "function") {
+            throw new Error("window.supabase.createClient is not available");
+          }
+
+          sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+          // 记录访客：发了不等（fire-and-forget），不阻塞首屏渲染。
+          recordVisitorIfNeeded().catch((visitorError) => {
+            showDebug("Save visitor record failed", errorMessage(visitorError));
+          });
+        } catch (error) {
+          setStatus("updatesStatus", t("supabaseUnavailable"), true);
+          setStatus("messageStatus", t("supabaseUnavailable"), true);
+          hideSkeleton("updates");
+          hideSkeleton("messages");
+          showDebug("Supabase initialization failed", errorMessage(error));
+          return;
+        }
+
+        // 先确认站点开关：它决定页面是否锁定/显示"已关闭"遮罩。
+        // 放在前面，避免站点关闭时其余内容抢先渲染、闪现一下。
+        try {
+          await loadSiteAccess();
+        } catch (error) {
+          showDebug("Load site access failed", errorMessage(error));
+        }
+
+        // 资料/动态/留言/访客记录互不依赖，并发执行；单个失败不影响其它，
+        // 总耗时约等于最慢的一个，而不是逐个相加（冷启动时差别明显）。
+        await Promise.allSettled([
+          loadProfile().catch((error) => {
+            showDebug("Load profile failed", errorMessage(error));
+          }),
+          loadUpdates().catch((error) => {
+            setStatus("updatesStatus", t("loadFailed"), true);
+            hideSkeleton("updates");
+            showDebug("Load updates failed", errorMessage(error));
+          }),
+          loadMessages().catch((error) => {
+            setStatus("messageStatus", t("loadFailed"), true);
+            hideSkeleton("messages");
+            showDebug("Load messages failed", errorMessage(error));
+          }),
+          loadVisitorRecords().catch((error) => {
+            setStatus("visitorRecordStatus", t("loadFailed"), true);
+            showDebug("Load visitor records failed", errorMessage(error));
+          })
+        ]);
+      }
+
+      function bindEvents() {
+        $("visitorGateForm").addEventListener("submit", submitVisitorGate);
+
+        $("themeBtn").addEventListener("click", toggleTheme);
+
+        $("langBtn").addEventListener("click", () => {
+          lang = lang === "zh" ? "en" : "zh";
+          localStorage.setItem("site_lang", lang);
+          applyLanguage();
+        });
+
+        $("contactList").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-copy]");
+          if (!btn) return;
+          copyText(btn.getAttribute("data-copy"));
+        });
+
+        $("adminLoginForm").addEventListener("submit", enterAdminMode);
+        $("adminLogoutBtn").addEventListener("click", exitAdminMode);
+
+        $("siteAccessToggleBtn").addEventListener("click", toggleSiteAccess);
+
+        $("profileForm").addEventListener("submit", saveProfile);
+
+        $("updatesToggleBtn").addEventListener("click", () => {
+          setUpdatesCollapsed(!updatesCollapsed);
+        });
+
+        $("newUpdateBtn").addEventListener("click", resetUpdateForm);
+        $("cancelUpdateBtn").addEventListener("click", hideUpdateEditor);
+        $("updateForm").addEventListener("submit", saveUpdate);
+
+        $("updateFilters").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-update-filter]");
+          if (!btn) return;
+
+          updateFilter = btn.getAttribute("data-update-filter") || "all";
+          renderUpdateFilters();
+          renderUpdates();
+        });
+
+        $("updatesList").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-update-action]");
+          if (!btn) return;
+
+          const action = btn.getAttribute("data-update-action");
+          const id = btn.getAttribute("data-id");
+
+          if (action === "edit") editUpdate(id);
+          if (action === "hide") setUpdateVisible(id, false);
+          if (action === "restore") setUpdateVisible(id, true);
+          if (action === "delete") deleteUpdate(id);
+        });
+
+        $("visitorRecordList").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-visitor-action]");
+          if (!btn) return;
+
+          const action = btn.getAttribute("data-visitor-action");
+          const id = btn.getAttribute("data-id");
+
+          if (action === "delete") deleteVisitorRecord(id);
+        });
+
+        $("messageForm").addEventListener("submit", sendMessage);
+        $("messageContent").addEventListener("input", updateMessageCounter);
+
+        // 在表单渲染时注入时间戳
+        const timestampEl = $("messageTimestamp");
+        if (timestampEl) {
+          timestampEl.value = String(Date.now());
+        }
+
+        $("messageList").addEventListener("click", (event) => {
+          const btn = event.target.closest("[data-message-action]");
+          if (!btn) return;
+
+          const action = btn.getAttribute("data-message-action");
+          const id = btn.getAttribute("data-id");
+
+          if (action === "hide") setMessageVisible(id, false);
+          if (action === "restore") setMessageVisible(id, true);
+          if (action === "delete") deleteMessage(id);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        applyTheme();
+        setupAdminView();
+        setupVisitorGate();
+        bindEvents();
+        applyLanguage();
+        updateMessageCounter();
+        renderUpdatesCollapse();
+        loadSupabaseAndData();
+
+        // 每次页面加载时刷新留言表单的时间戳
+        const ts = $("messageTimestamp");
+        if (ts) ts.value = String(Date.now());
+      });
+    })();
+  </script>
+</body>
+</html>
